@@ -1,9 +1,15 @@
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-
+import React from 'react';
 import { ScreenContent } from '~/components/ScreenContent';
+import { useUser } from '@clerk/clerk-expo';
 
 export default function Home() {
+  const { user, isSignedIn } = useUser();
+  if (!isSignedIn) {
+    router.replace('/(auth)/sign-in');
+  }
+
   return (
     <>
       <Stack.Screen options={{ title: 'Tab One' }} />
