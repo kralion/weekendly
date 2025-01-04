@@ -33,13 +33,13 @@ export default function SignUpScreen() {
 
   return (
     <ScrollView>
-      <SafeAreaView className="flex h-[100vh] flex-col items-center justify-center p-4 align-middle web:m-4">
+      <SafeAreaView className="flex h-[100vh] flex-col items-center justify-center p-4 align-middle web:m-4 ">
         <View className="h-screen-safe flex flex-col justify-center gap-12">
           <View className="flex flex-col items-center gap-1">
             <Image
               style={{
-                width: 225,
-                height: 225,
+                width: 200,
+                height: 200,
               }}
               source={require('../../assets/logo.png')}
             />
@@ -59,7 +59,7 @@ export default function SignUpScreen() {
             <SignInWithOAuthTiktok />
           </View>
           <View className="flex w-full  flex-col">
-            <Text className=" text-sm ">
+            <Text className=" text-center text-sm text-muted-foreground">
               Al continuar aceptas las politicas de privacidad y demas clausulas , en estos se
               describen como usamos tus datos y como protegemos tu privacidad.
             </Text>
@@ -69,7 +69,7 @@ export default function SignUpScreen() {
             <Text className="text-sm ">
               Copyright @ {new Date().getFullYear()} Weekendly | Desarrollado por
             </Text>
-            <Text className="text-primary text-sm active:underline">
+            <Text className="text-sm text-primary active:underline">
               <Link href="https://x.com/brayanpaucar_"> Brayan</Link>
             </Text>
           </View>

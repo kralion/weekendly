@@ -7,6 +7,10 @@ module.exports = {
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['DMSans_400Regular', 'sans-serif'],
+        bold: ['DMSans_700Bold', 'sans-serif'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -44,6 +48,14 @@ module.exports = {
       },
       borderWidth: {
         hairline: hairlineWidth(),
+      },
+      borderRadius: {
+        sm: 'var(--radius-sm)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
+        xl: 'var(--radius-xl)',
+        '2xl': 'var(--radius-2xl)',
+        full: 'var(--radius-full)',
       },
       keyframes: {
         'accordion-down': {

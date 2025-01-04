@@ -5,7 +5,6 @@ import * as WebBrowser from 'expo-web-browser';
 import React from 'react';
 import { Image, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 import { Button } from '~/components/ui/button';
 import { Text } from '~/components/ui/text';
 export const useWarmUpBrowser = () => {
@@ -30,17 +29,17 @@ WebBrowser.maybeCompleteAuthSession();
 export default function SignInScreen() {
   return (
     <ScrollView>
-      <SafeAreaView className="flex h-[100vh] flex-col items-center justify-center p-4 align-middle web:m-4">
-        <View className="flex w-full flex-col items-center gap-16">
+      <SafeAreaView className="flex h-[100vh] flex-col items-center justify-center p-4 align-middle web:m-4 ">
+        <View className="flex w-full flex-col items-center gap-16 p-4">
           <View className="flex flex-col items-center gap-1">
             <Image
               style={{
-                width: 225,
-                height: 225,
+                width: 200,
+                height: 200,
               }}
               source={require('../../assets/logo.png')}
             />
-            <Text className="text-4xl font-bold"> Inicia Sesión</Text>
+            <Text className=" text-3xl font-bold">Inicia Sesión</Text>
             <Text className="text-center">Para empezar a usar y disfrutar de Weekendly</Text>
           </View>
           <View className="flex w-full flex-col justify-center gap-4 align-middle">
