@@ -16,10 +16,7 @@ const styles = StyleSheet.create({
     overflow: "hidden", // Important for rounded corners with gradient
     ...Platform.select({
       ios: {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
+        boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
       },
       android: {
         elevation: 5,

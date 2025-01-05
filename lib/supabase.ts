@@ -22,7 +22,7 @@ export function createClerkSupabaseClient() {
         // Get the custom Supabase token from Clerk
         fetch: async (url, options = {}) => {
           const clerkToken = await getToken({
-            template: "supabase",
+            template: "weekendly",
           });
 
           // Insert the Clerk Supabase token into the headers

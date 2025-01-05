@@ -3,17 +3,21 @@ import * as Linking from "expo-linking";
 import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import React from "react";
+import { Platform } from "react-native";
 import { Image, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 export const useWarmUpBrowser = () => {
   React.useEffect(() => {
-    // Warm up the android browser to improve UX
-    // https://docs.expo.dev/guides/authentication/#improving-user-experience
-    void WebBrowser.warmUpAsync();
+    if (Platform.OS !== "web") {
+      void WebBrowser.warmUpAsync();
+    }
+
     return () => {
-      void WebBrowser.coolDownAsync();
+      if (Platform.OS !== "web") {
+        void WebBrowser.coolDownAsync();
+      }
     };
   }, []);
 };
@@ -35,7 +39,7 @@ export default function SignInScreen() {
             />
             <Text className="text-4xl font-bold"> Inicia Sesión</Text>
             <Text className="text-center">
-              Para empezar a usar y disfrutar de Monedo
+              Para empezar a usar y disfrutar de Weekendly
             </Text>
           </View>
           <View className="flex flex-col gap-4 justify-center align-middle w-full">
@@ -70,7 +74,7 @@ export const SignInWithOAuthGoogle = () => {
     try {
       const { createdSessionId, signIn, signUp, setActive } =
         await startOAuthFlow({
-          redirectUrl: Linking.createURL("/(tabs)", { scheme: "monedo" }),
+          redirectUrl: Linking.createURL("/(tabs)", { scheme: "side" }),
         });
 
       if (createdSessionId) {
@@ -110,7 +114,7 @@ export const SignInWithOAuthTiktok = () => {
     try {
       const { createdSessionId, signIn, signUp, setActive } =
         await startOAuthFlow({
-          redirectUrl: Linking.createURL("/(tabs)", { scheme: "monedo" }),
+          redirectUrl: Linking.createURL("/(tabs)", { scheme: "side" }),
         });
 
       if (createdSessionId) {
@@ -150,7 +154,7 @@ export const SignInWithOAuthFacebook = () => {
     try {
       const { createdSessionId, signIn, signUp, setActive } =
         await startOAuthFlow({
-          redirectUrl: Linking.createURL("/(tabs)", { scheme: "monedo" }),
+          redirectUrl: Linking.createURL("/(tabs)", { scheme: "side" }),
         });
 
       if (createdSessionId) {

@@ -3,6 +3,11 @@ import "~/global.css";
 import { ClerkLoaded, ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
+  useFonts,
+  DMSans_400Regular,
+  DMSans_700Bold,
+} from "@expo-google-fonts/dm-sans";
+import {
   DarkTheme,
   DefaultTheme,
   Theme,
@@ -74,6 +79,7 @@ if (!publishableKey) {
 // Prevent the splash screen from auto-hiding before getting the color scheme.
 SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({ DMSans_400Regular, DMSans_700Bold });
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 
@@ -103,7 +109,7 @@ export default function RootLayout() {
     });
   }, []);
 
-  if (!isColorSchemeLoaded) {
+  if (!isColorSchemeLoaded || !fontsLoaded) {
     return null;
   }
 

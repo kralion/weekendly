@@ -3,10 +3,10 @@ import { useAuth } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { Plus } from "lucide-react-native";
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { Button } from "./ui/button";
-import { BudgetLimitExceededModal } from "./budget-limit-exceeded";
+import { View } from "react-native";
 import { IBudget } from "~/interfaces";
+import { BudgetLimitExceededModal } from "./budget-limit-exceeded";
+import { Button } from "./ui/button";
 
 export default function AddExpenseIcon() {
   const router = useRouter();
@@ -84,23 +84,3 @@ export default function AddExpenseIcon() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  customTabStyle: {
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    position: "absolute",
-    marginBottom: -15,
-    left: -35,
-    bottom: 10,
-    borderRadius: 50,
-    padding: 10,
-    shadowOpacity: 0.3,
-    borderWidth: 1.5,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-});

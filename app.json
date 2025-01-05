@@ -1,19 +1,21 @@
 {
   "expo": {
-    "name": "monedo",
-    "slug": "monedo",
+    "name": "weekendly",
+    "slug": "weekendly",
     "version": "1.0.0",
     "newArchEnabled": true,
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "monedo",
+    "scheme": "weekendly",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -28,7 +30,11 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": ["expo-router", "expo-secure-store"],
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-font"
+    ],
     "experiments": {
       "typedRoutes": true
     }

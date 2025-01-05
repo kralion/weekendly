@@ -1,9 +1,9 @@
-import { useOAuth, useSignUp } from "@clerk/clerk-expo";
+import { useOAuth } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
 import { Link, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import * as React from "react";
-import { Image, ScrollView, View } from "react-native";
+import { Image, Platform, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TermsPolicyModal } from "~/components/auth/terms&policy";
 import { Button } from "~/components/ui/button";
@@ -11,11 +11,13 @@ import { Text } from "~/components/ui/text";
 
 export const useWarmUpBrowser = () => {
   React.useEffect(() => {
-    // Warm up the android browser to improve UX
-    // https://docs.expo.dev/guides/authentication/#improving-user-experience
-    void WebBrowser.warmUpAsync();
+    if (Platform.OS !== "web") {
+      void WebBrowser.warmUpAsync();
+    }
     return () => {
-      void WebBrowser.coolDownAsync();
+      if (Platform.OS !== "web") {
+        void WebBrowser.coolDownAsync();
+      }
     };
   }, []);
 };
@@ -23,13 +25,11 @@ export const useWarmUpBrowser = () => {
 WebBrowser.maybeCompleteAuthSession();
 
 export default function SignUpScreen() {
-  const { signUp, setActive } = useSignUp();
-  const [showTCModal, setShowTCModal] = React.useState(false);
   const router = useRouter();
 
   return (
     <ScrollView>
-      <SafeAreaView className="flex flex-col justify-center align-middle p-4 items-center h-[100vh]">
+      <SafeAreaView className="flex flex-col justify-center align-middle p-4  items-center h-[100vh]">
         <View className="flex flex-col gap-12 h-screen-safe justify-center">
           <View className="flex flex-col items-center gap-1">
             <Image
@@ -67,7 +67,8 @@ export default function SignUpScreen() {
           </View>
           <View className="flex flex-row justify-center align-middle absolute text-center w-full -bottom-24 ">
             <Text className="text-sm ">
-              Copyright @ {new Date().getFullYear()} Monedo | Desarrollado por
+              Copyright @ {new Date().getFullYear()} Weekendly | Desarrollado
+              por
             </Text>
             <Text className="text-sm text-primary active:underline">
               <Link href="https://x.com/brayanpaucar_"> Brayan</Link>
@@ -87,7 +88,7 @@ export const SignInWithOAuthGoogle = () => {
   const onPress = React.useCallback(async () => {
     try {
       const { createdSessionId, setActive } = await startOAuthFlow({
-        redirectUrl: Linking.createURL("/(tabs)", { scheme: "roomy" }),
+        redirectUrl: Linking.createURL("/(tabs)", { scheme: "side" }),
       });
 
       if (createdSessionId) {
@@ -126,7 +127,7 @@ export const SignInWithOAuthTiktok = () => {
   const onPress = React.useCallback(async () => {
     try {
       const { createdSessionId, setActive } = await startOAuthFlow({
-        redirectUrl: Linking.createURL("/(tabs)", { scheme: "roomy" }),
+        redirectUrl: Linking.createURL("/(tabs)", { scheme: "side" }),
       });
 
       if (createdSessionId) {
@@ -165,7 +166,7 @@ export const SignInWithOAuthFacebook = () => {
   const onPress = React.useCallback(async () => {
     try {
       const { createdSessionId, setActive } = await startOAuthFlow({
-        redirectUrl: Linking.createURL("/(tabs)", { scheme: "roomy" }),
+        redirectUrl: Linking.createURL("/(tabs)", { scheme: "side" }),
       });
 
       if (createdSessionId) {

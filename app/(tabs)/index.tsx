@@ -15,6 +15,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { createClerkSupabaseClient } from "~/lib/supabase";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { ExpenseSkeleton } from "~/components/skeleton/expense";
@@ -23,6 +24,7 @@ import { IExpense } from "~/interfaces";
 export default function Home() {
   const { loading, getRecentExpenses } = useExpenseContext();
   const [expenses, setExpenses] = React.useState<IExpense[]>([]);
+  const supabase = createClerkSupabaseClient();
   const { user, isSignedIn } = useUser();
   const { has } = useAuth();
   const [showAll, setShowAll] = React.useState(false);
@@ -30,8 +32,26 @@ export default function Home() {
     return null;
   }
 
+  async function createProfile() {
+    const { data, error } = await supabase
+      .from("profiles")
+      .insert({
+        name: "Brayan",
+        age: 23,
+        gender: "male",
+        looking_for: "hangouts",
+        bio: "I'm a software engineer",
+        hobbies: ["programming", "gaming", "reading"],
+      })
+      .single();
+    if (error) {
+      throw error;
+    }
+    return data;
+  }
   React.useEffect(() => {
     getRecentExpenses().then((data) => setExpenses(data));
+    createProfile();
   }, [user]);
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();

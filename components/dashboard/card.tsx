@@ -117,27 +117,16 @@ const styles = StyleSheet.create({
     zIndex: 100,
     position: "absolute",
     top: 20,
+    display: "flex", // Use flexbox for layout
     flexDirection: "column",
     justifyContent: "space-between",
-    borderRadius: 18,
+    borderRadius: "18px",
     padding: 16,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 3,
+    boxShadow: "0px 2px 3px rgba(0, 0, 0, 0.5)",
   },
   shadowContainer: {
     flex: 1,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
+    boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.4)",
     backgroundColor: "rgba(255, 255, 255, 0.001)",
   },
 });
