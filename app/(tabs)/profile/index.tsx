@@ -2,17 +2,19 @@ import { useAuth, useUser } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import {
   Bell,
+  ChevronRight,
   LogOut,
   SmartphoneNfc,
   Unlock,
   User,
   UserSquare2,
 } from "lucide-react-native";
-import { Linking, View } from "react-native";
+import { Linking, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import { Separator } from "~/components/ui/separator";
 import { Text } from "~/components/ui/text";
 export default function ProfileScreen() {
   const { user } = useUser();
@@ -33,83 +35,71 @@ export default function ProfileScreen() {
 
           <View className="flex flex-col gap-1">
             <Text className="font-bold text-2xl">{`${user?.firstName} ${user?.lastName}`}</Text>
-            <Badge
-              className={` text-white py-2  rounded-full
-                bg-${
-                  has?.({ permission: "org:premium:plan" })
-                    ? "green-500"
-                    : "orange-500"
-                }
-                `}
-            >
-              <Text className="text-md">
-                {`Cuenta ${
-                  has?.({ permission: "org:premium:plan" }) ? "Premium" : "Free"
-                }`}
-              </Text>
-            </Badge>
+            <Button className="">
+              <Text className="text-md">Editar Perfil</Text>
+            </Button>
           </View>
         </View>
       </View>
-      <View className="flex flex-col mt-10 items-start ml-4">
-        <Button
-          onPress={() => router.push("/(tabs)/profile/personal-info")}
-          size="lg"
-          variant="ghost"
-          className="flex flex-row gap-3 px-5"
-        >
-          <User color="black" />
-          <Text>Mis Datos</Text>
-        </Button>
-        <Button
-          onPress={() => router.push("/(tabs)/profile/buy-premium")}
-          size="lg"
-          variant="ghost"
-          className="flex flex-row gap-3 px-5"
-        >
-          <Unlock color="black" />
-          <Text>Adquirir Premium</Text>
-        </Button>
-        <Button
-          onPress={() => router.push("/(tabs)/profile/membership")}
-          size="lg"
-          className="flex flex-row gap-3 px-5"
-          variant="ghost"
-        >
-          <UserSquare2 color="black" />
-          <Text>Membresía</Text>
-        </Button>
-
-        <Button
-          onPress={() => router.push("/(tabs)/profile/notifications")}
-          size="lg"
-          variant="ghost"
-          className="flex flex-row gap-3 px-5"
-        >
-          <Bell color="black" />
-          <Text>Notificaciones</Text>
-        </Button>
-        <Button
-          onPress={() => Linking.openURL("https://cal.com/brayanpaucar/monedo")}
-          size="lg"
-          variant="ghost"
-          className="flex flex-row gap-3 px-5"
-        >
-          <SmartphoneNfc color="black" />
-          <Text>Soporte</Text>
-        </Button>
-        <Button
+      <View className="flex flex-col mt-10 items-start m-4  bg-muted rounded-xl p-4 gap-4">
+        <TouchableOpacity
           onPress={() => {
             signOut();
             router.replace("/(auth)/sign-in");
           }}
-          size="lg"
-          variant="ghost"
-          className="flex flex-row gap-3  px-5"
+          className="flex flex-row justify-between w-full  px-4 py-2"
         >
-          <LogOut color="red" />
-          <Text className="text-red-500">Cerrar Sesión</Text>
-        </Button>
+          <View className="flex flex-row gap-3 items-center">
+            <Bell color="black" />
+            <Text className="text-lg">Notificaciones</Text>
+          </View>
+          <ChevronRight color="gray" />
+        </TouchableOpacity>
+        <Separator />
+
+        <TouchableOpacity
+          onPress={() => {
+            signOut();
+            router.replace("/(auth)/sign-in");
+          }}
+          className="flex flex-row justify-between w-full  px-4 py-2"
+        >
+          <View className="flex flex-row gap-3 items-center">
+            <Unlock color="black" />
+            <Text className="text-lg">Adquirir Premium</Text>
+          </View>
+          <ChevronRight color="gray" />
+        </TouchableOpacity>
+        <Separator />
+
+        <TouchableOpacity
+          onPress={() => {
+            signOut();
+            router.replace("/(auth)/sign-in");
+          }}
+          className="flex flex-row justify-between w-full  px-4 py-2"
+        >
+          <View className="flex flex-row gap-3 items-center">
+            <User color="black" />
+            <Text className="text-lg">Mis Datos</Text>
+          </View>
+          <ChevronRight color="gray" />
+        </TouchableOpacity>
+        <Separator />
+
+        <TouchableOpacity
+          onPress={() => {
+            signOut();
+            router.replace("/(auth)/sign-in");
+          }}
+          className="flex flex-row justify-between w-full  px-4 py-2"
+        >
+          <View className="flex flex-row gap-3 items-center">
+            <LogOut color="red" />
+            <Text className="text-red-500 text-lg">Cerrar Sesión</Text>
+          </View>
+          <ChevronRight color="gray" />
+        </TouchableOpacity>
       </View>
 
       <Text className="text-muted-foreground opacity-40  mt-20 mx-auto text-sm">
@@ -118,12 +108,6 @@ export default function ProfileScreen() {
       <Text className="text-muted-foreground opacity-40   mx-auto text-sm">
         Versión 3.15.1
       </Text>
-
-      <View className="absolute bottom-[200px] right-[-70px] w-[200px] h-[300px] rounded-xl rotate-[-30deg] bg-yellow-400 shadow-lg" />
-
-      <View className="absolute bottom-[160px] right-[-70px] w-[200px] h-[300px] rounded-xl rotate-[-40deg] bg-orange-500 shadow-lg" />
-
-      <View className="absolute bottom-[120px] right-[-70px] w-[200px] h-[300px] rounded-xl rotate-[-50deg] bg-primary shadow-lg" />
     </SafeAreaView>
   );
 }

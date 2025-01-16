@@ -23,11 +23,11 @@
     --border: 240 15% 80%; /* Light border gray */
     --input: 240 15% 80%; /* Same as border for inputs */
     --ring: 270 80% 50%; /* Matches primary for focus rings */
-    --radius-md: 0.5rem; /* 8px */
-    --radius-lg: 0.75rem; /* 12px */
-    --radius-xl: 1rem; /* 16px */
-    --radius-2xl: 1.5rem; /* 24px */
-    --radius-full: 9999px; /* For fully rounded elements */
+    --rounded-md: 0.75rem; /*12px */
+    --rounded-lg: 1rem; /* 16px */
+    --rounded-xl: 1.25rem; /* 20px */
+    --rounded-2xl: 1.5rem; /* 24px */
+    --rounded-full: 9999px; /* For fully rounded elements */
   }
 
   .dark:root {

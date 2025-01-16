@@ -10,6 +10,13 @@ module.exports = {
       transitionDuration: {
         DEFAULT: "150ms",
       },
+      borderRadius: {
+        md: "var(--rounded-md)",
+        lg: "var(--rounded-lg)",
+        xl: "var(--rounded-xl)",
+        "2xl": "var(--rounded-2xl)",
+        full: "var(--rounded-full)",
+      },
       colors: {
         brand: "#41D29B",
         border: "hsl(var(--border))",
