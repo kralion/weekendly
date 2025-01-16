@@ -4,16 +4,6 @@
 
 ---
 
-## 🚀 Features
-
-- **Weekend-only Availability:** Focuses on connections tailored for Saturdays and Sundays.
-- **Custom Profiles:** Highlight your weekend preferences, interests, and activities.
-- **Real-time Matchmaking:** Get paired with users who share your vibe for the weekend.
-- **Interactive Map:** Discover people and events near you.
-- **Privacy First:** Full control over who can see your profile and interact with you.
-
----
-
 ## 🛠️ Tech Stack
 
 - **Frontend:** React Native (using Expo), NativeWind
