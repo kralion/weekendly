@@ -3,9 +3,7 @@ import * as Linking from "expo-linking";
 import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import React from "react";
-import { Platform } from "react-native";
-import { Image, ScrollView, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Image, Platform, ScrollView, View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 export const useWarmUpBrowser = () => {
@@ -27,40 +25,38 @@ WebBrowser.maybeCompleteAuthSession();
 export default function SignInScreen() {
   return (
     <ScrollView>
-      <SafeAreaView className="flex flex-col justify-center align-middle p-4 items-center h-[100vh]">
-        <View className="flex flex-col gap-16 w-full items-center">
-          <View className="flex flex-col items-center gap-1">
-            <Image
-              style={{
-                width: 125,
-                height: 125,
-              }}
-              source={require("../../assets/logo.png")}
-            />
-            <Text className="text-4xl font-bold"> Inicia Sesión</Text>
-            <Text className="text-center">
-              Para empezar a usar y disfrutar de Weekendly
-            </Text>
-          </View>
-          <View className="flex flex-col gap-4 justify-center align-middle w-full">
-            <SignInWithOAuthGoogle />
-            <SignInWithOAuthFacebook />
-            <SignInWithOAuthTiktok />
-          </View>
-
-          <View className="flex flex-row gap-2 justify-center align-middle w-full">
-            <Text className="text-textmuted text-center">
-              ¿No tienes una cuenta?
-            </Text>
-            <Text
-              onPress={() => router.push("/(auth)/sign-up")}
-              className="text-primary active:underline"
-            >
-              Regístrate
-            </Text>
-          </View>
+      <View className="flex flex-col gap-12 h-screen-safe justify-center px-4">
+        <View className="flex flex-col items-center gap-1">
+          <Image
+            style={{
+              width: 125,
+              height: 125,
+            }}
+            source={require("../../assets/logo.png")}
+          />
+          <Text className="text-4xl font-bold"> Inicia Sesión</Text>
+          <Text className="text-center">
+            Para empezar a usar y disfrutar de Weekendly
+          </Text>
         </View>
-      </SafeAreaView>
+        <View className="flex flex-col gap-4 justify-center align-middle w-full">
+          <SignInWithOAuthGoogle />
+          <SignInWithOAuthFacebook />
+          <SignInWithOAuthTiktok />
+        </View>
+
+        <View className="flex flex-row gap-2 justify-center align-middle w-full">
+          <Text className="text-muted-foreground opacity-40">
+            ¿Eres nuevo en Weekendly?
+          </Text>
+          <Text
+            onPress={() => router.push("/(auth)/sign-up")}
+            className="text-primary active:underline"
+          >
+            Regístrate
+          </Text>
+        </View>
+      </View>
     </ScrollView>
   );
 }
@@ -90,7 +86,7 @@ export const SignInWithOAuthGoogle = () => {
   return (
     <Button
       className="flex flex-row gap-2 items-center"
-      variant="outline"
+      variant="secondary"
       size="lg"
       onPress={onPress}
     >
@@ -130,7 +126,7 @@ export const SignInWithOAuthTiktok = () => {
   return (
     <Button
       className="flex flex-row gap-2 items-center"
-      variant="outline"
+      variant="secondary"
       size="lg"
       onPress={onPress}
     >
@@ -170,7 +166,7 @@ export const SignInWithOAuthFacebook = () => {
   return (
     <Button
       className="flex flex-row gap-2 items-center"
-      variant="outline"
+      variant="secondary"
       size="lg"
       onPress={onPress}
     >

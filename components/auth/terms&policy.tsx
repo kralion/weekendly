@@ -1,4 +1,4 @@
-import { FlatList, ScrollView } from "react-native";
+import { FlatList } from "react-native";
 import {
   Accordion,
   AccordionContent,
@@ -7,17 +7,13 @@ import {
 } from "~/components/ui/accordion";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { Button } from "../ui/button";
 import { Text } from "../ui/text";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export function TermsPolicyModal() {
   const sections = [

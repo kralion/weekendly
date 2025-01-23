@@ -1,6 +1,6 @@
-import { router, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import React from "react";
-import { Button, Platform } from "react-native";
+import { Platform } from "react-native";
 
 export default function Layout() {
   return (
@@ -8,7 +8,8 @@ export default function Layout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "",
+          title: "Tus Datos",
+          headerBackTitle: "Perfil",
           headerShown: false,
         }}
       />
@@ -19,23 +20,6 @@ export default function Layout() {
           headerBackTitle: "Perfil",
           headerTransparent: true,
           headerLargeTitle: true,
-        }}
-      />
-
-      <Stack.Screen
-        name="personal-info"
-        options={{
-          title: "Tus Datos",
-          headerBackTitle: "Perfil",
-          headerTransparent: true,
-          headerLargeTitle: true,
-          headerRight: () => (
-            <Button
-              title="Cancelar"
-              color="#27BE8B"
-              onPress={() => router.back()}
-            />
-          ),
         }}
       />
 

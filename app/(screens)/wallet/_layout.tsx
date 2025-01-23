@@ -1,6 +1,5 @@
 import { router, Stack } from "expo-router";
 import { Button, Platform } from "react-native";
-import { useBudgetContext } from "~/context";
 
 export default function Layout() {
   return (
@@ -8,7 +7,7 @@ export default function Layout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Presupuestos",
+          title: "Billetera",
           headerLargeTitle: true,
           headerShadowVisible: false,
           headerBlurEffect: Platform.OS === "android" ? "none" : "regular",

@@ -4,7 +4,6 @@ import { Link, useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import * as React from "react";
 import { Image, Platform, ScrollView, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { TermsPolicyModal } from "~/components/auth/terms&policy";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -29,53 +28,50 @@ export default function SignUpScreen() {
 
   return (
     <ScrollView>
-      <SafeAreaView className="flex flex-col justify-center align-middle p-4  items-center h-[100vh]">
-        <View className="flex flex-col gap-12 h-screen-safe justify-center">
-          <View className="flex flex-col items-center gap-1">
-            <Image
-              style={{
-                width: 125,
-                height: 125,
-              }}
-              source={require("../../assets/logo.png")}
-            />
-            <Text className="text-4xl font-bold"> Crea una cuenta</Text>
-            <View className="flex gap-1.5 flex-row">
-              <Text>Ya tienes una cuenta?</Text>
+      <View className="flex flex-col gap-12 h-screen-safe justify-center px-4">
+        <View className="flex flex-col items-center gap-1">
+          <Image
+            style={{
+              width: 125,
+              height: 125,
+            }}
+            source={require("../../assets/logo.png")}
+          />
+          <Text className="text-4xl font-bold"> Crea una cuenta</Text>
+          <View className="flex gap-1.5 flex-row">
+            <Text>Ya tienes una cuenta?</Text>
 
-              <Text
-                className="text-primary active:underline"
-                onPress={() => router.back()}
-              >
-                Inicia Sesión
-              </Text>
-            </View>
-          </View>
-
-          <View className="flex flex-col gap-4">
-            <SignInWithOAuthGoogle />
-            <SignInWithOAuthFacebook />
-            <SignInWithOAuthTiktok />
-          </View>
-          <View className="flex flex-col  w-full">
-            <Text className=" text-sm ">
-              Al continuar aceptas las politicas de privacidad y demas clausulas
-              , en estos se describen como usamos tus datos y como protegemos tu
-              privacidad.
-            </Text>
-            <TermsPolicyModal />
-          </View>
-          <View className="flex flex-row justify-center align-middle absolute text-center w-full -bottom-24 ">
-            <Text className="text-sm ">
-              Copyright @ {new Date().getFullYear()} Weekendly | Desarrollado
-              por
-            </Text>
-            <Text className="text-sm text-primary active:underline">
-              <Link href="https://x.com/brayanpaucar_"> Brayan</Link>
+            <Text
+              className="text-primary active:underline"
+              onPress={() => router.back()}
+            >
+              Inicia Sesión
             </Text>
           </View>
         </View>
-      </SafeAreaView>
+
+        <View className="flex flex-col gap-4">
+          <SignInWithOAuthGoogle />
+          <SignInWithOAuthFacebook />
+          <SignInWithOAuthTiktok />
+        </View>
+        <View className="flex flex-col  w-full">
+          <Text className=" text-sm text-muted-foreground opacity-40">
+            Al continuar aceptas las politicas de privacidad y demas clausulas ,
+            en estos se describen como usamos tus datos y como protegemos tu
+            privacidad.
+          </Text>
+          <TermsPolicyModal />
+        </View>
+        <View className="flex flex-row justify-center text-center ">
+          <Text className="text-sm text-muted-foreground opacity-40">
+            Copyright @ {new Date().getFullYear()} Weekendly | Desarrollado por
+          </Text>
+          <Text className="text-sm text-primary active:underline">
+            <Link href="https://x.com/brayanpaucar_"> Brayan</Link>
+          </Text>
+        </View>
+      </View>
     </ScrollView>
   );
 }
@@ -104,7 +100,7 @@ export const SignInWithOAuthGoogle = () => {
   return (
     <Button
       className="flex flex-row gap-2 items-center"
-      variant="outline"
+      variant="secondary"
       size="lg"
       onPress={onPress}
     >
@@ -143,7 +139,7 @@ export const SignInWithOAuthTiktok = () => {
   return (
     <Button
       className="flex flex-row gap-2 items-center"
-      variant="outline"
+      variant="secondary"
       size="lg"
       onPress={onPress}
     >
@@ -182,7 +178,7 @@ export const SignInWithOAuthFacebook = () => {
   return (
     <Button
       className="flex flex-row gap-2 items-center"
-      variant="outline"
+      variant="secondary"
       size="lg"
       onPress={onPress}
     >
