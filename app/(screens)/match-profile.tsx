@@ -1,19 +1,9 @@
-import React from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
-import {
-  ChevronLeft,
-  MoreHorizontal,
-  CheckCircle,
-  Heart,
-  Star,
-  Zap,
-  MessageCircle,
-  PhoneCall,
-} from "lucide-react-native";
-import { router } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
-import { Button } from "~/components/ui/button";
 import { Stack } from "expo-router";
+import { PhoneCall, Star } from "lucide-react-native";
+import React from "react";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Button } from "~/components/ui/button";
 const hobbies = [
   {
     name: "Senderismo",

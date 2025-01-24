@@ -1,3 +1,4 @@
+import { useAuth } from "@clerk/clerk-expo";
 import { FlashList } from "@shopify/flash-list";
 import { router, Stack } from "expo-router";
 import {
@@ -38,6 +39,7 @@ const hobbies = [
   },
 ];
 export default function ProfileScreen() {
+  const { signOut } = useAuth();
   return (
     <View style={{ flex: 1 }}>
       <Stack.Screen
@@ -140,7 +142,13 @@ export default function ProfileScreen() {
               <Text className="text-sm text-gray-600">sessions</Text>
             </View>
           </View>
-
+          <Button
+            onPress={() => signOut()}
+            className="my-8"
+            variant="destructive"
+          >
+            <Text>Cerrar Sessión </Text>
+          </Button>
           {/* Subscribe Button */}
           <FlashList
             estimatedItemSize={75}
@@ -164,25 +172,24 @@ export default function ProfileScreen() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <Image
               source={{
-                uri: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-gSFVjx5YHHkzkeMCbLHPnDr2r1FdAj.png",
+                uri: "https://plus.unsplash.com/premium_photo-1675827055694-010aef2cf08f?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8bmF0dXJlfGVufDB8fDB8fHww",
               }}
               className="w-24 h-24 rounded-lg mr-2"
             />
             <Image
               source={{
-                uri: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-gSFVjx5YHHkzkeMCbLHPnDr2r1FdAj.png",
+                uri: "https://plus.unsplash.com/premium_photo-1664367173144-7e854e199524?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZmFtaWx5fGVufDB8fDB8fHww",
               }}
               className="w-24 h-24 rounded-lg mr-2"
             />
             <Image
               source={{
-                uri: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-gSFVjx5YHHkzkeMCbLHPnDr2r1FdAj.png",
+                uri: "https://plus.unsplash.com/premium_photo-1673603988651-99f79e4ae7d3?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8bmF0dXJlfGVufDB8fDB8fHww",
               }}
               className="w-24 h-24 rounded-lg"
             />
           </ScrollView>
 
-          {/* Spacer for absolute buttons */}
           <View className="h-24" />
         </View>
       </ScrollView>

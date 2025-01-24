@@ -74,7 +74,6 @@ export const SignInWithOAuthGoogle = () => {
   return (
     <Button
       className="flex flex-row gap-2 items-center"
-      variant="secondary"
       size="lg"
       onPress={onPress}
     >
