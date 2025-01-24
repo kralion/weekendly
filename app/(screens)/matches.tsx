@@ -40,7 +40,7 @@ type Props = {
 };
 export default function Home() {
   const renderMatchCard = ({ item }: { item: Props["item"] }) => (
-    <View className="bg-card rounded-md  m-4 p-4 flex-col  gap-6">
+    <View className="bg-white rounded-md  m-4 p-4 flex-col  gap-6">
       <Image
         source={{ uri: item.image }}
         style={{
@@ -93,7 +93,10 @@ export default function Home() {
           headerLargeTitleShadowVisible: false,
         }}
       />
-      <ScrollView contentInsetAdjustmentBehavior="automatic">
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        className="bg-background"
+      >
         <FlashList
           estimatedItemSize={100}
           data={mockMatches}

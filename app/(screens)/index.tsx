@@ -5,76 +5,113 @@ import * as React from "react";
 import { useState } from "react";
 import { ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Text } from "~/components/ui/text";
 
 const mockProfiles = [
   {
     id: "1",
-    name: "John Doe",
-    bio: "Love hiking and exploring new places.",
-    distance: "5 miles away",
+    name: "Juan Doe",
+    bio: "Me encanta hacer senderismo y explorar nuevos lugares.",
+    distance: "5 millas de distancia",
     image: "https://mighty.tools/mockmind-api/content/human/80.jpg",
   },
   {
     id: "2",
     name: "Jane Smith",
-    bio: "Coffee enthusiast and weekend adventurer.",
-    distance: "10 miles away",
+    bio: "Enthusiasta del caf  y aventurera de fin de semana.",
+    distance: "10 millas de distancia",
     image: "https://mighty.tools/mockmind-api/content/human/128.jpg",
   },
 ];
 const categories = [
   {
-    name: "Food",
-    image: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
-    description: "Explore delicious cuisines and recipes.",
-    popularity: "High",
+    name: "Comida",
+    image:
+      "https://plus.unsplash.com/premium_photo-1673108852141-e8c3c22a4a22?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Zm9vZHxlbnwwfHwwfHx8MA%3D%3D",
+    description: "Explora deliciosas cocinas y recetas.",
+    popularity: "Alta",
   },
   {
-    name: "Outdoor",
-    image: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
-    description: "Discover outdoor activities and adventures.",
-    popularity: "Medium",
+    name: "Aventura",
+    image:
+      "https://plus.unsplash.com/premium_photo-1673292293042-cafd9c8a3ab3?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bmF0dXJlfGVufDB8fDB8fHww",
+    description: "Actividades al aire libre y deportes extremos.",
+    popularity: "Media",
   },
   {
-    name: "Music",
-    image: "https://images.unsplash.com/photo-1497032201393-7c2b5f1e7b5f",
-    description: "Find your favorite music genres and artists.",
-    popularity: "High",
+    name: "Deportes",
+    image:
+      "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8c3BvcnR8ZW58MHx8MHx8fDA%3D",
+    description: "Todo sobre deportes y actividades físicas.",
+    popularity: "Alta",
   },
   {
-    name: "Art",
-    image: "https://images.unsplash.com/photo-1517841905240-4729888e1b3f",
-    description: "Explore various forms of art and creativity.",
-    popularity: "Medium",
+    name: "Música",
+    image:
+      "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bXVzaWN8ZW58MHx8MHx8fDA%3D",
+    description: "Conciertos, festivales y música en vivo.",
+    popularity: "Alta",
+  },
+  {
+    name: "Arte",
+    image:
+      "https://plus.unsplash.com/premium_photo-1661767490975-f31a02946f48?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YXJ0fGVufDB8fDB8fHww",
+    description: "Exposiciones, galerías y eventos artísticos.",
+    popularity: "Media",
+  },
+  {
+    name: "Tecnología",
+    image:
+      "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8dGVjaHxlbnwwfHwwfHx8MA%3D%3D",
+    description: "Novedades y avances en el mundo tecnológico.",
+    popularity: "Alta",
+  },
+  {
+    name: "Viajes",
+    image:
+      "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dHJhdmVsfGVufDB8fDB8fHww",
+    description: "Descubre nuevos destinos y experiencias.",
+    popularity: "Alta",
+  },
+  {
+    name: "Lectura",
+    image:
+      "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHJlYWR8ZW58MHx8MHx8fDA%3D",
+    description: "Libros, literatura y clubes de lectura.",
+    popularity: "Baja",
   },
 ];
-
 const hobbies = [
   {
-    name: "Hiking",
-    image: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
-    description: "Enjoy the beauty of nature while hiking.",
-    popularity: "High",
+    name: "Senderismo",
+    image:
+      "https://plus.unsplash.com/premium_photo-1677002240252-af3f88114efc?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aGlraW5nfGVufDB8fDB8fHww",
+    description:
+      "Disfruta de la belleza de la naturaleza mientras haces senderismo.",
+    popularity: "Alta",
   },
   {
-    name: "Cooking",
-    image: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
-    description: "Learn new recipes and cooking techniques.",
-    popularity: "High",
+    name: "Cocina",
+    image:
+      "https://images.unsplash.com/photo-1527667455007-10a82aed3892?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8Y29va3xlbnwwfHwwfHx8MA%3D%3D",
+    description: "Aprende recetas nuevas y t cnicas de cocina.",
+    popularity: "Alta",
   },
   {
-    name: "Painting",
-    image: "https://images.unsplash.com/photo-1497032201393-7c2b5f1e7b5f",
-    description: "Express your creativity through painting.",
-    popularity: "Medium",
+    name: "Pintura",
+    image:
+      "https://plus.unsplash.com/premium_photo-1661700093968-b538c5a9f539?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cGFpbnR8ZW58MHx8MHx8fDA%3D",
+    description: "Expresa tu creatividad a trav s de la pintura.",
+    popularity: "Media",
   },
   {
-    name: "Dancing",
-    image: "https://images.unsplash.com/photo-1517841905240-4729888e1b3f",
-    description: "Enjoy dancing and learn new styles.",
-    popularity: "High",
+    name: "Baile",
+    image:
+      "https://plus.unsplash.com/premium_photo-1681492529719-a1d3d8cc498a?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZGFuY2luZ3xlbnwwfHwwfHx8MA%3D%3D",
+    description: "Disfruta bailando y aprende nuevos estilos.",
+    popularity: "Alta",
   },
 ];
 
@@ -100,86 +137,52 @@ function CardRender({ item }: { item: any }) {
     </Card>
   );
 }
+const renderProfileCard = ({ item, handleInvite }: any) => (
+  <View className="bg-white rounded-md shadow m-4 p-4">
+    <View className="flex-row items-center">
+      <Image
+        source={{ uri: item.image }}
+        className="h-40 w-full rounded-md mb-4"
+        style={{ borderRadius: 8, height: 100, width: 100 }}
+      />
+      <View className="flex-1 ml-4">
+        <Text className=" font-bold text-lg">{item.name}</Text>
+        <Text className="text-muted-foreground mt-1">{item.bio}</Text>
+        <Badge variant="secondary">
+          <Text className="text-secondary-foreground mt-1 text-xs">
+            {item.distance}
+          </Text>
+        </Badge>
+      </View>
+    </View>
+    <TouchableOpacity
+      onPress={() => handleInvite(item.id)}
+      className="bg-primary mt-4 py-2 px-4 rounded-md"
+    >
+      <Text className="text-primary-foreground text-center font-semibold">
+        Conectar
+      </Text>
+    </TouchableOpacity>
+  </View>
+);
 export default function Home() {
   const [profiles, setProfiles] = useState(mockProfiles);
 
   const handleInvite = (profileId: string) => {
     router.push("/(screens)/match-profile");
   };
-  const renderProfileCard = ({ item }: { item: any }) => (
-    <View className="bg-card rounded-md shadow m-4 p-4">
-      <View className="flex-row items-center">
-        <Image
-          source={{ uri: item.image }}
-          className="h-40 w-full rounded-md mb-4"
-          style={{ borderRadius: 8, height: 100, width: 100 }}
-        />
-        <View className="flex-1 ml-4">
-          <Text className="text-primary font-bold text-lg">{item.name}</Text>
-          <Text className="text-muted-foreground mt-1">{item.bio}</Text>
-          <Text className="text-secondary-foreground mt-1">
-            {item.distance}
-          </Text>
-        </View>
-      </View>
-      <TouchableOpacity
-        onPress={() => handleInvite(item.id)}
-        className="bg-primary mt-4 py-2 px-4 rounded-md"
-      >
-        <Text className="text-primary-foreground text-center font-semibold">
-          Send Invite
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
+
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen
-        name="index"
-        options={{
-          title: "Descubre Planes",
-          headerShown: true,
-          headerLargeTitle: true,
-          headerLargeTitleShadowVisible: false,
-        }}
-      />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        className="flex-1 bg-white"
+        className="flex-1 bg-background"
       >
-        <View className="flex flex-row justify-between  p-4">
-          <View className="flex flex-col gap-2 ">
-            <Text className="text-4xl font-bold">Descubre</Text>
-            <TextInput
-              placeholder="Search for categories or hobbies..."
-              className="h-12 border border-gray-300 rounded-md p-2 mb-4 "
-            />
-          </View>
-          <TouchableOpacity onPress={() => router.push("/(screens)/profile")}>
-            <Avatar
-              alt="User"
-              style={{
-                width: 40,
-                height: 40,
-              }}
-            >
-              <AvatarImage
-                source={{
-                  uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
-                }}
-              />
-              <AvatarFallback>
-                <Text>FN</Text>
-              </AvatarFallback>
-            </Avatar>
-          </TouchableOpacity>
-        </View>
-
         <FlashList
           data={profiles}
           estimatedItemSize={100}
           keyExtractor={(item) => item.id}
-          renderItem={renderProfileCard}
+          renderItem={({ item }) => renderProfileCard({ item, handleInvite })}
           showsVerticalScrollIndicator={false}
         />
 

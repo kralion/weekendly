@@ -47,7 +47,7 @@ export default function ProfileScreen() {
           headerBackTitle: "Atrás",
         }}
       />
-      <ScrollView>
+      <ScrollView className="bg-background">
         {/* Header */}
         <View className="p-4 flex-row mt-10 justify-between items-center absolute top-0 left-0 right-0 z-10">
           <TouchableOpacity
