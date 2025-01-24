@@ -1,30 +1,29 @@
-import { useExpenseContext } from "@/context";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { router, Stack } from "expo-router";
 import * as React from "react";
 import { useState } from "react";
-import {
-  Pressable,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Text } from "~/components/ui/text";
 
-import { IExpense } from "~/interfaces";
-import { getDateRange } from "~/lib/rangeDate";
+const mockProfiles = [
+  {
+    id: "1",
+    name: "John Doe",
+    bio: "Love hiking and exploring new places.",
+    distance: "5 miles away",
+    image: "https://mighty.tools/mockmind-api/content/human/80.jpg",
+  },
+  {
+    id: "2",
+    name: "Jane Smith",
+    bio: "Coffee enthusiast and weekend adventurer.",
+    distance: "10 miles away",
+    image: "https://mighty.tools/mockmind-api/content/human/128.jpg",
+  },
+];
 const categories = [
   {
     name: "Food",
@@ -102,13 +101,46 @@ function CardRender({ item }: { item: any }) {
   );
 }
 export default function Home() {
+  const [profiles, setProfiles] = useState(mockProfiles);
+
+  const handleInvite = (profileId: string) => {
+    router.push("/(screens)/match-profile");
+  };
+  const renderProfileCard = ({ item }: { item: any }) => (
+    <View className="bg-card rounded-md shadow m-4 p-4">
+      <View className="flex-row items-center">
+        <Image
+          source={{ uri: item.image }}
+          className="h-40 w-full rounded-md mb-4"
+          style={{ borderRadius: 8, height: 100, width: 100 }}
+        />
+        <View className="flex-1 ml-4">
+          <Text className="text-primary font-bold text-lg">{item.name}</Text>
+          <Text className="text-muted-foreground mt-1">{item.bio}</Text>
+          <Text className="text-secondary-foreground mt-1">
+            {item.distance}
+          </Text>
+        </View>
+      </View>
+      <TouchableOpacity
+        onPress={() => handleInvite(item.id)}
+        className="bg-primary mt-4 py-2 px-4 rounded-md"
+      >
+        <Text className="text-primary-foreground text-center font-semibold">
+          Send Invite
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
   return (
     <View style={{ flex: 1 }}>
       <Stack.Screen
         name="index"
         options={{
-          title: "Inicio",
-          headerShown: false,
+          title: "Descubre Planes",
+          headerShown: true,
+          headerLargeTitle: true,
+          headerLargeTitleShadowVisible: false,
         }}
       />
       <ScrollView
@@ -142,6 +174,14 @@ export default function Home() {
             </Avatar>
           </TouchableOpacity>
         </View>
+
+        <FlashList
+          data={profiles}
+          estimatedItemSize={100}
+          keyExtractor={(item) => item.id}
+          renderItem={renderProfileCard}
+          showsVerticalScrollIndicator={false}
+        />
 
         <Text className="text-lg font-bold mb-2 px-4">Categories</Text>
         <FlashList

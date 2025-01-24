@@ -44,18 +44,6 @@ export default function SignInScreen() {
           <SignInWithOAuthFacebook />
           <SignInWithOAuthTiktok />
         </View>
-
-        <View className="flex flex-row gap-2 justify-center align-middle w-full">
-          <Text className="text-muted-foreground opacity-40">
-            ¿Eres nuevo en Weekendly?
-          </Text>
-          <Text
-            onPress={() => router.push("/(auth)/sign-up")}
-            className="text-primary active:underline"
-          >
-            Regístrate
-          </Text>
-        </View>
       </View>
     </ScrollView>
   );

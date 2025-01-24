@@ -1,18 +1,16 @@
-import React from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
-import {
-  ChevronLeft,
-  MoreHorizontal,
-  CheckCircle,
-  Heart,
-  Star,
-  Zap,
-  MessageCircle,
-  PhoneCall,
-} from "lucide-react-native";
-import { router } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
+import { router, Stack } from "expo-router";
+import {
+  CheckCircle,
+  ChevronLeft,
+  Heart,
+  Link2,
+  Star,
+} from "lucide-react-native";
+import React from "react";
+import { Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { Button } from "~/components/ui/button";
+import { Text } from "~/components/ui/text";
 const hobbies = [
   {
     name: "Hiking",
@@ -41,7 +39,14 @@ const hobbies = [
 ];
 export default function ProfileScreen() {
   return (
-    <View className="flex-1 bg-white">
+    <View style={{ flex: 1 }}>
+      <Stack.Screen
+        name="profile"
+        options={{
+          title: "Mi Perfil",
+          headerBackTitle: "Atrás",
+        }}
+      />
       <ScrollView>
         {/* Header */}
         <View className="p-4 flex-row mt-10 justify-between items-center absolute top-0 left-0 right-0 z-10">
@@ -51,8 +56,13 @@ export default function ProfileScreen() {
           >
             <ChevronLeft size={24} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity className="w-10 h-10 justify-center items-center bg-black/20 rounded-full">
-            <MoreHorizontal size={24} color="white" />
+          <TouchableOpacity
+            className=" h-10 w-28 px-2 justify-center items-center bg-black/20  rounded-full"
+            onPress={() => {
+              router.push("/(screens)/matches");
+            }}
+          >
+            <Text className=" font-bold text-sm text-white">Mis Planes</Text>
           </TouchableOpacity>
         </View>
 
@@ -179,10 +189,15 @@ export default function ProfileScreen() {
 
       {/* Action Buttons */}
       <View className="absolute bottom-4 left-0 right-0 flex-row justify-between p-4 bg-transparent">
-        <TouchableOpacity className="flex-1 gap-3 ml-2 bg-green-500 p-4 rounded-full flex-row justify-center items-center">
-          <PhoneCall size={24} color="white" className="mr-2" />
-          <Text className="text-white font-semibold">Enviar Whatsapp</Text>
-        </TouchableOpacity>
+        <Button
+          className="flex-1 gap-3 ml-2   rounded-full flex-row justify-center items-center"
+          onPress={() => {
+            router.push("/(screens)/matches");
+          }}
+        >
+          <Link2 size={24} color="white" className="mr-2" />
+          <Text className="text-white font-semibold">Mis Planes</Text>
+        </Button>
       </View>
     </View>
   );

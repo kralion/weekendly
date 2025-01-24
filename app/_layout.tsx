@@ -1,12 +1,12 @@
 import "~/global.css";
 
 import { ClerkLoaded, ClerkProvider, useAuth } from "@clerk/clerk-expo";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
-  useFonts,
   DMSans_400Regular,
   DMSans_700Bold,
+  useFonts,
 } from "@expo-google-fonts/dm-sans";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   DarkTheme,
   DefaultTheme,
@@ -14,12 +14,11 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
-import { router, SplashScreen, Stack } from "expo-router";
+import { router, Slot, SplashScreen } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { Button as NativeButton, Platform } from "react-native";
-import AppProvider from "~/context/provider";
+import { Platform } from "react-native";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
@@ -128,20 +127,11 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const { isLoaded, isSignedIn } = useAuth();
-
-  // Automatically open login if user is not authenticated
   React.useEffect(() => {
     if (isLoaded && !isSignedIn) {
       router.push("/(auth)/sign-in");
     }
   }, [isLoaded]);
 
-  return (
-    <AppProvider>
-      <Stack>
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(screens)" options={{ headerShown: false }} />
-      </Stack>
-    </AppProvider>
-  );
+  return <Slot />;
 }
