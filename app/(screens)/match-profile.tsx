@@ -34,17 +34,7 @@ const hobbies = [
 ];
 export default function ProfileScreen() {
   return (
-    <View style={{ flex: 1 }}>
-      <Stack.Screen
-        name="match-profile"
-        options={{
-          title: "Match Perfil",
-          headerLargeTitle: true,
-          headerLargeTitleShadowVisible: false,
-          headerBackTitle: "Atrás",
-          headerShown: true,
-        }}
-      />
+    <>
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <View className="p-4">
           <View className="relative">
@@ -137,6 +127,6 @@ export default function ProfileScreen() {
           <Text className="text-white font-semibold">Enviar Whatsapp</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </>
   );
 }

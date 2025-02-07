@@ -137,34 +137,7 @@ function CardRender({ item }: { item: any }) {
     </Card>
   );
 }
-const renderProfileCard = ({ item, handleInvite }: any) => (
-  <View className="bg-white rounded-md shadow m-4 p-4">
-    <View className="flex-row items-center">
-      <Image
-        source={{ uri: item.image }}
-        className="h-40 w-full rounded-md mb-4"
-        style={{ borderRadius: 8, height: 100, width: 100 }}
-      />
-      <View className="flex-1 ml-4">
-        <Text className=" font-bold text-lg">{item.name}</Text>
-        <Text className="text-muted-foreground mt-1">{item.bio}</Text>
-        <Badge variant="secondary">
-          <Text className="text-secondary-foreground mt-1 text-xs">
-            {item.distance}
-          </Text>
-        </Badge>
-      </View>
-    </View>
-    <TouchableOpacity
-      onPress={() => handleInvite(item.id)}
-      className="bg-primary mt-4 py-2 px-4 rounded-md"
-    >
-      <Text className="text-primary-foreground text-center font-semibold">
-        Conectar
-      </Text>
-    </TouchableOpacity>
-  </View>
-);
+
 export default function Home() {
   const [profiles, setProfiles] = useState(mockProfiles);
 
@@ -178,14 +151,6 @@ export default function Home() {
         contentInsetAdjustmentBehavior="automatic"
         className="flex-1 bg-background"
       >
-        <FlashList
-          data={profiles}
-          estimatedItemSize={100}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => renderProfileCard({ item, handleInvite })}
-          showsVerticalScrollIndicator={false}
-        />
-
         <Text className="text-lg font-bold mb-2 px-4">Categories</Text>
         <FlashList
           estimatedItemSize={75} // Set a reasonable estimated item size

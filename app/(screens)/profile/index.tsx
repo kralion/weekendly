@@ -1,54 +1,45 @@
-import { useAuth } from "@clerk/clerk-expo";
+import { useAuth, useUser } from "@clerk/clerk-expo";
 import { FlashList } from "@shopify/flash-list";
 import { router, Stack } from "expo-router";
-import {
-  CheckCircle,
-  ChevronLeft,
-  Heart,
-  Link2,
-  Star,
-} from "lucide-react-native";
+import { CheckCircle, ChevronLeft, Link2, Star } from "lucide-react-native";
 import React from "react";
 import { Image, ScrollView, TouchableOpacity, View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 const hobbies = [
   {
-    name: "Hiking",
+    name: "Senderismo",
     image: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
-    description: "Enjoy the beauty of nature while hiking.",
-    popularity: "High",
+    description:
+      "Disfruta de la belleza de la naturaleza mientras haces senderismo.",
+    popularity: "Alta",
   },
   {
-    name: "Cooking",
+    name: "Cocinar",
     image: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
-    description: "Learn new recipes and cooking techniques.",
-    popularity: "High",
+    description: "Aprende nuevas recetas y técnicas de cocina.",
+    popularity: "Alta",
   },
   {
-    name: "Painting",
+    name: "Pintar",
     image: "https://images.unsplash.com/photo-1497032201393-7c2b5f1e7b5f",
-    description: "Express your creativity through painting.",
-    popularity: "Medium",
+    description: "Expresa tu creatividad a través de la pintura.",
+    popularity: "Media",
   },
   {
-    name: "Dancing",
+    name: "Bailar",
     image: "https://images.unsplash.com/photo-1517841905240-4729888e1b3f",
-    description: "Enjoy dancing and learn new styles.",
-    popularity: "High",
+    description: "Disfruta bailando y aprende nuevos estilos.",
+    popularity: "Alta",
   },
 ];
 export default function ProfileScreen() {
   const { signOut } = useAuth();
+  const [online, setOnline] = React.useState(false);
+  const { user } = useUser();
+
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen
-        name="profile"
-        options={{
-          title: "Mi Perfil",
-          headerBackTitle: "Atrás",
-        }}
-      />
       <ScrollView className="bg-background">
         {/* Header */}
         <View className="p-4 flex-row mt-10 justify-between items-center absolute top-0 left-0 right-0 z-10">
@@ -57,14 +48,6 @@ export default function ProfileScreen() {
             className="w-10 h-10 justify-center items-center bg-black/20 rounded-full"
           >
             <ChevronLeft size={24} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            className=" h-10 w-28 px-2 justify-center items-center bg-black/20  rounded-full"
-            onPress={() => {
-              router.push("/(screens)/matches");
-            }}
-          >
-            <Text className=" font-bold text-sm text-white">Mis Planes</Text>
           </TouchableOpacity>
         </View>
 
@@ -107,14 +90,11 @@ export default function ProfileScreen() {
               </View>
               <Text className="text-gray-600">theunderdog</Text>
             </View>
-            <TouchableOpacity>
-              <Heart size={24} color="#FF3B30" />
-            </TouchableOpacity>
           </View>
 
           <Text className="mt-4 text-gray-800">
-            I will inspire 10 million people to do what they love the best they
-            can!
+            Yo soy Kim Parkinson, y estoy buscando un plan para mi semana de
+            descanso en la naturaleza.
           </Text>
 
           {/* Ratings */}
@@ -124,31 +104,9 @@ export default function ProfileScreen() {
             <Star size={16} color="#FFD700" />
             <Star size={16} color="#FFD700" />
             <Star size={16} color="#FFD700" />
-            <Text className="ml-2 text-gray-600">26 reviews</Text>
+            <Text className="ml-2 text-gray-600">26 planes que va del año</Text>
           </View>
 
-          {/* Stats */}
-          <View className="flex-row justify-between mt-4">
-            <View>
-              <Text className="font-bold">$3.00</Text>
-              <Text className="text-sm text-gray-600">rate per min</Text>
-            </View>
-            <View>
-              <Text className="font-bold">5 mins</Text>
-              <Text className="text-sm text-gray-600">min talk time</Text>
-            </View>
-            <View>
-              <Text className="font-bold">36</Text>
-              <Text className="text-sm text-gray-600">sessions</Text>
-            </View>
-          </View>
-          <Button
-            onPress={() => signOut()}
-            className="my-8"
-            variant="destructive"
-          >
-            <Text>Cerrar Sessión </Text>
-          </Button>
           {/* Subscribe Button */}
           <FlashList
             estimatedItemSize={75}
@@ -191,15 +149,18 @@ export default function ProfileScreen() {
           </ScrollView>
 
           <View className="h-24" />
+
+          <Button onPress={() => signOut()} variant="secondary">
+            <Text className="text-red-500">Cerrar Sessión </Text>
+          </Button>
         </View>
       </ScrollView>
-
       {/* Action Buttons */}
       <View className="absolute bottom-4 left-0 right-0 flex-row justify-between p-4 bg-transparent">
         <Button
           className="flex-1 gap-3 ml-2   rounded-full flex-row justify-center items-center"
           onPress={() => {
-            router.push("/(screens)/matches");
+            router.push("/(screens)/profile/matches");
           }}
         >
           <Link2 size={24} color="white" className="mr-2" />

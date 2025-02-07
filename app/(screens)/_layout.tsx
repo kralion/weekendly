@@ -38,6 +38,17 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Stack.Screen
+        name="match-profile"
+        options={{
+          title: "Match Perfil",
+          headerLargeTitle: true,
+          headerLargeTitleShadowVisible: false,
+          headerBackTitle: "Atrás",
+          presentation: "modal",
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }
