@@ -158,6 +158,7 @@ export default function ProfileScreen() {
       {/* Action Buttons */}
       <View className="absolute bottom-4 left-0 right-0 flex-row justify-between p-4 bg-transparent">
         <Button
+          size="lg"
           className="flex-1 gap-3 ml-2   rounded-full flex-row justify-center items-center"
           onPress={() => {
             router.push("/(screens)/profile/matches");
