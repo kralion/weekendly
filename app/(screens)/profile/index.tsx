@@ -4,6 +4,7 @@ import { router, Stack } from "expo-router";
 import { CheckCircle, ChevronLeft, Link2, Star } from "lucide-react-native";
 import React from "react";
 import { Image, ScrollView, TouchableOpacity, View } from "react-native";
+import { Marquee, type MarqueeRef } from "@animatereactnative/marquee";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 const hobbies = [
@@ -37,7 +38,7 @@ export default function ProfileScreen() {
   const { signOut } = useAuth();
   const [online, setOnline] = React.useState(false);
   const { user } = useUser();
-
+  const ref = React.useRef<MarqueeRef>(null);
   return (
     <View style={{ flex: 1 }}>
       <ScrollView className="bg-background">
@@ -107,23 +108,28 @@ export default function ProfileScreen() {
             <Text className="ml-2 text-gray-600">26 planes que va del año</Text>
           </View>
 
-          {/* Subscribe Button */}
-          <FlashList
-            estimatedItemSize={75}
-            data={hobbies}
-            renderItem={({ item }) => (
-              <Button
-                variant="secondary"
-                className="mr-2 mb-2 rounded-full"
-                onPress={() => console.log(`Selected ${item.name}`)}
-              >
-                <Text>{item.name}</Text>
-              </Button>
-            )}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingVertical: 10 }}
-          />
+          <Marquee
+            ref={ref}
+            spacing={10}
+            speed={1}
+            style={{ marginTop: 12 }}
+            frameRate={30}
+          >
+            <View style={{ flexDirection: "row" }}>
+              {hobbies.map((item) => {
+                return (
+                  <Button
+                    key={item.name}
+                    variant="secondary"
+                    className="mr-2 mb-2 rounded-full"
+                    onPress={() => console.log(`Selected ${item.name}`)}
+                  >
+                    <Text>{item.name}</Text>
+                  </Button>
+                );
+              })}
+            </View>
+          </Marquee>
 
           {/* Media Section */}
           <Text className="mt-6 mb-2 font-semibold">Media</Text>
