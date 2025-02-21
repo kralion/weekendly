@@ -23,6 +23,7 @@ import { Platform } from "react-native";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
+import { Toaster } from "sonner-native";
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -120,6 +121,7 @@ export default function RootLayout() {
         <ClerkLoaded>
           <GestureHandlerRootView>
             <RootLayoutNav />
+            <Toaster />
           </GestureHandlerRootView>
         </ClerkLoaded>
         <PortalHost />

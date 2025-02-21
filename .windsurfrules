@@ -1,0 +1,63 @@
+## Project Structure
+
+- Components go inside **`/components`**.
+- Screens go inside **`/(screens)`**.
+- Utility functions go inside **`/lib`**.
+- For UI Component library i am using React-native-reusables, as you can see inside **`/components/ui`** folder. So reuse them when needed and when you can't find a certaing component you need there ask me for installing it before.
+- Global state should be handled using **Zustand**.
+- The project target audience are people who speaks spanish.
+
+## Styling
+
+- Use **NativeWind** for styling.
+- Avoid inline styles.
+- Use **tailwind.config.js** for global styling adjustments.
+- Follow a **consistent spacing system** (`px-4`, `py-2`, etc.).
+- Use **rounded corners (`rounded-lg`)** for a soft UI feel.
+- Avoid excessive shadows unless necessary.
+
+## Animations
+
+- Use **React Native Reanimated** for smooth animations.
+- Ensure animations are **fluid and not excessive**.
+- Prefer **native-driven animations** for performance.
+
+## API & Data Handling
+
+- Fetch data using **Supabase client** inside **supabase** (`/lib/supabase`).
+- Use **optimistic UI updates** where possible.
+- Implement **pagination** for large datasets.
+- Always **handle errors gracefully** and provide user feedback.
+- Use **toast** from **sonner-native** with `toast.error("Message")` and `toast.success("Message")` for interactive feedback, specially when inserting or deleting data.
+
+## Navigation
+
+- Use **Expo router** with a **stack navigator**.
+- Ensure screens are properly named and organized.
+- Avoid deep nesting in navigation stacks.
+
+## Forms & Inputs
+
+- Use **React Hook Form** for handling inputs.
+- Validate inputs using **Zod** and **hookform/resolvers**, create the schemas using the types inside **`/types/index.ts`** file.
+- Show clear error messages on validation failures, there comes a `toast.error("Message")` for that.
+
+## Performance Optimizations
+
+- Use **FlashList** for large lists instead of **map()**.
+- Optimize re-renders using **memoization (`useMemo`, `useCallback`)**.
+- Avoid **anonymous functions inside JSX**.
+- Use **lazy loading** for non-essential components.
+
+## Logging & Debugging
+
+- Remove all **console.log()** statements before production.
+
+## Commit Messages
+
+- Use clear and structured commit messages:
+  - `feat: Added new feature`
+  - `fix: Fixed a bug`
+  - `refactor: Code refactoring`
+  - `chore: Minor changes`
+- Keep commits **small and focused**.

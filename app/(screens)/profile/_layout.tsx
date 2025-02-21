@@ -22,7 +22,7 @@ export default function TabLayout() {
         }}
       />
       <Stack.Screen
-        name="edit-preferences"
+        name="edit"
         options={{
           title: "Editar preferencias",
           headerShadowVisible: false,

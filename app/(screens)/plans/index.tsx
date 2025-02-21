@@ -2,21 +2,19 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import * as React from "react";
-import { Pressable, ScrollView, View } from "react-native";
-import { Button } from "~/components/ui/button";
-import { Card } from "~/components/ui/card";
+import { Pressable, View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { MapPin } from "lucide-react-native";
-import { useCategories, usePlans } from "~/stores";
-import type { Category, Plan } from "~/types";
+import { usePlans } from "~/stores";
+import type { Plan } from "~/types";
 import { LinearGradient } from "expo-linear-gradient";
 
 function PlanCard({ plan }: { plan: Plan }) {
   return (
     <Pressable
-      style={{ width: 280, height: 400 }}
-      className="ml-4 bg-white rounded-3xl overflow-hidden relative"
-      onPress={() => router.push("/(screens)/plans")}
+      onPress={() => router.push(`/(screens)/plans/plan/${plan.id}`)}
+      className="mb-4 bg-white relative"
+      style={{ height: 500 }}
     >
       <Image
         source={{
@@ -72,17 +70,13 @@ function PlanCard({ plan }: { plan: Plan }) {
   );
 }
 
-export default function Home() {
+export default function Plans() {
   const { plans, loading: plansLoading, fetchPlans } = usePlans();
-  const {
-    categories,
-    loading: categoriesLoading,
-    fetchCategories,
-  } = useCategories();
+  const [page, setPage] = React.useState(1);
+  const ITEMS_PER_PAGE = 10;
 
   React.useEffect(() => {
     fetchPlans();
-    fetchCategories();
   }, []);
 
   // Sort plans alphabetically
@@ -90,7 +84,13 @@ export default function Home() {
     return [...plans].sort((a, b) => a.title.localeCompare(b.title));
   }, [plans]);
 
-  if (plansLoading || categoriesLoading) {
+  const handleLoadMore = React.useCallback(() => {
+    if (page * ITEMS_PER_PAGE < sortedPlans.length) {
+      setPage((prev) => prev + 1);
+    }
+  }, [page, sortedPlans.length]);
+
+  if (plansLoading) {
     return (
       <View className="flex-1 justify-center items-center">
         <Text>Cargando...</Text>
@@ -99,36 +99,15 @@ export default function Home() {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        className="flex-1 bg-background"
-      >
-        <Text className="text-lg font-bold mb-2 px-4">Categorías</Text>
-        <FlashList
-          estimatedItemSize={75}
-          data={categories}
-          renderItem={({ item }) => (
-            <Button>
-              <Text className="mt-8 text-white">{item.name}</Text>
-            </Button>
-          )}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingVertical: 10 }}
-        />
-
-        <Text className="text-lg font-bold mt-4 mb-2 px-4">
-          Planes disponibles
-        </Text>
-        <FlashList
-          estimatedItemSize={75}
-          data={sortedPlans}
-          renderItem={({ item }) => <PlanCard plan={item} />}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        />
-      </ScrollView>
+    <View style={{ flex: 1 }} className="bg-background px-4">
+      <FlashList
+        estimatedItemSize={500}
+        data={sortedPlans.slice(0, page * ITEMS_PER_PAGE)}
+        renderItem={({ item }) => <PlanCard plan={item} />}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 }

@@ -1,4 +1,3 @@
-import { type MarqueeRef } from "@animatereactnative/marquee";
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import { router } from "expo-router";
 import { CheckCircle, ChevronLeft, Pen } from "lucide-react-native";
@@ -14,29 +13,29 @@ import { RefreshControl } from "react-native-gesture-handler";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { Text } from "~/components/ui/text";
-import { formatTimeArray } from "~/lib/utils/time";
-import { useUserPreferencesStore } from "~/stores";
+import { useProfiles } from "~/stores";
 
 export default function ProfileScreen() {
   const { signOut } = useAuth();
   const { user } = useUser();
-  const ref = React.useRef<MarqueeRef>(null);
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const { preferences, isLoading, fetchPreferences, error } =
-    useUserPreferencesStore();
+  const { currentProfile, loading, fetchProfileById } = useProfiles();
 
   function onRefresh() {
     setRefreshing(true);
-    fetchPreferences(user?.id as string).finally(() => setRefreshing(false));
+    if (user?.id) {
+      fetchProfileById(user.id).finally(() => setRefreshing(false));
+    }
   }
+
   React.useEffect(() => {
     if (user?.id) {
-      fetchPreferences(user.id);
+      fetchProfileById(user.id);
     }
   }, [user?.id]);
 
-  if (isLoading) {
+  if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
         <ActivityIndicator size="large" />
@@ -95,7 +94,7 @@ export default function ProfileScreen() {
             className="rounded-full absolute bottom-3 right-0"
             variant="secondary"
             size="icon"
-            onPress={() => router.push("/(screens)/profile/edit-preferences")}
+            onPress={() => router.push("/(screens)/profile/edit")}
           >
             <Pen color="#A020F0" size={18} />
           </Button>
@@ -104,51 +103,49 @@ export default function ProfileScreen() {
         <View className="mt-4 flex-row justify-between items-center">
           <View>
             <View className="flex-row items-center gap-2">
-              <Text className="text-xl font-bold">{user?.fullName}</Text>
+              <Text className="text-xl font-bold">
+                {currentProfile?.username || user?.fullName}
+              </Text>
               <CheckCircle size={16} color="#1DA1F2" className="ml-1" />
             </View>
           </View>
           <Text className="text-gray-600">
-            {user?.createdAt?.toISOString().split("T")[0]}
+            {currentProfile?.created_at?.split("T")[0]}
           </Text>
         </View>
 
         <Text className="mt-4 text-gray-800">
-          {preferences?.bio || "No hay biografía aún"}
+          {currentProfile?.bio || "No hay biografía aún"}
         </Text>
 
-        {/* Preferences Section */}
+        {/* Profile Details Section */}
         <View className="mt-6">
-          <Text className="text-lg font-semibold mb-2">Preferencias</Text>
+          <Text className="text-lg font-semibold mb-2">Detalles</Text>
           <View className="bg-white rounded-lg shadow-sm">
-            <View className="flex-row justify-between items-center  p-4">
+            <View className="flex-row justify-between items-center p-4">
               <Text className="font-medium">Rango de edad</Text>
-              <Text>{preferences?.age_range.join(" -  ")} años</Text>
-            </View>
-            <Separator />
-
-            <View className="flex-row justify-between items-center  p-4">
-              <Text className="font-medium">Tiempos preferidos</Text>
-              <Text>{formatTimeArray(preferences?.preferred_time_ranges)}</Text>
+              <Text>{currentProfile?.age_range}</Text>
             </View>
             <Separator />
 
             <View className="flex-row justify-between items-center p-4">
-              <Text className="font-medium">Días preferidos</Text>
-              <Text>
-                {preferences?.preferred_days?.join(", ") || "No especificado"}
-              </Text>
+              <Text className="font-medium">Día preferido</Text>
+              <Text>{currentProfile?.day_preferred}</Text>
+            </View>
+            <Separator />
+
+            <View className="flex-row justify-between items-center p-4">
+              <Text className="font-medium">Ubicación</Text>
+              <Text>{currentProfile?.location || "No especificada"}</Text>
             </View>
           </View>
-
-          <Separator />
         </View>
 
         {/* Hobbies Section */}
         <View className="mt-6">
           <Text className="text-lg font-semibold mb-2">Pasatiempos</Text>
           <View className="flex-row flex-wrap gap-2">
-            {preferences?.hobbies?.map((hobby, index) => (
+            {currentProfile?.hobbies?.map((hobby, index) => (
               <View key={index} className="bg-blue-100 px-3 py-1 rounded-full">
                 <Text className="text-blue-800">{hobby}</Text>
               </View>
@@ -156,39 +153,12 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Activities Section */}
-        <View className="mt-6">
-          <Text className="text-lg font-semibold mb-2">
-            Actividades preferidas
-          </Text>
-          <View className="flex-row flex-wrap gap-2">
-            {preferences?.preferred_activities?.map((activity, index) => (
-              <View key={index} className="bg-green-100 px-3 py-1 rounded-full">
-                <Text className="text-green-800">{activity}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Place Types Section */}
-        <View className="mt-6 mb-8">
-          <Text className="text-lg font-semibold mb-2">Lugares preferidos</Text>
-          <View className="flex-row flex-wrap gap-2">
-            {preferences?.preferred_place_types?.map((place, index) => (
-              <View
-                key={index}
-                className="bg-purple-100 px-3 py-1 rounded-full"
-              >
-                <Text className="text-purple-800">{place}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
-
         {/* Sign Out Button */}
-        <Button variant="destructive" size="lg" onPress={() => signOut()}>
-          <Text>Cerrar sesión</Text>
-        </Button>
+        <View className="mt-8">
+          <Button variant="destructive" size="lg" onPress={() => signOut()}>
+            <Text className="text-white">Cerrar sesión</Text>
+          </Button>
+        </View>
       </View>
     </ScrollView>
   );
