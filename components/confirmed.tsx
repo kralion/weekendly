@@ -27,29 +27,18 @@ export function Confirmed({
       tint="light"
       className="absolute inset-0 items-center justify-center px-8"
     >
-      <View className="bg-white rounded-3xl w-full p-6 items-center">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-2 top-2"
-          onPress={onClose}
-        >
-          <X size={24} />
-        </Button>
-
+      <View className="bg-white rounded-3xl w-full p-6 h-1/2 items-center">
         <View className="flex-row items-center justify-center mb-6">
           <View className="relative -right-4">
             <Image
               source={{ uri: planImage }}
-              style={{ width: 120, height: 160 }}
-              className="rounded-2xl"
+              style={{ width: 100, height: 100, borderRadius: 999 }}
             />
           </View>
           <View className="relative -left-4">
             <Image
               source={{ uri: userImage }}
-              style={{ width: 120, height: 160 }}
-              className="rounded-2xl"
+              style={{ width: 100, height: 100, borderRadius: 999 }}
             />
           </View>
         </View>
@@ -68,16 +57,16 @@ export function Confirmed({
           </Text>
         </View>
 
-        {/* <Button
-          className="w-full mb-4"
+        <Button
+          className="w-full mt-10 rounded-full"
+          size="lg"
           onPress={() => {
             // Handle chat navigation
-            router.push("/(screens)/chat");
+            router.back();
           }}
         >
-          <MessageCircle className="mr-2" color="white" size={20} />
-          <Text className="text-white font-semibold">Iniciar chat</Text>
-        </Button> */}
+          <Text className="text-white font-semibold">Cerrar</Text>
+        </Button>
       </View>
     </BlurView>
   );

@@ -1,10 +1,17 @@
 import { Image } from "expo-image";
 import { useLocalSearchParams, router } from "expo-router";
 import * as React from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { Button } from "~/components/ui/button";
-import { MapPin, Calendar, Users, ArrowLeft } from "lucide-react-native";
+import {
+  MapPin,
+  Calendar,
+  Users,
+  ArrowLeft,
+  ChevronLeft,
+  Share,
+} from "lucide-react-native";
 import { usePlans } from "~/stores";
 import { LinearGradient } from "expo-linear-gradient";
 import { Confirmed } from "~/components/confirmed";
@@ -26,7 +33,7 @@ export default function PlanDetail() {
   return (
     <View className="flex-1 bg-background">
       <ScrollView>
-        <View className="relative" style={{ height: 400 }}>
+        <View className="relative " style={{ height: 400 }}>
           <Image
             source={{
               uri: "https://images.unsplash.com/photo-1513689125086-6c432170e843",
@@ -46,17 +53,23 @@ export default function PlanDetail() {
             }}
           />
 
-          <Button
-            variant="ghost"
-            className="absolute top-4 left-4 rounded-full bg-black/20"
-            onPress={() => router.back()}
-          >
-            <ArrowLeft size={24} color="white" />
-          </Button>
+          <View className="p-4 flex-row mt-10 justify-between items-center absolute top-0 left-0 right-0 z-10">
+            <TouchableOpacity
+              onPress={() => router.back()}
+              className="w-10 h-10 justify-center items-center bg-black/20 rounded-full"
+            >
+              <ChevronLeft size={24} color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View className="px-4 mt-4">
-          <Text className="text-3xl font-bold mb-2">{plan.title}</Text>
+          <View className="flex flex-row justify-between items-center">
+            <Text className="text-3xl font-bold mb-2">{plan.title}</Text>
+            <Button size="icon" className="rounded-full" variant="ghost">
+              <Share size={20} color="black" />
+            </Button>
+          </View>
 
           <View className="flex-row items-center mb-4">
             <MapPin size={16} className="mr-1" />
@@ -74,8 +87,8 @@ export default function PlanDetail() {
             ))}
           </View>
 
-          <View className="flex-row justify-between mb-6">
-            <View className="flex-row items-center">
+          <View className="flex-row justify-between mb-6 items-center">
+            <View className="flex-row items-center gap-2">
               <Calendar size={16} className="mr-2" />
               <Text>
                 {new Date(plan.date).toLocaleDateString("es", {
@@ -95,12 +108,15 @@ export default function PlanDetail() {
 
           <Text className="text-lg font-semibold mb-2">Descripción</Text>
           <Text className="text-gray-600 mb-6">{plan.description}</Text>
-
-          <Button className="mb-6" onPress={() => setShowConfirmed(true)}>
-            <Text className="text-white font-semibold">Unirme al plan</Text>
-          </Button>
         </View>
       </ScrollView>
+      <Button
+        size="lg"
+        className="m-4 mb-8 rounded-full"
+        onPress={() => setShowConfirmed(true)}
+      >
+        <Text className="text-white font-semibold">Unirme al plan</Text>
+      </Button>
 
       {showConfirmed && (
         <Confirmed

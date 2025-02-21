@@ -2,69 +2,131 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import * as React from "react";
-import { Pressable, View } from "react-native";
+import {
+  Pressable,
+  View,
+  Dimensions,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { Text } from "~/components/ui/text";
-import { MapPin } from "lucide-react-native";
+import {
+  MapPin,
+  Calendar,
+  Users,
+  DollarSign,
+  Heart,
+  Share2,
+  MessageCircle,
+  ChevronLeft,
+} from "lucide-react-native";
 import { usePlans } from "~/stores";
 import type { Plan } from "~/types";
 import { LinearGradient } from "expo-linear-gradient";
+import { Avatar, AvatarImage } from "~/components/ui/avatar";
+import { Button } from "~/components/ui/button";
 
 function PlanCard({ plan }: { plan: Plan }) {
+  const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+  const [liked, setLiked] = React.useState(false);
+
+  const formatDate = (date: string) => {
+    return new Date(date).toLocaleDateString("es", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    });
+  };
+
   return (
     <Pressable
       onPress={() => router.push(`/(screens)/plans/plan/${plan.id}`)}
-      className="mb-4 bg-white relative"
-      style={{ height: 500 }}
+      className="relative"
+      style={{ height: SCREEN_HEIGHT, width: "100%" }}
     >
+      <View className="p-4 flex-row mt-10 justify-between items-center absolute top-0 left-0 right-0 z-10">
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="w-10 h-10 justify-center items-center bg-black/20 rounded-full"
+        >
+          <ChevronLeft size={24} color="white" />
+        </TouchableOpacity>
+      </View>
       <Image
         source={{
           uri: "https://images.unsplash.com/photo-1513689125086-6c432170e843",
         }}
+        contentFit="cover"
         style={{ width: "100%", height: "100%" }}
         className="absolute"
       />
 
       <LinearGradient
-        colors={["transparent", "rgba(0,0,0,0.8)"]}
+        colors={["rgba(0,0,0,0.3)", "transparent", "rgba(0,0,0,0.9)"]}
         style={{
           position: "absolute",
+          top: 0,
           bottom: 0,
           left: 0,
           right: 0,
-          height: 200,
         }}
       />
 
-      <View className="absolute bottom-0 left-0 right-0 p-4">
-        <View className="flex-row items-center justify-between mb-2">
-          <Text className="text-2xl font-bold text-white">{plan.title}</Text>
-          <Text className="text-lg font-semibold text-white">27</Text>
+      {/* Main Content */}
+      <View className="absolute bottom-4 left-0 right-0 p-6">
+        <View className="flex-row items-center justify-between mb-3">
+          <Text className="text-3xl font-bold text-white">{plan.title}</Text>
         </View>
 
-        <View className="flex-row items-center mb-2">
-          <MapPin size={16} color="white" className="mr-1" />
-          <Text className="text-white text-sm">{plan.location}</Text>
+        {/* Date and Location */}
+        <View className="flex flex-col gap-2 mb-4">
+          <View className="flex-row items-center gap-2">
+            <Calendar size={20} color="white" className="mr-2" />
+            <Text className="text-white text-base">
+              {formatDate(plan.date)}
+            </Text>
+          </View>
+          <View className="flex-row items-center gap-2">
+            <MapPin size={20} color="white" className="mr-2" />
+            <Text className="text-white text-base">{plan.location}</Text>
+            <Text className="text-white/60 text-sm ml-2">(2.5 km)</Text>
+          </View>
         </View>
 
-        <View className="flex-row flex-wrap gap-2 mb-3">
+        {/* Participants */}
+        <View className="flex-row items-center mb-4">
+          <View className="flex-row -space-x-2 mr-3">
+            {plan.participants.map((participant, i) => (
+              <AvatarImage
+                key={i}
+                source={{ uri: `https://i.pravatar.cc/150?img=${i + 1}` }}
+              />
+            ))}
+          </View>
+          <Text className="text-white text-base">
+            {plan.participants.length}/{plan.max_participants} participantes
+          </Text>
+        </View>
+
+        {/* Tags */}
+        <View className="flex-row flex-wrap gap-2 mb-6">
           {["Música", "Fotografía", "Arte"].map((interest, index) => (
-            <View key={index} className="bg-white/20 px-3 py-1 rounded-full">
-              <Text className="text-white text-sm">{interest}</Text>
+            <View key={index} className="bg-white/20 px-4 py-2 rounded-full">
+              <Text className="text-white">{interest}</Text>
             </View>
           ))}
         </View>
 
-        <View className="flex-row items-center justify-between">
-          <Text className="text-white text-sm">
-            {plan.participants.length}/{plan.max_participants} participantes
-          </Text>
-          <Text className="text-white text-sm">
-            {new Date(plan.date).toLocaleDateString("es", {
-              weekday: "long",
-              day: "numeric",
-            })}
-          </Text>
-        </View>
+        {/* Action Buttons */}
+
+        <Button
+          variant="default"
+          className="flex-1 mr-3 rounded-full"
+          size="lg"
+          onPress={() => router.push(`/(screens)/plans/plan/${plan.id}`)}
+        >
+          <Text className="text-base font-medium">Ver Detalles</Text>
+        </Button>
       </View>
     </Pressable>
   );
@@ -74,12 +136,12 @@ export default function Plans() {
   const { plans, loading: plansLoading, fetchPlans } = usePlans();
   const [page, setPage] = React.useState(1);
   const ITEMS_PER_PAGE = 10;
+  const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
   React.useEffect(() => {
     fetchPlans();
   }, []);
 
-  // Sort plans alphabetically
   const sortedPlans = React.useMemo(() => {
     return [...plans].sort((a, b) => a.title.localeCompare(b.title));
   }, [plans]);
@@ -93,20 +155,24 @@ export default function Plans() {
   if (plansLoading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <Text>Cargando...</Text>
+        <ActivityIndicator size="large" />
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1 }} className="bg-background px-4">
+    <View style={{ flex: 1 }} className="bg-background">
       <FlashList
-        estimatedItemSize={500}
+        estimatedItemSize={SCREEN_HEIGHT}
         data={sortedPlans.slice(0, page * ITEMS_PER_PAGE)}
         renderItem={({ item }) => <PlanCard plan={item} />}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
         showsVerticalScrollIndicator={false}
+        snapToAlignment="start"
+        decelerationRate="fast"
+        pagingEnabled
+        getItemType={(item) => "plan"}
       />
     </View>
   );

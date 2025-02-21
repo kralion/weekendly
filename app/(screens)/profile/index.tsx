@@ -155,7 +155,13 @@ export default function ProfileScreen() {
 
         {/* Sign Out Button */}
         <View className="mt-8">
-          <Button variant="destructive" size="lg" onPress={() => signOut()}>
+          <Button
+            variant="destructive"
+            size="lg"
+            onPress={() => {
+              signOut();
+            }}
+          >
             <Text className="text-white">Cerrar sesión</Text>
           </Button>
         </View>
