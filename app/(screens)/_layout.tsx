@@ -1,9 +1,11 @@
+import { useUser } from "@clerk/clerk-expo";
 import { router, Stack } from "expo-router";
 import { TouchableOpacity } from "react-native";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Text } from "~/components/ui/text";
 
 export default function TabLayout() {
+  const { user } = useUser();
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -27,7 +29,7 @@ export default function TabLayout() {
               >
                 <AvatarImage
                   source={{
-                    uri: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+                    uri: user?.imageUrl,
                   }}
                 />
                 <AvatarFallback>

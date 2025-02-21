@@ -18,7 +18,7 @@ module.exports = {
         full: "var(--rounded-full)",
       },
       colors: {
-        brand: "#41D29B",
+        brand: "#A020F0",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

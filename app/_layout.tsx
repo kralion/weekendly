@@ -13,6 +13,7 @@ import {
   Theme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PortalHost } from "@rn-primitives/portal";
 import { router, Slot, SplashScreen } from "expo-router";
 import * as SecureStore from "expo-secure-store";
@@ -117,7 +118,9 @@ export default function RootLayout() {
       <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
         <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
         <ClerkLoaded>
-          <RootLayoutNav />
+          <GestureHandlerRootView>
+            <RootLayoutNav />
+          </GestureHandlerRootView>
         </ClerkLoaded>
         <PortalHost />
       </ThemeProvider>

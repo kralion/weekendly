@@ -21,6 +21,14 @@ export default function TabLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="edit-preferences"
+        options={{
+          title: "Editar preferencias",
+          headerShadowVisible: false,
+          presentation: "modal",
+        }}
+      />
     </Stack>
   );
 }
