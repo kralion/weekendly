@@ -23,7 +23,7 @@ export function createClerkSupabaseClient() {
 
     {
       auth: {
-        storage: AsyncStorage,
+        ...(Platform.OS !== "web" ? { storage: AsyncStorage } : {}),
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: false,

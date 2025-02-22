@@ -1,28 +1,62 @@
-import { Image } from "expo-image";
-import { useLocalSearchParams, router } from "expo-router";
-import * as React from "react";
-import { ScrollView, TouchableOpacity, View } from "react-native";
-import { Text } from "~/components/ui/text";
-import { Button } from "~/components/ui/button";
-import {
-  MapPin,
-  Calendar,
-  Users,
-  ArrowLeft,
-  ChevronLeft,
-  Share,
-} from "lucide-react-native";
-import { usePlans } from "~/stores";
-import { LinearGradient } from "expo-linear-gradient";
-import { Confirmed } from "~/components/confirmed";
 import { useUser } from "@clerk/clerk-expo";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import * as Linking from "expo-linking";
+import { router, useLocalSearchParams } from "expo-router";
+import {
+  Calendar,
+  ChevronLeft,
+  MapPin,
+  Share2,
+  Users,
+} from "lucide-react-native";
+import * as React from "react";
+import { ScrollView, Share, TouchableOpacity, View } from "react-native";
+import { toast } from "sonner-native";
+import { Confirmed } from "~/components/confirmed";
+import { Button } from "~/components/ui/button";
+import { Text } from "~/components/ui/text";
+import { usePlans } from "~/stores";
 
+//DOCS:  npx expo start --https when executing on the web
 export default function PlanDetail() {
   const { id } = useLocalSearchParams();
   const { user } = useUser();
   const { plans } = usePlans();
   const plan = plans.find((p) => p.id === id);
   const [showConfirmed, setShowConfirmed] = React.useState(false);
+
+  const handleShare = async () => {
+    try {
+      // Create a deep link URL for the plan
+      const deepLink = Linking.createURL(`/plans/plan/${id}`);
+
+      const message = `¡Únete a mi plan "${plan?.title}"!\n\n📍 ${
+        plan?.location
+      }\n📅 ${new Date(plan?.date as string).toLocaleDateString("es", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      })}\n\n${plan?.description}\n\nParticipantes: ${
+        plan?.participants.length
+      }/${plan?.max_participants}\n\nAbrir plan: ${deepLink}`;
+
+      const result = await Share.share({
+        message,
+        title: "Compartir Plan",
+        url: deepLink, // This will be used on iOS when available
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          toast.success("Plan compartido exitosamente");
+        }
+      }
+    } catch (error) {
+      toast.error("Error al compartir el plan");
+      console.error(error);
+    }
+  };
 
   if (!plan) {
     return (
@@ -68,8 +102,13 @@ export default function PlanDetail() {
         <View className="px-4 mt-4">
           <View className="flex flex-row justify-between items-center">
             <Text className="text-3xl font-bold mb-2">{plan.title}</Text>
-            <Button size="icon" className="rounded-full" variant="ghost">
-              <Share size={20} color="black" />
+            <Button
+              size="icon"
+              className="rounded-full"
+              variant="secondary"
+              onPress={handleShare}
+            >
+              <Share2 size={20} color="#A020F0" />
             </Button>
           </View>
 
@@ -100,7 +139,7 @@ export default function PlanDetail() {
                 })}
               </Text>
             </View>
-            <View className="flex-row items-center">
+            <View className="flex-row items-center gap-2">
               <Users size={16} className="mr-2" />
               <Text>
                 {plan.participants.length}/{plan.max_participants}

@@ -9,6 +9,8 @@ import {
   ActivityIndicator,
   Dimensions,
   Pressable,
+  RefreshControl,
+  ScrollView,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -54,6 +56,7 @@ function CategoryButton({
 export default function Index() {
   const { plans, loading: plansLoading, fetchPlans } = usePlans();
   const [notifications, setNotifications] = React.useState(2);
+  const [refreshing, setRefreshing] = React.useState(false);
   const {
     categories,
     loading: categoriesLoading,
@@ -65,6 +68,13 @@ export default function Index() {
   const [selectedCategory, setSelectedCategory] = React.useState<string | null>(
     null
   );
+
+  const handleRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchPlans();
+    fetchCategories();
+    setRefreshing(false);
+  }, []);
 
   React.useEffect(() => {
     fetchPlans();
@@ -114,7 +124,14 @@ export default function Index() {
   }
 
   return (
-    <View style={{ flex: 1 }} className="bg-background pt-10">
+    <ScrollView
+      style={{ flex: 1 }}
+      className="bg-background"
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }
+      contentInsetAdjustmentBehavior="automatic"
+    >
       {/* Custom Header */}
       <Animated.View
         entering={FadeIn}
@@ -239,7 +256,7 @@ export default function Index() {
           </View>
         }
       />
-    </View>
+    </ScrollView>
   );
 }
 
