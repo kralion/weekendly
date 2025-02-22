@@ -55,7 +55,7 @@ export function Confirmed({
         <View className="items-center  mb-10">
           <Image
             source={{
-              uri: "https://img.icons8.com/?size=100&id=IBUUC7KokVgW&format=png&color=000000",
+              uri: "https://img.icons8.com/?size=300&id=IBUUC7KokVgW&format=png&color=000000",
             }}
             style={{ width: 100, height: 100 }}
           />

@@ -3,9 +3,15 @@ import { router } from "expo-router";
 import {
   CheckCircle,
   ChevronLeft,
-  ChevronRight,
+  Instagram,
+  Twitter,
   Pen,
+  MapPin,
+  Globe,
+  MessageCircle,
+  MessageCircleDashedIcon,
 } from "lucide-react-native";
+import { openBrowserAsync } from "expo-web-browser";
 import React from "react";
 import {
   ActivityIndicator,
@@ -15,8 +21,8 @@ import {
   View,
 } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
+import { LinearGradient } from "expo-linear-gradient";
 import { Button } from "~/components/ui/button";
-import { Separator } from "~/components/ui/separator";
 import { Text } from "~/components/ui/text";
 import { useProfiles } from "~/stores";
 
@@ -50,12 +56,28 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView
-      className="bg-background"
+      className="bg-white flex-1"
       contentContainerClassName="pb-10"
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
+      {/* Profile Banner */}
+      <View style={{ position: "relative", width: "100%", height: 200 }}>
+        <Image
+          source={{
+            uri: "https://images.unsplash.com/photo-1513689125086-6c432170e843",
+          }}
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            top: 0,
+            left: 0,
+          }}
+        />
+      </View>
+
       {/* Header */}
       <View className="p-4 flex-row mt-10 justify-between items-center absolute top-0 left-0 right-0 z-10">
         <TouchableOpacity
@@ -74,37 +96,14 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Profile Banner */}
-      <View style={{ position: "relative", width: "100%", height: 200 }}>
-        <Image
-          source={{
-            uri: "https://images.unsplash.com/photo-1513689125086-6c432170e843",
-          }}
-          style={{
-            width: "100%",
-            height: "100%",
-            position: "absolute",
-            top: 0,
-            left: 0,
-          }}
-        />
-      </View>
-
       {/* Profile Info */}
-      <View className="px-4 -mt-16">
-        <View className="relative">
-          <View className="w-24 h-24 rounded-full border-4 border-white overflow-hidden">
-            <Image
-              source={{
-                uri: user?.imageUrl,
-              }}
-              className="w-full h-full"
-            />
+      <View className="px-6 -mt-16">
+        <View className="relative flex items-center">
+          <View className="w-32 h-32 rounded-full border-4 border-white overflow-hidden shadow-lg">
+            <Image source={{ uri: user?.imageUrl }} className="w-full h-full" />
           </View>
-          <View className="absolute top-0 left-0 w-24 h-24 rounded-full border-2 border-blue-500" />
-          <View className="absolute bottom-0 left-16 w-6 h-6 bg-green-500 rounded-full border-4 border-white" />
           <Button
-            className="rounded-full absolute bottom-3 right-0"
+            className="rounded-full absolute top-10 right-0 bg-white shadow-sm"
             variant="secondary"
             size="icon"
             onPress={() => router.push("/(screens)/my-profile/edit")}
@@ -113,54 +112,56 @@ export default function ProfileScreen() {
           </Button>
         </View>
 
-        <View className="mt-4 flex-row justify-between items-center">
-          <View>
-            <View className="flex-row items-center gap-2">
-              <Text className="text-xl font-bold">
-                {currentProfile?.username || user?.fullName}
-              </Text>
-              <CheckCircle size={16} color="#1DA1F2" className="ml-1" />
-            </View>
+        {/* Name and Verification */}
+        <View className="mt-4 flex flex-col justify-center items-center">
+          <View className="flex-row items-center justify-center gap-2">
+            <Text className="text-2xl font-bold text-gray-900">
+              {user?.fullName}
+            </Text>
+            <CheckCircle size={20} color="#1DA1F2" />
           </View>
-          <Text className="text-gray-600">
-            {currentProfile?.created_at?.split("T")[0]}
-          </Text>
         </View>
 
-        <Text className="mt-4 text-gray-800">
+        {/* Bio */}
+        <Text className="my-4 text-gray-600 text-center">
           {currentProfile?.bio || "No hay biografía aún"}
         </Text>
 
-        {/* Profile Details Section */}
-        <View className="mt-6">
-          <Text className="text-lg font-semibold mb-2">Detalles</Text>
-          <View className="bg-white rounded-lg shadow-sm">
-            <View className="flex-row justify-between items-center p-4">
-              <Text className="font-medium">Rango de edad</Text>
-              <Text>{currentProfile?.age_range}</Text>
-            </View>
-            <Separator />
+        <View className="flex flex-row gap-4 mx-auto">
+          <View className="flex flex-row gap-1 items-center">
+            <MapPin size={18} color="gray" />
+            <Text className="text-gray-500 mt-1">
+              {currentProfile?.country}
+            </Text>
+          </View>
+          <View className="flex flex-row gap-1 items-center">
+            <Globe size={18} color="gray" />
+            <Text className="text-gray-500 mt-1">
+              {currentProfile?.languages?.join(", ")}
+            </Text>
+          </View>
+        </View>
+        {/* Social Links */}
 
-            <View className="flex-row justify-between items-center p-4">
-              <Text className="font-medium">Día preferido</Text>
-              <Text>{currentProfile?.day_preferred}</Text>
-            </View>
-            <Separator />
-
-            <View className="flex-row justify-between items-center p-4">
-              <Text className="font-medium">Ubicación</Text>
-              <Text>{currentProfile?.location || "No especificada"}</Text>
-            </View>
+        {/* Profile Details Cards */}
+        <View className="mt-8 flex flex-col gap-4">
+          <View className="bg-muted p-4 rounded-lg">
+            <Text className="text-gray-500 mb-1">Día preferido</Text>
+            <Text className="text-gray-900 font-medium">
+              {currentProfile?.day_preferred}
+            </Text>
           </View>
         </View>
 
-        {/* Hobbies Section */}
-        <View className="mt-6">
-          <Text className="text-lg font-semibold mb-2">Pasatiempos</Text>
+        {/* Interests/Hobbies */}
+        <View className="mt-8">
+          <Text className="text-lg font-semibold mb-4 text-gray-900">
+            Intereses
+          </Text>
           <View className="flex-row flex-wrap gap-2">
             {currentProfile?.hobbies?.map((hobby, index) => (
-              <View key={index} className="bg-blue-100 px-3 py-1 rounded-full">
-                <Text className="text-blue-800">{hobby}</Text>
+              <View key={index} className="px-4 py-2 rounded-xl bg-gray-100">
+                <Text className="text-gray-800 font-medium">{hobby}</Text>
               </View>
             ))}
           </View>
@@ -171,11 +172,10 @@ export default function ProfileScreen() {
           <Button
             variant="destructive"
             size="lg"
-            onPress={() => {
-              signOut();
-            }}
+            className="w-full"
+            onPress={() => signOut()}
           >
-            <Text className="text-white">Cerrar sesión</Text>
+            <Text className="text-white font-medium">Cerrar sesión</Text>
           </Button>
         </View>
       </View>

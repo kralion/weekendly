@@ -1,4 +1,5 @@
-import { useAuth, useUser } from "@clerk/clerk-expo";
+import { useUser } from "@clerk/clerk-expo";
+import { Audio } from "expo-av";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
@@ -10,11 +11,16 @@ import {
   Share2,
   Users,
 } from "lucide-react-native";
-import * as React from "react";
-import { ScrollView, Share, TouchableOpacity, View } from "react-native";
+import React from "react";
+import {
+  ScrollView,
+  Share,
+  TouchableOpacity,
+  View,
+  Vibration,
+} from "react-native";
 import { toast } from "sonner-native";
 import { Confirmed } from "~/components/confirmed";
-import { Avatar } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { usePlans } from "~/stores";
@@ -27,6 +33,26 @@ export default function PlanDetail() {
 
   const plan = plans.find((p) => p.id === id);
   const [showConfirmed, setShowConfirmed] = React.useState(false);
+  const [sound, setSound] = React.useState<Audio.Sound | null>(null);
+
+  React.useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
+  const playFeedback = async () => {
+    // Play sound and vibrate simultaneously
+    Vibration.vibrate(50);
+    const { sound } = await Audio.Sound.createAsync(
+      require("../../../../assets/sounds/success.mp3"),
+      { volume: 0.5 }
+    );
+    setSound(sound);
+    await sound.playAsync();
+  };
 
   const handleShare = async () => {
     try {
@@ -164,7 +190,10 @@ export default function PlanDetail() {
       <Button
         size="lg"
         className="m-4 mb-8 rounded-full"
-        onPress={() => setShowConfirmed(true)}
+        onPress={async () => {
+          await playFeedback();
+          setShowConfirmed(true);
+        }}
       >
         <Text className="text-white font-semibold">Unirme al plan</Text>
       </Button>

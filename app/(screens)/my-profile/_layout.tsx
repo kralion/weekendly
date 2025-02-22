@@ -5,12 +5,11 @@ import { Text } from "~/components/ui/text";
 
 export default function TabLayout() {
   return (
-    <Stack>
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="index"
         options={{
           title: "Descubre Planes",
-          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -18,14 +17,12 @@ export default function TabLayout() {
         options={{
           title: "Match Perfil",
           presentation: "modal",
-          headerShown: false,
         }}
       />
       <Stack.Screen
         name="edit"
         options={{
           title: "Editar preferencias",
-          headerShadowVisible: false,
           presentation: "modal",
         }}
       />
@@ -33,7 +30,6 @@ export default function TabLayout() {
         name="my-plans"
         options={{
           title: "Mis Planes",
-          headerShown: false,
         }}
       />
     </Stack>

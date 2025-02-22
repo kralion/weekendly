@@ -58,7 +58,7 @@ export function MultiSelect<T extends string = string>({
     <View className={`relative ${className}`} style={style}>
       <Pressable
         onPress={() => setIsOpen(!isOpen)}
-        className="flex-row items-center justify-between p-3 bg-white border border-brand rounded-lg"
+        className="flex-row items-center justify-between p-3 bg-white border border-border rounded-md"
       >
         <View className="flex-1">
           {selectedOptions.length > 0 ? (

@@ -3,7 +3,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { Bell, BellDot, MapPin, Plus, Search } from "lucide-react-native";
+import { Bell, BellDot, MapPin, Search } from "lucide-react-native";
 import * as React from "react";
 import {
   ActivityIndicator,
@@ -22,7 +22,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
 import { useCategories, usePlans } from "~/stores";
-import { Category, Plan } from "~/types";
+import { Plan } from "~/types";
 
 // Type for category items in the list (includes the "Todos" option)
 type CategoryItem = {
@@ -137,7 +137,6 @@ export default function Index() {
       {/* Custom Header */}
       <Animated.View
         entering={FadeIn}
-        style={{ paddingTop: insets.top }}
         className="bg-background p-4  flex flex-col gap-8"
       >
         <View className="flex-row items-center justify-between ">

@@ -11,11 +11,12 @@ export interface Profile {
   user_id: string;
   username: string;
   bio: string | null;
-  location: string | null;
   hobbies: string[];
-  age_range: string;
   day_preferred: "Sábado" | "Domingo";
   created_at: string;
+  country: string;
+  languages: string[];
+  phone: string;
 }
 
 export interface Plan {

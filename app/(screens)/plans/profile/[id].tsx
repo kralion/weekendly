@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { CheckCircle, X } from "lucide-react-native";
+import { CheckCircle, MessageCircleDashedIcon, X } from "lucide-react-native";
 import React from "react";
 import {
   ActivityIndicator,
@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { openBrowserAsync } from "expo-web-browser";
+import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { Text } from "~/components/ui/text";
 import { useProfiles } from "~/stores";
@@ -133,6 +135,18 @@ export default function ProfileScreen() {
               ))}
             </View>
           </View>
+          <Button
+            className="rounded-full mt-10  bg-[#25D366] flex-row items-center gap-2"
+            size="lg"
+            onPress={() =>
+              openBrowserAsync(
+                `https://wa.me/${profile?.phone}?text=Hola que tal%20`
+              )
+            }
+          >
+            <MessageCircleDashedIcon size={22} color="white" />
+            <Text className="text-white"> Hablar por Whatsapp </Text>
+          </Button>
         </View>
       </ScrollView>
     </View>

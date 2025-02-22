@@ -20,9 +20,10 @@ export const profileSchema = z.object({
     .string()
     .min(2, "Nombre de usuario debe tener al menos 2 caracteres"),
   bio: z.string().nullable(),
-  location: z.string().nullable(),
+  phone: z.string().min(1, "Telefono es requerido"),
+  country: z.string().min(1, "Pais es requerido"),
+  languages: z.array(z.string()).min(1, "Selecciona al menos un idioma"),
   hobbies: z.array(z.string()).min(1, "Selecciona al menos un hobby"),
-  age_range: z.string().min(1, "Rango de edad es requerido"),
   day_preferred: z.enum(["Sábado", "Domingo"], {
     errorMap: () => ({ message: "Selecciona un día válido" }),
   }),
