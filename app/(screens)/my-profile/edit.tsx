@@ -16,12 +16,19 @@ import { Button } from "~/components/ui/button";
 import { MultiSelect } from "~/components/ui/multi-select";
 import { Text } from "~/components/ui/text";
 import { Textarea } from "~/components/ui/textarea";
-import { createProfileSchema } from "~/schemas";
 import { useProfiles } from "~/stores";
-import type { CreateProfileSchema } from "~/schemas";
+import { createProfileSchema, type CreateProfileSchema } from "~/schemas";
 import { Input } from "~/components/ui/input";
 import { Camera, ChevronLeft, X } from "lucide-react-native";
 import * as ImagePicker from "expo-image-picker";
+import { Gender } from "~/types";
+import { Select, SelectItem } from "~/components/ui/select";
+import Animated, {
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 const HOBBIES_OPTIONS = [
   "Deportes",
@@ -35,8 +42,6 @@ const HOBBIES_OPTIONS = [
   "Teatro",
   "Danza",
 ];
-
-const AGE_RANGE_OPTIONS = ["18-25", "26-35", "36-45", "46-55", "56+"];
 
 const DAY_OPTIONS = [
   { label: "Sábado", value: "Sábado" },
@@ -52,6 +57,26 @@ export default function EditProfileScreen() {
   const [image_url, setImage_url] = React.useState<string>(
     user?.imageUrl || ""
   );
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const headerStyle = useAnimatedStyle(() => {
+    return {
+      backgroundColor: "rgba(255, 240, 255, 1)",
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 1,
+      opacity: withTiming(scrollY.value > 50 ? 1 : 0),
+    };
+  });
+
   const {
     control,
     handleSubmit,
@@ -63,6 +88,7 @@ export default function EditProfileScreen() {
       username: currentProfile?.username || user?.fullName || "",
       bio: currentProfile?.bio || "",
       phone: currentProfile?.phone || "",
+      gender: (currentProfile?.gender as Gender) || "Hombre",
       country: currentProfile?.country || "",
       languages: currentProfile?.languages || [],
       hobbies: currentProfile?.hobbies || [],
@@ -107,9 +133,17 @@ export default function EditProfileScreen() {
 
     try {
       if (currentProfile) {
-        await updateProfile(user.id, data);
+        await updateProfile(user.id, {
+          ...data,
+          image_url,
+          gender: data.gender[0] as Gender,
+        });
       } else {
-        await createProfile(data);
+        await createProfile({
+          ...data,
+          image_url,
+          gender: data.gender[0] as Gender,
+        });
       }
       router.back();
     } catch (error) {
@@ -123,26 +157,30 @@ export default function EditProfileScreen() {
       className="flex-1 bg-white"
     >
       {/* Header */}
-      <View className="p-6 flex-row items-center bg-background">
-        <Button
-          className="rounded-full"
-          onPress={() => router.back()}
-          variant="secondary"
-          size="icon"
-        >
-          <X size={20} color="#A020F0" />
-        </Button>
-        <Text className="text-xl font-semibold ml-4">Editar perfil</Text>
-      </View>
-      <ScrollView
-        className="flex-1 p-4 bg-background"
+      <Animated.View style={headerStyle}>
+        <View className="p-6 flex-row items-center">
+          <Button
+            className="rounded-full"
+            onPress={() => router.back()}
+            variant="secondary"
+            size="icon"
+          >
+            <X size={20} color="#A020F0" />
+          </Button>
+          <Text className="text-xl font-semibold ml-4">Editar perfil</Text>
+        </View>
+      </Animated.View>
+      <Animated.ScrollView
+        className="flex-1 p-6 bg-background"
         contentContainerClassName="pb-20"
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
       >
-        <View className="flex items-center mb-4">
+        <View className="flex-row items-center mb-8 mx-auto">
           <View className="relative">
             <Image
               source={{ uri: image_url }}
-              className="w-28 h-28 rounded-full overflow-hidden"
+              className="w-36 h-36 rounded-full overflow-hidden"
               style={{ opacity: isLoading ? 0.5 : 1 }}
             />
             {isLoading && (
@@ -150,13 +188,15 @@ export default function EditProfileScreen() {
                 <ActivityIndicator size="large" color="#A020F0" />
               </View>
             )}
-            <TouchableOpacity
+            <Button
+              variant="secondary"
+              size="icon"
               className="bg-white rounded-full p-1 absolute bottom-0 right-0"
               onPress={() => pickImage()}
               disabled={isLoading}
             >
               <Camera size={20} color="#A020F0" />
-            </TouchableOpacity>
+            </Button>
           </View>
         </View>
 
@@ -199,6 +239,39 @@ export default function EditProfileScreen() {
             {errors.bio?.message && (
               <Text className="text-xs text-red-500">
                 {errors.bio?.message}
+              </Text>
+            )}
+          </View>
+
+          <View>
+            <Text className="font-medium mb-2">Género</Text>
+            <Controller
+              control={control}
+              name="gender"
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  value={{
+                    label: value,
+                    value,
+                  }}
+                  className="bg-white rounded-lg px-2 py-3"
+                  onValueChange={(option) => onChange(option?.value)}
+                >
+                  <SelectItem value="Hombre" label="Hombre">
+                    Hombre
+                  </SelectItem>
+                  <SelectItem value="Mujer" label="Mujer">
+                    Mujer
+                  </SelectItem>
+                  <SelectItem value="Otro" label="Otro">
+                    Otro
+                  </SelectItem>
+                </Select>
+              )}
+            />
+            {errors.gender?.message && (
+              <Text className="text-xs text-red-500">
+                {errors.gender?.message}
               </Text>
             )}
           </View>
@@ -269,11 +342,21 @@ export default function EditProfileScreen() {
               control={control}
               name="day_preferred"
               render={({ field: { onChange, value } }) => (
-                <MultiSelect
-                  options={DAY_OPTIONS}
-                  value={[value]}
-                  onChange={(selected) => onChange(selected[0])}
-                />
+                <Select
+                  value={{ label: value, value }}
+                  className="bg-white rounded-lg px-2 py-3"
+                  onValueChange={(option) => onChange(option?.value)}
+                >
+                  {DAY_OPTIONS.map((option) => (
+                    <SelectItem
+                      key={option.value}
+                      value={option.value}
+                      label={option.label}
+                    >
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </Select>
               )}
             />
             {errors.day_preferred?.message && (
@@ -311,7 +394,7 @@ export default function EditProfileScreen() {
             </Text>
           </Button>
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </KeyboardAvoidingView>
   );
 }

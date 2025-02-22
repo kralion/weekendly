@@ -7,16 +7,24 @@ export interface Category {
   created_at: string;
 }
 
+export enum Gender {
+  Hombre = "Hombre",
+  Mujer = "Mujer",
+  Otro = "Otro",
+}
+
 export interface Profile {
   user_id: string;
   username: string;
   bio: string | null;
+  image_url: string | null;
   hobbies: string[];
   day_preferred: "Sábado" | "Domingo";
   created_at: string;
   country: string;
   languages: string[];
   phone: string;
+  gender: Gender;
 }
 
 export interface Plan {

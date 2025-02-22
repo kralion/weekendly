@@ -8,6 +8,7 @@ import {
   type ViewStyle,
 } from "react-native";
 import { Text } from "./text";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 export type Option<T extends string = string> =
   | {
@@ -90,7 +91,11 @@ export function MultiSelect<T extends string = string>({
       </Pressable>
 
       {isOpen && (
-        <View className="absolute top-full left-0 right-0 z-10 mt-1 bg-white border border-gray-300 rounded-lg max-h-48 overflow-y-auto">
+        <Animated.View
+          className="absolute top-full left-0 right-0 z-10 mt-1 bg-white border border-gray-300 rounded-lg max-h-56 overflow-y-auto"
+          entering={FadeIn.duration(200)}
+          exiting={FadeOut.duration(200)}
+        >
           <ScrollView className="p-2">
             {normalizedOptions.map((option) => (
               <TouchableOpacity
@@ -113,7 +118,7 @@ export function MultiSelect<T extends string = string>({
               </TouchableOpacity>
             ))}
           </ScrollView>
-        </View>
+        </Animated.View>
       )}
     </View>
   );
