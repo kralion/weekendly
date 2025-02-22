@@ -31,12 +31,11 @@ const CATEGORIES = [
   { id: "3", name: "Deportes" },
   { id: "4", name: "Cine" },
   { id: "5", name: "Teatro" },
-  { id: "6", name: "Cultura" },
+  { id: "6", name: "Lectura" },
   { id: "7", name: "Ocio" },
   { id: "8", name: "Eventos" },
 ];
 
-// Type for category items in the list (includes the "Todos" option)
 type CategoryItem = {
   id: string | null;
   name: string;
@@ -53,8 +52,9 @@ function CategoryButton({
 }) {
   return (
     <Button
+      key={`category-${category.id}`}
       variant={isSelected ? "default" : "secondary"}
-      className="mr-2 rounded-full"
+      className={`mr-2 rounded-full ${isSelected ? "bg-primary" : ""}`}
       onPress={onPress}
     >
       <Text
@@ -88,18 +88,18 @@ export default function Index() {
     fetchPlans();
   }, []);
 
-  // Handle category selection
-  const handleCategoryPress = (categoryName: string | null) => {
-    setSelectedCategory(
-      categoryName === selectedCategory ? null : categoryName
-    );
+  const handleCategoryPress = (categoryId: string | null) => {
+    setSelectedCategory(categoryId);
   };
 
-  // Filter plans based on category and search
   const getFilteredPlans = () => {
     return plans.filter((plan) => {
+      const selectedCategoryName = selectedCategory
+        ? CATEGORIES.find((cat) => cat.id === selectedCategory)?.name
+        : null;
+
       const matchesCategory =
-        !selectedCategory || plan.categories.includes(selectedCategory);
+        !selectedCategoryName || plan.categories.includes(selectedCategoryName);
       const matchesSearch = plan.title
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
@@ -119,9 +119,9 @@ export default function Index() {
       {/* Custom Header */}
       <Animated.View
         entering={FadeIn}
-        className="bg-background p-4  flex flex-col gap-8"
+        className="bg-background   flex flex-col gap-8"
       >
-        <View className="flex-row items-center justify-between ">
+        <View className="flex-row items-center justify-between p-4">
           <View>
             <Text className="text-3xl font-bold">
               ¡Hola! {user?.firstName} 👋
@@ -156,7 +156,7 @@ export default function Index() {
         </View>
 
         {/* Search Bar */}
-        <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center justify-between p-4">
           <Input
             placeholder="Buscar planes..."
             ref={searchRef}
@@ -181,17 +181,20 @@ export default function Index() {
 
         {/* Categories */}
         <View>
-          <Text className="text-muted-foreground  mb-4 ">Categorías</Text>
-          <View className="flex flex-col gap-2">
+          <Text className="text-muted-foreground px-4  mb-4 ">Categorías</Text>
+          <View className="flex flex-col gap-2 ">
             {/* First Row */}
             <FlashList
               estimatedItemSize={100}
               data={CATEGORIES}
+              extraData={selectedCategory}
+              contentContainerClassName="pl-4"
               renderItem={({ item }) => (
                 <CategoryButton
+                  key={item.id}
                   category={item}
-                  isSelected={selectedCategory === item.name}
-                  onPress={() => handleCategoryPress(item.name)}
+                  isSelected={selectedCategory === item.id}
+                  onPress={() => handleCategoryPress(item.id)}
                 />
               )}
               horizontal
@@ -216,8 +219,14 @@ export default function Index() {
         pagingEnabled
         getItemType={(item) => "plan"}
         ListEmptyComponent={
-          <View className="flex-1 justify-center items-center p-4">
-            <Text className="text-lg text-center text-muted-foreground">
+          <View className="flex flex-col justify-center items-center">
+            <Image
+              source={{
+                uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",
+              }}
+              style={{ width: 100, height: 100 }}
+            />
+            <Text className=" text-center text-muted-foreground mx-auto w-2/3 ">
               {searchQuery || selectedCategory
                 ? "No se encontraron planes que coincidan con tu búsqueda"
                 : "No hay planes disponibles en este momento"}

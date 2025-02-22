@@ -24,7 +24,7 @@ import { planSchema } from "~/schemas";
 import { usePlans } from "~/stores";
 import { Plan } from "~/types";
 
-const INTERESTS = [
+const CATEGORIES = [
   "Música",
   "Arte",
   "Deportes",
@@ -38,7 +38,6 @@ const INTERESTS = [
 ];
 
 export default function CreatePlan() {
-  const [showDatePicker, setShowDatePicker] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [image_url, setImage_url] = React.useState<string>(
     "https://images.unsplash.com/photo-1739741432363-8f5fa6ef4e7d?q=80&w=1434&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -50,7 +49,6 @@ export default function CreatePlan() {
     control,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = useForm<Plan>({
     resolver: zodResolver(planSchema),
     defaultValues: {
@@ -103,29 +101,23 @@ export default function CreatePlan() {
       toast.error("Debes iniciar sesión para crear un plan");
       return;
     }
-    try {
-      await createPlan({
-        title: data.title,
-        description: data.description,
-        location: data.location,
-        image_url,
-        date: data.date,
-        max_participants: data.max_participants,
-        creator_id: user.id,
-        categories: data.categories,
-      });
-      toast.success("¡Plan creado con éxito!");
-      router.back();
-    } catch (error) {
-      toast.error("Error al crear el plan");
-    }
+    await createPlan({
+      title: data.title,
+      description: data.description,
+      location: data.location,
+      image_url,
+      date: data.date,
+      max_participants: data.max_participants,
+      creator_id: user.id,
+      categories: data.categories,
+    });
   };
 
   return (
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
       <ScrollView
         className="flex-1 "
-        contentContainerClassName="pb-10"
+        contentContainerClassName="pb-4"
         showsVerticalScrollIndicator={false}
       >
         <View className="p-4 flex-row justify-between mt-10 gap-4 items-center absolute top-0 left-0 right-0 z-10">
@@ -165,8 +157,8 @@ export default function CreatePlan() {
               name="title"
               render={({ field: { onChange, value } }) => (
                 <Input
-                  placeholder="Ej: Concierto en el Parque"
                   onChangeText={onChange}
+                  placeholder="Ej: Salida al café"
                   value={value}
                 />
               )}
@@ -177,16 +169,12 @@ export default function CreatePlan() {
           </View>
 
           <View>
-            <Text className="text-base mb-2">Descripción</Text>
+            <Text className="text-muted-foreground mb-2">Descripción</Text>
             <Controller
               control={control}
               name="description"
               render={({ field: { onChange, value } }) => (
-                <Textarea
-                  placeholder="Describe tu plan..."
-                  onChangeText={onChange}
-                  value={value}
-                />
+                <Textarea onChangeText={onChange} value={value} />
               )}
             />
             {errors.description?.message && (
@@ -202,11 +190,7 @@ export default function CreatePlan() {
               control={control}
               name="location"
               render={({ field: { onChange, value } }) => (
-                <Input
-                  placeholder="Ej: Parque Central"
-                  onChangeText={onChange}
-                  value={value}
-                />
+                <Input onChangeText={onChange} value={value} />
               )}
             />
             {errors.location?.message && (
@@ -228,7 +212,6 @@ export default function CreatePlan() {
                   minuteInterval={15}
                   locale="es-ES"
                   onChange={(event, selectedDate) => {
-                    setShowDatePicker(false);
                     if (selectedDate) {
                       onChange(selectedDate);
                     }
@@ -249,7 +232,7 @@ export default function CreatePlan() {
               name="categories"
               render={({ field: { onChange, value } }) => (
                 <View className="flex flex-row gap-2 flex-wrap">
-                  {INTERESTS.map((item) => (
+                  {CATEGORIES.map((item) => (
                     <Pressable
                       key={item}
                       onPress={() => {
@@ -280,20 +263,20 @@ export default function CreatePlan() {
               </Text>
             )}
           </View>
+          <Button
+            onPress={handleSubmit(onSubmit)}
+            className="mt-10 rounded-full"
+            size="lg"
+          >
+            {loading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text className="text-white font-semibold text-lg">
+                Crear Plan
+              </Text>
+            )}
+          </Button>
         </View>
-
-        {/* Submit Button */}
-        <Button
-          onPress={handleSubmit(onSubmit)}
-          className="mx-4 mt-10 rounded-full"
-          size="lg"
-        >
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text className="text-white font-semibold text-lg">Crear Plan</Text>
-          )}
-        </Button>
       </ScrollView>
     </KeyboardAvoidingView>
   );

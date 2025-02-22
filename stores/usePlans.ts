@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { supabase } from "@/lib/supabase";
 import type { Plan } from "@/types";
 import { toast } from "sonner-native";
+import { router } from "expo-router";
 
 interface PlansState {
   plans: Plan[];
@@ -105,6 +106,7 @@ export const usePlans = create<PlansState>((set, get) => ({
         userPlans: [...state.userPlans, data],
       }));
       toast.success("Plan creado exitosamente");
+      router.back();
     } catch (error) {
       toast.error("Error al crear plan");
       console.error(error);
