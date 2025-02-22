@@ -80,10 +80,40 @@ export default function MyPlansScreen() {
           variant="secondary"
           size="icon"
         >
-          <ChevronLeft size={24} />
+          <ChevronLeft color="#A020F0" size={24} />
         </Button>
-
-        <Text className="text-xl font-semibold ml-2">Mis Planes</Text>
+        <Tabs
+          value={value}
+          onValueChange={setValue}
+          className="flex-1 w-full  max-w-[250px]  mx-auto flex-col gap-1.5"
+        >
+          <TabsList className="flex-row w-full rounded-full     border border-gray-200 bg-white">
+            <TabsTrigger
+              value="created"
+              className="flex-1 rounded-full shadow-none "
+            >
+              <Text
+                className={`${
+                  value === "created" ? "text-black" : "text-zinc-400"
+                }`}
+              >
+                Creados
+              </Text>
+            </TabsTrigger>
+            <TabsTrigger
+              value="joined"
+              className="flex-1 rounded-full shadow-none"
+            >
+              <Text
+                className={`${
+                  value === "joined" ? "text-black" : "text-zinc-400"
+                }`}
+              >
+                Participando
+              </Text>
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
         <Button
           size="icon"
           variant="secondary"
@@ -99,18 +129,6 @@ export default function MyPlansScreen() {
         onValueChange={setValue}
         className="flex-1 w-full  max-w-[350px]  mx-auto flex-col gap-1.5"
       >
-        <TabsList className="flex-row w-full rounded-lg   mb-4 border border-gray-200 bg-white">
-          <TabsTrigger
-            value="created"
-            className="flex-1 rounded-md shadow-none"
-          >
-            <Text>Creados</Text>
-          </TabsTrigger>
-          <TabsTrigger value="joined" className="flex-1 rounded-md shadow-none">
-            <Text>Participando</Text>
-          </TabsTrigger>
-        </TabsList>
-
         <TabsContent value="created" className="flex-1">
           <FlashList
             data={[1, 2, 3, 4, 5]}

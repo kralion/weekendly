@@ -120,8 +120,7 @@ function PlanCard({ plan }: { plan: Plan }) {
         {/* Action Buttons */}
 
         <Button
-          variant="default"
-          className="flex-1 mr-3 rounded-full"
+          className="flex-1  rounded-full"
           size="lg"
           onPress={() => router.push(`/(screens)/plans/plan/${plan.id}`)}
         >
