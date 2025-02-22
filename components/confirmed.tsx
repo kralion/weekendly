@@ -2,9 +2,14 @@ import { Image } from "expo-image";
 import { View } from "react-native";
 import { Text } from "./ui/text";
 import { Button } from "./ui/button";
-import { MessageCircle, X } from "lucide-react-native";
 import { BlurView } from "expo-blur";
+import Animated, {
+  FadeIn,
+  FadeInLeft,
+  FadeInRight,
+} from "react-native-reanimated";
 import { router } from "expo-router";
+import { Link2Icon } from "lucide-react-native";
 
 interface ConfirmedProps {
   planTitle: string;
@@ -29,36 +34,40 @@ export function Confirmed({
     >
       <View className="bg-white rounded-3xl w-full p-6 h-1/2 items-center">
         <View className="flex-row items-center justify-center mb-6">
-          <View className="relative -right-4">
-            <Image
-              source={{ uri: planImage }}
-              style={{ width: 100, height: 100, borderRadius: 999 }}
-            />
-          </View>
-          <View className="relative -left-4">
-            <Image
-              source={{ uri: userImage }}
-              style={{ width: 100, height: 100, borderRadius: 999 }}
-            />
-          </View>
+          <Animated.View entering={FadeInLeft.duration(250).delay(150)}>
+            <View className="relative -right-4">
+              <Image
+                source={{ uri: planImage }}
+                style={{ width: 100, height: 100, borderRadius: 999 }}
+              />
+            </View>
+          </Animated.View>
+          <Animated.View entering={FadeInRight.duration(250).delay(150)}>
+            <View className="relative -left-4">
+              <Image
+                source={{ uri: userImage }}
+                style={{ width: 100, height: 100, borderRadius: 999 }}
+              />
+            </View>
+          </Animated.View>
         </View>
 
-        <View className="items-center mb-6">
-          <View className="bg-blue-50 rounded-full p-2 mb-4">
-            <View className="bg-blue-500 rounded-full p-3">
-              <View className="bg-white rounded-full p-1">
-                <View className="bg-blue-500 rounded-full w-4 h-4" />
-              </View>
-            </View>
-          </View>
+        <View className="items-center  mb-10">
+          <Image
+            source={{
+              uri: "https://img.icons8.com/?size=100&id=IBUUC7KokVgW&format=png&color=000000",
+            }}
+            style={{ width: 100, height: 100 }}
+          />
           <Text className="text-2xl font-bold mb-2">¡Te has unido!</Text>
+
           <Text className="text-gray-500 text-center">
             Tienes {hoursToRespond} horas para coordinar los detalles del plan
           </Text>
         </View>
 
         <Button
-          className="w-full mt-10 rounded-full"
+          className="w-full  rounded-full"
           size="lg"
           onPress={() => {
             // Handle chat navigation

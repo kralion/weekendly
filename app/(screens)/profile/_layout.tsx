@@ -29,6 +29,13 @@ export default function TabLayout() {
           presentation: "modal",
         }}
       />
+      <Stack.Screen
+        name="my-plans"
+        options={{
+          title: "Mis Planes",
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

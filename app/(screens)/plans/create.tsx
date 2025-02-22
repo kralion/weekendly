@@ -6,6 +6,7 @@ import { router } from "expo-router";
 import {
   ArrowLeft,
   Calendar,
+  Camera,
   ChevronLeft,
   Image as ImageIcon,
   MapPin,
@@ -121,18 +122,25 @@ export default function CreatePlan() {
   return (
     <ScrollView
       className="flex-1 "
-      contentContainerClassName="pb-20"
+      contentContainerClassName="pb-10"
       showsVerticalScrollIndicator={false}
     >
-      <View className="p-4 flex-row mt-10 justify-between items-center absolute top-0 left-0 right-0 z-10">
+      <View className="p-4 flex-row justify-between mt-10 gap-4 items-center absolute top-0 left-0 right-0 z-10">
         <TouchableOpacity
           onPress={() => router.back()}
           className="w-10 h-10 justify-center items-center bg-black/20 rounded-full"
         >
           <ChevronLeft size={24} color="white" />
         </TouchableOpacity>
+        <Text className="text-2xl font-semibold text-white">Crear Plan</Text>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="w-10 h-10 justify-center items-center bg-black/20 rounded-full"
+        >
+          <Camera size={20} color="white" />
+        </TouchableOpacity>
       </View>
-      <View className=" w-full h-[500px] rounded-b-3xl overflow-hidden mb-6">
+      <View className=" w-full h-[400px] rounded-b-3xl overflow-hidden mb-6">
         <Image
           source={{
             uri: "https://images.unsplash.com/photo-1739741432363-8f5fa6ef4e7d?q=80&w=1434&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -140,14 +148,6 @@ export default function CreatePlan() {
           style={{ width: "100%", height: "100%" }}
         />
       </View>
-      <Button
-        className="flex gap-2 flex-row items-center mx-4"
-        variant="secondary"
-        size="lg"
-      >
-        <ImageIcon size={20} className="mr-2" />
-        <Text>Cambiar Imagen</Text>
-      </Button>
 
       {/* Form Fields */}
       <View className="flex flex-col gap-6 m-4">

@@ -1,6 +1,11 @@
 import { useAuth, useUser } from "@clerk/clerk-expo";
 import { router } from "expo-router";
-import { CheckCircle, ChevronLeft, Pen } from "lucide-react-native";
+import {
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Pen,
+} from "lucide-react-native";
 import React from "react";
 import {
   ActivityIndicator,
@@ -58,6 +63,14 @@ export default function ProfileScreen() {
           className="w-10 h-10 justify-center items-center bg-black/20 rounded-full"
         >
           <ChevronLeft size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+      <View className="p-4 flex-row mt-10 justify-between items-center absolute top-0 right-0 z-10">
+        <TouchableOpacity
+          onPress={() => router.push(`/(screens)/profile/my-plans`)}
+          className="w-28 h-10 justify-center items-center bg-black/20 rounded-full"
+        >
+          <Text className="text-white">Mis Planes </Text>
         </TouchableOpacity>
       </View>
 

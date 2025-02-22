@@ -62,7 +62,7 @@ function PlanCard({ plan }: { plan: Plan }) {
       />
 
       <LinearGradient
-        colors={["rgba(0,0,0,0.3)", "transparent", "rgba(0,0,0,0.9)"]}
+        colors={["rgba(0,0,0,0.5)", "transparent", "rgba(0,0,0,1)"]}
         style={{
           position: "absolute",
           top: 0,

@@ -3,7 +3,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { Bell, MapPin, Plus, Search } from "lucide-react-native";
+import { Bell, BellDot, MapPin, Plus, Search } from "lucide-react-native";
 import * as React from "react";
 import {
   ActivityIndicator,
@@ -53,6 +53,7 @@ function CategoryButton({
 
 export default function Index() {
   const { plans, loading: plansLoading, fetchPlans } = usePlans();
+  const [notifications, setNotifications] = React.useState(2);
   const {
     categories,
     loading: categoriesLoading,
@@ -113,27 +114,32 @@ export default function Index() {
   }
 
   return (
-    <View style={{ flex: 1 }} className="bg-background">
+    <View style={{ flex: 1 }} className="bg-background pt-10">
       {/* Custom Header */}
       <Animated.View
         entering={FadeIn}
         style={{ paddingTop: insets.top }}
-        className="bg-background p-4 flex flex-col gap-8"
+        className="bg-background p-4  flex flex-col gap-8"
       >
         <View className="flex-row items-center justify-between ">
           <View>
-            <Text className="text-2xl font-bold">
+            <Text className="text-3xl font-bold">
               ¡Hola! {user?.firstName} 👋
             </Text>
             <Text className="text-base text-muted-foreground">
               Descubre planes increíbles
             </Text>
           </View>
-          <View className="flex-row items-center gap-3">
-            <TouchableOpacity>
+          <View className="flex-row items-center gap-6">
+            <TouchableOpacity
+              onPress={() => router.push("/(screens)/notifications")}
+            >
               <View className="relative">
-                <Bell size={24} />
-                <View className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full" />
+                {notifications > 0 ? (
+                  <BellDot color="#A020F0" size={24} />
+                ) : (
+                  <Bell color="#A020F0" size={24} />
+                )}
               </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push("/(screens)/profile")}>
@@ -166,13 +172,13 @@ export default function Index() {
             className="rounded-full  px-4"
             onPress={() => router.push("/(screens)/plans/create")}
           >
-            <Plus size={20} />
+            <Search color="#A020F0" size={20} />
           </Button>
         </View>
 
         {/* Categories */}
         <View>
-          <Text className="text-base font-medium mb-2">Categorías</Text>
+          <Text className="text-muted-foreground  mb-4 ">Categorías</Text>
           <View className="flex flex-col gap-2">
             {/* First Row */}
             <FlashList
@@ -211,6 +217,7 @@ export default function Index() {
       </Animated.View>
 
       {/* Plans List */}
+      <Text className="text-muted-foreground mb-8  m-4 ">Planes Sugeridos</Text>
       <FlashList
         estimatedItemSize={Dimensions.get("window").height}
         data={getFilteredPlans()}

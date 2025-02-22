@@ -15,9 +15,11 @@ import {
 import { usePlans } from "~/stores";
 import { LinearGradient } from "expo-linear-gradient";
 import { Confirmed } from "~/components/confirmed";
+import { useUser } from "@clerk/clerk-expo";
 
 export default function PlanDetail() {
   const { id } = useLocalSearchParams();
+  const { user } = useUser();
   const { plans } = usePlans();
   const plan = plans.find((p) => p.id === id);
   const [showConfirmed, setShowConfirmed] = React.useState(false);
@@ -122,7 +124,7 @@ export default function PlanDetail() {
         <Confirmed
           planTitle={plan.title}
           planImage="https://images.unsplash.com/photo-1513689125086-6c432170e843"
-          userImage="https://images.unsplash.com/photo-1494790108377-be9c29b29330"
+          userImage={user?.imageUrl as string}
           onClose={() => setShowConfirmed(false)}
         />
       )}
