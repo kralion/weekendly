@@ -3,8 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
+import { useLocalSearchParams } from "expo-router";
 import { router } from "expo-router";
-import { Camera, X } from "lucide-react-native";
+import { Camera, Lock, Trash, X } from "lucide-react-native";
 import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -39,6 +40,7 @@ const CATEGORIES = [
 
 export default function CreatePlan() {
   const [isLoading, setIsLoading] = React.useState(false);
+  const { id } = useLocalSearchParams();
   const [image_url, setImage_url] = React.useState<string>(
     "https://images.unsplash.com/photo-1739741432363-8f5fa6ef4e7d?q=80&w=1434&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   );
@@ -127,7 +129,9 @@ export default function CreatePlan() {
           >
             <X size={24} color="white" />
           </TouchableOpacity>
-          <Text className="text-2xl font-semibold text-white">Crear Plan</Text>
+          <Text className="text-2xl font-semibold text-white">
+            {id ? "Editar Plan" : "Crear Plan"}
+          </Text>
           <TouchableOpacity
             onPress={pickImage}
             className="w-10 h-10 justify-center items-center bg-black/20 rounded-full"
@@ -263,19 +267,40 @@ export default function CreatePlan() {
               </Text>
             )}
           </View>
-          <Button
-            onPress={handleSubmit(onSubmit)}
-            className="mt-10 rounded-full"
-            size="lg"
-          >
-            {loading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text className="text-white font-semibold text-lg">
-                Crear Plan
-              </Text>
+          <View className="flex flex-row gap-2 justify-center">
+            <Button
+              onPress={handleSubmit(onSubmit)}
+              className={`mt-10 rounded-full ${id ? "" : "w-full"}`}
+              size="lg"
+            >
+              {loading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text className="text-white font-semibold text-lg">
+                  {id ? "Guardar Cambios" : "Crear Plan"}
+                </Text>
+              )}
+            </Button>
+            {id && (
+              <View className="flex flex-row gap-2">
+                <Button
+                  onPress={handleSubmit(onSubmit)}
+                  className="mt-10 rounded-full px-4"
+                  variant="destructive"
+                  size="lg"
+                >
+                  <Trash color="white" size={18} />
+                </Button>
+                <Button
+                  onPress={handleSubmit(onSubmit)}
+                  className="mt-10 rounded-full px-4"
+                  size="lg"
+                >
+                  <Lock color="white" size={18} />
+                </Button>
+              </View>
             )}
-          </Button>
+          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

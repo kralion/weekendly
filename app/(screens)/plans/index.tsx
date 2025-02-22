@@ -25,10 +25,10 @@ import type { Plan } from "~/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { Avatar, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
+import { useUser } from "@clerk/clerk-expo";
 
 function PlanCard({ plan }: { plan: Plan }) {
   const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-  const [liked, setLiked] = React.useState(false);
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString("es", {
@@ -54,7 +54,7 @@ function PlanCard({ plan }: { plan: Plan }) {
       </View>
       <Image
         source={{
-          uri: "https://images.unsplash.com/photo-1513689125086-6c432170e843",
+          uri: plan.image_url,
         }}
         contentFit="cover"
         style={{ width: "100%", height: "100%" }}

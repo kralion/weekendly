@@ -1,62 +1,114 @@
+import { useUser } from "@clerk/clerk-expo";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import { ChevronLeft, Plus } from "lucide-react-native";
 import React from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Text } from "~/components/ui/text";
+import { usePlans } from "~/stores";
+import { Plan } from "~/types";
 
 export default function MyPlansScreen() {
   const [value, setValue] = React.useState("created");
   const [refreshing, setRefreshing] = React.useState(false);
+  const { user } = useUser();
+  const {
+    userPlans,
+    plans,
+    fetchUserPlans,
+    loading,
+    getParticipants,
+    participants,
+  } = usePlans();
 
-  // TODO: Replace with actual data fetching
+  // Get plans where user is joined
+  const joinedPlans = React.useMemo(() => {
+    return plans.filter(
+      (plan) =>
+        plan.participants.includes(user?.id || "") &&
+        plan.creator_id !== user?.id
+    );
+  }, [plans, user?.id]);
+
+  React.useEffect(() => {
+    if (user?.id) {
+      fetchUserPlans(user.id);
+    }
+  }, [user?.id]);
+
+  // Fetch participants for each plan
+  React.useEffect(() => {
+    const fetchParticipantsForPlans = async () => {
+      if (value === "created") {
+        for (const plan of userPlans) {
+          await getParticipants(plan.id || "");
+        }
+      } else {
+        for (const plan of joinedPlans) {
+          await getParticipants(plan.id || "");
+        }
+      }
+    };
+
+    fetchParticipantsForPlans();
+  }, [value, userPlans, joinedPlans]);
+
   const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    // Simulate data fetching
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
-  }, []);
+    if (user?.id) {
+      setRefreshing(true);
+      fetchUserPlans(user.id).finally(() => {
+        setRefreshing(false);
+      });
+    }
+  }, [user?.id]);
 
   const renderPlanCard = React.useCallback(
-    ({ item }: { item: number }) => (
+    ({ item }: { item: Plan }) => (
       <TouchableOpacity
         className="my-4 bg-white rounded-xl shadow-sm overflow-hidden"
-        onPress={() => router.push(`/(screens)/plans/plan/${item}`)}
+        onPress={() => router.push(`/(screens)/plans/plan/${item.id}`)}
       >
         <Image
           source={{
-            uri: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205",
+            uri: item.image_url,
           }}
           className="w-full h-40"
         />
         <View className="p-4">
           <View className="flex-row justify-between items-center mb-2">
-            <Text className="text-lg font-semibold">Plan de ejemplo</Text>
+            <Text className="text-lg font-semibold">{item.title}</Text>
             <View className="bg-blue-100 px-3 py-1 rounded-full">
-              <Text className="text-blue-800 text-sm">12/12/2023</Text>
+              <Text className="text-blue-800 text-sm">
+                {new Date(item.date).toLocaleDateString()}
+              </Text>
             </View>
           </View>
 
-          <Text className="text-gray-600 mb-3">
-            Una breve descripción del plan y las actividades que se
-            realizarán...
+          <Text className="text-gray-600 mb-3" numberOfLines={2}>
+            {item.description}
           </Text>
 
           <View className="flex-row justify-between items-center">
             <View className="flex-row items-center">
               <View className="flex-row -space-x-2">
-                {[1, 2, 3].map((_, i) => (
-                  <View
-                    key={i}
-                    className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white"
-                  />
+                {participants.slice(0, 3).map((participant, index) => (
+                  <Avatar key={index} alt={participant.username}>
+                    <AvatarImage
+                      source={{ uri: participant.image_url as string }}
+                    />
+                    <AvatarFallback>
+                      <Text>{participant.username?.[0]}</Text>
+                    </AvatarFallback>
+                  </Avatar>
                 ))}
               </View>
-              <Text className="text-gray-600 ml-2">3 participantes</Text>
+              <Text className="text-gray-600 ml-2">
+                {item.participants.length} personas
+              </Text>
             </View>
 
             <View className="flex-row items-center">
@@ -67,7 +119,7 @@ export default function MyPlansScreen() {
         </View>
       </TouchableOpacity>
     ),
-    []
+    [participants]
   );
 
   return (
@@ -87,10 +139,10 @@ export default function MyPlansScreen() {
           onValueChange={setValue}
           className="flex-1 w-full  max-w-[250px]  mx-auto flex-col gap-1.5"
         >
-          <TabsList className="flex-row w-full rounded-full     border border-gray-200 bg-white">
+          <TabsList className="flex-row w-full rounded-full border border-gray-200 bg-white">
             <TabsTrigger
               value="created"
-              className="flex-1 rounded-full shadow-none "
+              className="flex-1 rounded-full shadow-none"
             >
               <Text
                 className={`${
@@ -109,48 +161,75 @@ export default function MyPlansScreen() {
                   value === "joined" ? "text-black" : "text-zinc-400"
                 }`}
               >
-                Participando
+                Unidos
               </Text>
             </TabsTrigger>
           </TabsList>
         </Tabs>
         <Button
-          size="icon"
-          variant="secondary"
           className="rounded-full"
           onPress={() => router.push("/(screens)/plans/create")}
+          variant="secondary"
+          size="icon"
         >
-          <Plus size={20} color="#A020F0" />
+          <Plus color="#A020F0" size={24} />
         </Button>
       </View>
 
+      {/* Content */}
       <Tabs
         value={value}
         onValueChange={setValue}
-        className="flex-1 w-full  max-w-[350px]  mx-auto flex-col gap-1.5"
+        className="flex-1 min-h-screen flex-col gap-1.5 px-4"
       >
         <TabsContent value="created" className="flex-1">
           <FlashList
-            data={[1, 2, 3, 4, 5]}
+            data={userPlans}
             renderItem={renderPlanCard}
-            estimatedItemSize={200}
             showsVerticalScrollIndicator={false}
-            contentContainerClassName="px-4 pb-4"
+            estimatedItemSize={200}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={
+              <View className="flex-1 mt-16 justify-center items-center">
+                <Image
+                  source={{
+                    uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",
+                  }}
+                  style={{ width: 100, height: 100 }}
+                />
+                <Text className="text-center text-muted-foreground mx-auto w-2/3">
+                  {loading
+                    ? "Cargando tus planes..."
+                    : "Aún no has creado ningún plan. ¡Crea uno nuevo!"}
+                </Text>
+              </View>
             }
           />
         </TabsContent>
 
         <TabsContent value="joined" className="flex-1">
           <FlashList
-            data={[6, 7, 8]}
+            data={joinedPlans}
             renderItem={renderPlanCard}
             showsVerticalScrollIndicator={false}
             estimatedItemSize={200}
-            contentContainerClassName="px-4 pb-4"
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={
+              <View className="flex-1 mt-16 justify-center items-center">
+                <Image
+                  source={{
+                    uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",
+                  }}
+                  style={{ width: 100, height: 100 }}
+                />
+                <Text className="text-center text-muted-foreground mx-auto w-2/3">
+                  No te has unido a ningún plan aún
+                </Text>
+              </View>
             }
           />
         </TabsContent>

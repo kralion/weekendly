@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { supabase } from "@/lib/supabase";
-import type { Plan } from "@/types";
+import type { Plan, Profile } from "@/types";
 import { toast } from "sonner-native";
 import { router } from "expo-router";
 
 interface PlansState {
   plans: Plan[];
   userPlans: Plan[];
+  participants: Profile[];
   loading: boolean;
   selectedPlan: Plan | null;
   fetchPlans: () => Promise<void>;
@@ -20,10 +21,12 @@ interface PlansState {
   joinPlan: (planId: string, userId: string) => Promise<void>;
   leavePlan: (planId: string, userId: string) => Promise<void>;
   setSelectedPlan: (plan: Plan | null) => void;
+  getParticipants: (planId: string) => Promise<void>;
 }
 
 export const usePlans = create<PlansState>((set, get) => ({
   plans: [],
+  participants: [],
   userPlans: [],
   loading: false,
   selectedPlan: null,
@@ -47,6 +50,26 @@ export const usePlans = create<PlansState>((set, get) => ({
     }
   },
 
+  getParticipants: async (planId: string) => {
+    try {
+      set({ loading: true });
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .in(
+          "user_id",
+          (
+            await supabase.from("plans").select("participants").eq("id", planId)
+          ).data?.[0]?.participants
+        );
+      if (error) throw error;
+      set({ participants: data });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      set({ loading: false });
+    }
+  },
   fetchUserPlans: async (userId) => {
     try {
       set({ loading: true });

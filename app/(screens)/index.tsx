@@ -3,7 +3,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { Bell, BellDot, MapPin, Search } from "lucide-react-native";
+import { Bell, BellDot, MapPin, Search, X } from "lucide-react-native";
 import * as React from "react";
 import {
   ActivityIndicator,
@@ -15,7 +15,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  withDelay,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
@@ -118,8 +122,12 @@ export default function Index() {
     >
       {/* Custom Header */}
       <Animated.View
-        entering={FadeIn}
-        className="bg-background   flex flex-col gap-8"
+        entering={FadeInDown.springify()
+          .mass(0.5)
+          .damping(8)
+          .stiffness(80)
+          .duration(600)}
+        className="bg-background   flex flex-col gap-4"
       >
         <View className="flex-row items-center justify-between p-4">
           <View>
@@ -172,10 +180,17 @@ export default function Index() {
           <Button
             variant="secondary"
             size="lg"
+            hitSlop={10}
             className="rounded-full  px-4"
-            onPress={() => searchRef.current?.focus()}
+            onPress={() => {
+              searchQuery ? setSearchQuery("") : searchRef.current?.focus();
+            }}
           >
-            <Search color="#A020F0" size={20} />
+            {searchQuery ? (
+              <X color="#A020F0" size={20} />
+            ) : (
+              <Search color="#A020F0" size={20} />
+            )}
           </Button>
         </View>
 
@@ -210,7 +225,7 @@ export default function Index() {
       <FlashList
         estimatedItemSize={Dimensions.get("window").height}
         data={getFilteredPlans()}
-        renderItem={({ item }) => <PlanCard plan={item} />}
+        renderItem={({ item, index }) => <PlanCard plan={item} index={index} />}
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => (item.id ? item.id : item.title)}
         snapToAlignment="start"
@@ -219,7 +234,7 @@ export default function Index() {
         pagingEnabled
         getItemType={(item) => "plan"}
         ListEmptyComponent={
-          <View className="flex flex-col justify-center items-center">
+          <View className="flex-1 mt-16 justify-center items-center">
             <Image
               source={{
                 uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",
@@ -227,9 +242,7 @@ export default function Index() {
               style={{ width: 100, height: 100 }}
             />
             <Text className=" text-center text-muted-foreground mx-auto w-2/3 ">
-              {searchQuery || selectedCategory
-                ? "No se encontraron planes que coincidan con tu búsqueda"
-                : "No hay planes disponibles en este momento"}
+              No se encontraron planes que coincidan con el filtro o búsqueda.
             </Text>
           </View>
         }
@@ -238,31 +251,28 @@ export default function Index() {
   );
 }
 
-function PlanCard({ plan }: { plan: Plan }) {
+function PlanCard({ plan, index }: { plan: Plan; index: number }) {
   return (
-    <Pressable
-      style={{ width: 280, height: 400 }}
-      className="ml-4 bg-white rounded-3xl overflow-hidden relative"
-      onPress={() => router.push("/(screens)/plans")}
+    <Animated.View
+      entering={FadeInDown.delay(index * 100)
+        .springify()
+        .mass(0.5)
+        .damping(8)
+        .stiffness(80)}
     >
-      <Image
-        source={{
-          uri: "https://images.unsplash.com/photo-1513689125086-6c432170e843",
-        }}
-        style={{ width: "100%", height: "100%" }}
-        className="absolute"
-      />
-
-      <Animated.View
-        entering={FadeIn}
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 200,
-        }}
+      <Pressable
+        style={{ width: 280, height: 400 }}
+        className="ml-4 bg-white rounded-3xl overflow-hidden relative"
+        onPress={() => router.push("/(screens)/plans")}
       >
+        <Image
+          source={{
+            uri: plan.image_url,
+          }}
+          style={{ width: "100%", height: "100%" }}
+          className="absolute"
+        />
+
         <LinearGradient
           colors={["transparent", "rgba(0,0,0,0.8)"]}
           style={{
@@ -273,39 +283,38 @@ function PlanCard({ plan }: { plan: Plan }) {
             height: 200,
           }}
         />
-      </Animated.View>
 
-      <View className="absolute bottom-0 left-0 right-0 p-4">
-        <View className="flex-row items-center justify-between mb-2">
-          <Text className="text-2xl font-bold text-white">{plan.title}</Text>
-          <Text className="text-lg font-semibold text-white">27</Text>
-        </View>
-
-        <View className="flex-row items-center mb-2">
-          <MapPin size={16} color="white" className="mr-1" />
-          <Text className="text-white text-sm">{plan.location}</Text>
-        </View>
-
-        <View className="flex-row flex-wrap gap-2 mb-3">
-          {["Música", "Fotografía", "Arte"].map((interest, index) => (
-            <View key={index} className="bg-white/20 px-3 py-1 rounded-full">
-              <Text className="text-white text-sm">{interest}</Text>
-            </View>
-          ))}
-        </View>
-
-        <View className="flex-row items-center justify-between">
-          <Text className="text-white text-sm">
-            {plan.participants.length}/{plan.max_participants} participantes
+        <View className="absolute bottom-0 left-0 right-0 p-4">
+          <Text className="text-2xl font-bold mb-2 text-white">
+            {plan.title}
           </Text>
-          <Text className="text-white text-sm">
-            {new Date(plan.date).toLocaleDateString("es", {
-              weekday: "long",
-              day: "numeric",
-            })}
-          </Text>
+
+          <View className="flex-row items-center mb-2 gap-1">
+            <MapPin size={16} color="white" className="mr-1" />
+            <Text className="text-white text-sm">{plan.location}</Text>
+          </View>
+
+          <View className="flex-row flex-wrap gap-2 mb-3">
+            {plan.categories.map((category, index) => (
+              <View key={index} className="bg-white/20 px-3 py-1 rounded-full">
+                <Text className="text-white text-sm">{category}</Text>
+              </View>
+            ))}
+          </View>
+
+          <View className="flex-row items-center justify-between">
+            <Text className="text-white text-sm">
+              {plan.participants.length}/{plan.max_participants} participantes
+            </Text>
+            <Text className="text-white text-sm">
+              {new Date(plan.date).toLocaleDateString("es", {
+                weekday: "long",
+                day: "numeric",
+              })}
+            </Text>
+          </View>
         </View>
-      </View>
-    </Pressable>
+      </Pressable>
+    </Animated.View>
   );
 }

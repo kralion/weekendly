@@ -8,6 +8,7 @@ import {
   Calendar,
   ChevronLeft,
   MapPin,
+  Pen,
   Share2,
   Users,
 } from "lucide-react-native";
@@ -86,8 +87,6 @@ export default function PlanDetail() {
         title: "Compartir Plan",
         url: deepLink,
       });
-
-      toast.success("Plan compartido exitosamente");
     } catch (error) {
       toast.error("Error al compartir el plan");
       console.error(error);
@@ -104,11 +103,11 @@ export default function PlanDetail() {
 
   return (
     <View className="flex-1 bg-background">
-      <ScrollView>
+      <ScrollView contentContainerClassName="pb-10">
         <View className="relative " style={{ height: 400 }}>
           <Image
             source={{
-              uri: "https://images.unsplash.com/photo-1513689125086-6c432170e843",
+              uri: plan.image_url,
             }}
             style={{ width: "100%", height: "100%" }}
             className="absolute"
@@ -132,6 +131,16 @@ export default function PlanDetail() {
             >
               <ChevronLeft size={24} color="white" />
             </TouchableOpacity>
+            {user?.id === plan.creator_id && (
+              <TouchableOpacity
+                onPress={() =>
+                  router.push(`/(screens)/plans/create?id=${plan.id}`)
+                }
+                className="w-10 h-10 justify-center items-center bg-black/20 rounded-full"
+              >
+                <Pen size={20} color="white" />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
@@ -186,25 +195,35 @@ export default function PlanDetail() {
           <Text className="text-lg font-semibold mb-2">Descripción</Text>
           <Text className="text-gray-600 mb-6">{plan.description}</Text>
         </View>
-        <View className="flex-row items-center gap-1  p-4">
-          <Text className="  text-sm text-muted-foreground">Creado por</Text>
-          <Link href={`/(screens)/plans/profile/${plan.creator_id}`}>
-            <Text className="text-sm font-semibold text-brand">
-              @{plan.profiles?.username}
-            </Text>
-          </Link>
-        </View>
+        {user?.id !== plan.creator_id && (
+          <View className="flex-row items-center gap-1  p-4">
+            <Text className="  text-sm text-muted-foreground">Creado por</Text>
+            <Link href={`/(screens)/plans/profile/${plan.creator_id}`}>
+              <Text className="text-sm font-semibold text-brand">
+                @{plan.profiles?.username}
+              </Text>
+            </Link>
+          </View>
+        )}
+        {user?.id === plan.participants.find((id) => id === user?.id) &&
+          user?.id !== plan.creator_id && (
+            <Button size="lg" className=" rounded-full m-4">
+              <Text className="text-white font-semibold">Salir del Plan</Text>
+            </Button>
+          )}
       </ScrollView>
-      <Button
-        size="lg"
-        className="m-4 mb-8 rounded-full"
-        onPress={async () => {
-          await playFeedback();
-          setShowConfirmed(true);
-        }}
-      >
-        <Text className="text-white font-semibold">Unirme al plan</Text>
-      </Button>
+      {user?.id !== plan.participants.find((id) => id === user?.id) && (
+        <Button
+          size="lg"
+          className="m-4 mb-8 rounded-full"
+          onPress={async () => {
+            await playFeedback();
+            setShowConfirmed(true);
+          }}
+        >
+          <Text className="text-white font-semibold">Unirme al plan</Text>
+        </Button>
+      )}
 
       {showConfirmed && (
         <Confirmed
