@@ -97,10 +97,11 @@ function PlanCard({ plan }: { plan: Plan }) {
         <View className="flex-row items-center mb-4">
           <View className="flex-row -space-x-2 mr-3">
             {plan.participants.map((participant, i) => (
-              <AvatarImage
-                key={i}
-                source={{ uri: `https://i.pravatar.cc/150?img=${i + 1}` }}
-              />
+              <Avatar alt="Participant" key={i}>
+                <AvatarImage
+                  source={{ uri: `https://i.pravatar.cc/150?img=${i + 1}` }}
+                />
+              </Avatar>
             ))}
           </View>
           <Text className="text-white text-base">

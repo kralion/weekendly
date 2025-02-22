@@ -1,15 +1,10 @@
-import { Image } from "expo-image";
-import { View } from "react-native";
-import { Text } from "./ui/text";
-import { Button } from "./ui/button";
 import { BlurView } from "expo-blur";
-import Animated, {
-  FadeIn,
-  FadeInLeft,
-  FadeInRight,
-} from "react-native-reanimated";
+import { Image } from "expo-image";
 import { router } from "expo-router";
-import { Link2Icon } from "lucide-react-native";
+import { View } from "react-native";
+import Animated, { FadeInLeft, FadeInRight } from "react-native-reanimated";
+import { Button } from "./ui/button";
+import { Text } from "./ui/text";
 
 interface ConfirmedProps {
   planTitle: string;

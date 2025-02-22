@@ -54,32 +54,40 @@ export default function PlanDetail() {
     await sound.playAsync();
   };
 
+  const formatDate = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: false,
+    };
+    return date.toLocaleDateString("es-ES", options);
+  };
+
   const handleShare = async () => {
+    if (!plan) return;
+
     try {
       // Create a deep link URL for the plan
-      const deepLink = Linking.createURL(`/plans/plan/${id}`);
+      const deepLink = `exp://192.168.100.6:8081/--/plans/${plan.id}`;
 
-      const message = `¡Únete a mi plan "${plan?.title}"!\n\n📍 ${
-        plan?.location
-      }\n📅 ${plan?.date.toLocaleDateString("es", {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-      })}\n\n${plan?.description}\n\nParticipantes: ${
-        plan?.participants.length
-      }/${plan?.max_participants}\n\nAbrir plan: ${deepLink}`;
+      const message = `¡Únete a mi plan "${plan.title}"!\n\n📍 ${
+        plan.location
+      }\n📅 ${formatDate(new Date(plan.date))}\n\n${
+        plan.description
+      }\n\nParticipantes: ${plan.participants.length}/${
+        plan.max_participants
+      }\n\nAbrir plan: ${deepLink}`;
 
-      const result = await Share.share({
+      await Share.share({
         message,
         title: "Compartir Plan",
-        url: deepLink, // This will be used on iOS when available
+        url: deepLink,
       });
 
-      if (result.action === Share.sharedAction) {
-        if (result.activityType) {
-          toast.success("Plan compartido exitosamente");
-        }
-      }
+      toast.success("Plan compartido exitosamente");
     } catch (error) {
       toast.error("Error al compartir el plan");
       console.error(error);
@@ -180,7 +188,7 @@ export default function PlanDetail() {
         </View>
         <View className="flex-row items-center gap-1  p-4">
           <Text className="  text-sm text-muted-foreground">Creado por</Text>
-          <Link href={`/(screens)/plans/profile/${plan.profiles?.user_id}`}>
+          <Link href={`/(screens)/plans/profile/${plan.creator_id}`}>
             <Text className="text-sm font-semibold text-brand">
               @{plan.profiles?.username}
             </Text>

@@ -21,8 +21,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
-import { useCategories, usePlans } from "~/stores";
+import { usePlans } from "~/stores";
 import { Plan } from "~/types";
+
+const CATEGORIES = [
+  { id: null, name: "Todos" },
+  { id: "1", name: "Música" },
+  { id: "2", name: "Arte" },
+  { id: "3", name: "Deportes" },
+  { id: "4", name: "Cine" },
+  { id: "5", name: "Teatro" },
+  { id: "6", name: "Cultura" },
+  { id: "7", name: "Ocio" },
+  { id: "8", name: "Eventos" },
+];
 
 // Type for category items in the list (includes the "Todos" option)
 type CategoryItem = {
@@ -59,11 +71,6 @@ export default function Index() {
   const searchRef = React.useRef<TextInput>(null);
   const [notifications, setNotifications] = React.useState(2);
   const [refreshing, setRefreshing] = React.useState(false);
-  const {
-    categories,
-    loading: categoriesLoading,
-    fetchCategories,
-  } = useCategories();
   const { user } = useUser();
   const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -74,56 +81,31 @@ export default function Index() {
   const handleRefresh = React.useCallback(() => {
     setRefreshing(true);
     fetchPlans();
-    fetchCategories();
     setRefreshing(false);
   }, []);
 
   React.useEffect(() => {
     fetchPlans();
-    fetchCategories();
   }, []);
 
   // Handle category selection
-  const handleCategoryPress = (categoryId: string | null) => {
-    setSelectedCategory(categoryId === selectedCategory ? null : categoryId);
+  const handleCategoryPress = (categoryName: string | null) => {
+    setSelectedCategory(
+      categoryName === selectedCategory ? null : categoryName
+    );
   };
-
-  // Split categories into two rows
-  const allCategories = React.useMemo(() => {
-    const categoriesWithAll: CategoryItem[] = [
-      { id: null, name: "Todos" },
-      ...categories.map((cat) => ({ id: cat.id, name: cat.name })),
-    ];
-    return {
-      firstRow: categoriesWithAll.slice(0, 4),
-      secondRow:
-        categoriesWithAll.length > 4 ? categoriesWithAll.slice(4, 8) : [],
-    };
-  }, [categories]);
 
   // Filter plans based on category and search
   const getFilteredPlans = () => {
-    if (!plans) return [];
-
     return plans.filter((plan) => {
       const matchesCategory =
-        !selectedCategory || plan.category_id === selectedCategory;
-      const matchesSearch =
-        !searchQuery ||
-        plan.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        plan.location.toLowerCase().includes(searchQuery.toLowerCase());
-
+        !selectedCategory || plan.categories.includes(selectedCategory);
+      const matchesSearch = plan.title
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     });
   };
-
-  if (categoriesLoading) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#A020F0" />
-      </View>
-    );
-  }
 
   return (
     <ScrollView
@@ -204,35 +186,18 @@ export default function Index() {
             {/* First Row */}
             <FlashList
               estimatedItemSize={100}
-              data={allCategories.firstRow}
+              data={CATEGORIES}
               renderItem={({ item }) => (
                 <CategoryButton
                   category={item}
-                  isSelected={selectedCategory === item.id}
-                  onPress={() => handleCategoryPress(item.id)}
+                  isSelected={selectedCategory === item.name}
+                  onPress={() => handleCategoryPress(item.name)}
                 />
               )}
               horizontal
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item) => item.id ?? "all"}
             />
-
-            {allCategories.secondRow.length > 0 && (
-              <FlashList
-                estimatedItemSize={100}
-                data={allCategories.secondRow}
-                renderItem={({ item }) => (
-                  <CategoryButton
-                    category={item}
-                    isSelected={selectedCategory === item.id}
-                    onPress={() => handleCategoryPress(item.id)}
-                  />
-                )}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={(item) => item.id ?? "all"}
-              />
-            )}
           </View>
         </View>
       </Animated.View>
@@ -243,8 +208,8 @@ export default function Index() {
         estimatedItemSize={Dimensions.get("window").height}
         data={getFilteredPlans()}
         renderItem={({ item }) => <PlanCard plan={item} />}
-        keyExtractor={(item) => item.id}
         showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => (item.id ? item.id : item.title)}
         snapToAlignment="start"
         horizontal
         decelerationRate="fast"

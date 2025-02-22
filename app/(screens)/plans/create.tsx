@@ -4,7 +4,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import { Calendar, Camera, X } from "lucide-react-native";
+import { Camera, X } from "lucide-react-native";
 import * as React from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
@@ -39,9 +39,6 @@ const INTERESTS = [
 
 export default function CreatePlan() {
   const [showDatePicker, setShowDatePicker] = React.useState(false);
-  const [selectedInterests, setSelectedInterests] = React.useState<string[]>(
-    []
-  );
   const [isLoading, setIsLoading] = React.useState(false);
   const [image_url, setImage_url] = React.useState<string>(
     "https://images.unsplash.com/photo-1739741432363-8f5fa6ef4e7d?q=80&w=1434&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -59,12 +56,12 @@ export default function CreatePlan() {
     defaultValues: {
       title: "",
       description: "",
-      location: "",
       date: new Date(),
       participants: [user?.id],
       max_participants: 2,
       image_url: "https://images.unsplash.com/photo-1513689125086-6c432170e843",
-      category_id: "",
+      categories: [],
+      status: "activo",
     },
   });
   const pickImage = async () => {
@@ -106,8 +103,6 @@ export default function CreatePlan() {
       toast.error("Debes iniciar sesión para crear un plan");
       return;
     }
-    console.log("CREAR");
-
     try {
       await createPlan({
         title: data.title,
@@ -117,7 +112,7 @@ export default function CreatePlan() {
         date: data.date,
         max_participants: data.max_participants,
         creator_id: user.id,
-        category_id: data.category_id,
+        categories: data.categories,
       });
       toast.success("¡Plan creado con éxito!");
       router.back();
@@ -162,7 +157,7 @@ export default function CreatePlan() {
         </View>
 
         {/* Form Fields */}
-        <View className="flex flex-col gap-6 m-4">
+        <View className="flex flex-col gap-8 p-6">
           <View>
             <Text className="text-base mb-2">Título del Plan</Text>
             <Controller
@@ -225,37 +220,20 @@ export default function CreatePlan() {
               control={control}
               name="date"
               render={({ field: { onChange, value } }) => (
-                <>
-                  <Pressable
-                    onPress={() => setShowDatePicker(true)}
-                    className="flex-row items-center gap-2 border bg-secondary border-border rounded-lg p-3"
-                  >
-                    <Calendar size={20} color="purple" />
-                    <Text>
-                      {new Date(value).toLocaleDateString("es", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </Text>
-                  </Pressable>
-                  {showDatePicker && (
-                    <DateTimePicker
-                      value={new Date(value)}
-                      mode="datetime"
-                      display="default"
-                      onChange={(event, selectedDate) => {
-                        setShowDatePicker(false);
-                        if (selectedDate) {
-                          onChange(selectedDate);
-                        }
-                      }}
-                    />
-                  )}
-                </>
+                <DateTimePicker
+                  value={new Date(value)}
+                  style={{ marginLeft: -18 }}
+                  mode="datetime"
+                  display="default"
+                  minuteInterval={15}
+                  locale="es-ES"
+                  onChange={(event, selectedDate) => {
+                    setShowDatePicker(false);
+                    if (selectedDate) {
+                      onChange(selectedDate);
+                    }
+                  }}
+                />
               )}
             />
             {errors.date && (
@@ -264,61 +242,43 @@ export default function CreatePlan() {
               </Text>
             )}
           </View>
-
           <View>
-            <Text className="text-base mb-2">
-              Número máximo de participantes
-            </Text>
+            <Text className="text-base mb-2">Categorías</Text>
             <Controller
               control={control}
-              name="max_participants"
-              render={({ field: { onChange, value } }) => (
-                <Input
-                  placeholder="2"
-                  onChangeText={(text) => onChange(Number(text))}
-                  value={value.toString()}
-                  keyboardType="numeric"
-                />
-              )}
-            />
-            {errors.max_participants?.message && (
-              <Text className="text-red-500">
-                {errors.max_participants?.message}
-              </Text>
-            )}
-          </View>
-          <View>
-            <Text className="text-base mb-2">Categoría</Text>
-            <Controller
-              control={control}
-              name="category_id"
+              name="categories"
               render={({ field: { onChange, value } }) => (
                 <View className="flex flex-row gap-2 flex-wrap">
                   {INTERESTS.map((item) => (
                     <Pressable
                       key={item}
-                      onPress={() => onChange(value === item ? "" : item)}
+                      onPress={() => {
+                        const newValue = value.includes(item)
+                          ? value.filter((v) => v !== item)
+                          : [...value, item];
+                        onChange(newValue);
+                      }}
                       className={`rounded-md px-6 py-2 ${
-                        value === item ? "bg-primary" : "bg-zinc-100"
+                        value.includes(item) ? "bg-primary" : "bg-zinc-100"
                       }`}
                     >
                       <Text
                         className={`
-                      ${value === item ? "text-white" : "text-black"}
-                      `}
+                        ${value.includes(item) ? "text-white" : "text-black"}
+                        `}
                       >
                         {item}
                       </Text>
                     </Pressable>
                   ))}
-                  {errors.category_id?.message && (
-                    <Text className="text-red-500">
-                      {errors.category_id?.message}
-                    </Text>
-                  )}
                 </View>
               )}
             />
+            {errors.categories?.message && (
+              <Text className="text-xs text-red-500">
+                {errors.categories?.message}
+              </Text>
+            )}
           </View>
         </View>
 

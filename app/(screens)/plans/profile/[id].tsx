@@ -98,29 +98,6 @@ export default function ProfileScreen() {
             {profile?.bio || "No hay biografía aún"}
           </Text>
 
-          {/* Profile Details Section */}
-          <View className="mt-6">
-            <Text className="text-lg font-semibold mb-2">Detalles</Text>
-            <View className="bg-white rounded-lg shadow-sm">
-              <View className="flex-row justify-between items-center p-4">
-                <Text className="font-medium">Rango de edad</Text>
-                <Text>{profile?.age_range}</Text>
-              </View>
-              <Separator />
-
-              <View className="flex-row justify-between items-center p-4">
-                <Text className="font-medium">Día preferido</Text>
-                <Text>{profile?.day_preferred}</Text>
-              </View>
-              <Separator />
-
-              <View className="flex-row justify-between items-center p-4">
-                <Text className="font-medium">Ubicación</Text>
-                <Text>{profile?.location || "No especificada"}</Text>
-              </View>
-            </View>
-          </View>
-
           {/* Hobbies Section */}
           <View className="mt-6">
             <Text className="text-lg font-semibold mb-2">Pasatiempos</Text>

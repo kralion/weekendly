@@ -1,34 +1,32 @@
 import { useUser } from "@clerk/clerk-expo";
-import { router } from "expo-router";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as ImagePicker from "expo-image-picker";
+import { router } from "expo-router";
+import { Camera, X } from "lucide-react-native";
 import React from "react";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Image,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
-  TouchableOpacity,
   View,
 } from "react-native";
-import { Button } from "~/components/ui/button";
-import { MultiSelect } from "~/components/ui/multi-select";
-import { Text } from "~/components/ui/text";
-import { Textarea } from "~/components/ui/textarea";
-import { useProfiles } from "~/stores";
-import { createProfileSchema, type CreateProfileSchema } from "~/schemas";
-import { Input } from "~/components/ui/input";
-import { Camera, ChevronLeft, X } from "lucide-react-native";
-import * as ImagePicker from "expo-image-picker";
-import { Gender } from "~/types";
-import { Select, SelectItem } from "~/components/ui/select";
 import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { MultiSelect } from "~/components/ui/multi-select";
+import { Select, SelectItem } from "~/components/ui/select";
+import { Text } from "~/components/ui/text";
+import { Textarea } from "~/components/ui/textarea";
+import { ProfileSchema, profileSchema } from "~/schemas";
+import { useProfiles } from "~/stores";
+import { Gender } from "~/types";
 
 const HOBBIES_OPTIONS = [
   "Deportes",
@@ -81,8 +79,8 @@ export default function EditProfileScreen() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<CreateProfileSchema>({
-    resolver: zodResolver(createProfileSchema),
+  } = useForm<ProfileSchema>({
+    resolver: zodResolver(profileSchema),
     defaultValues: {
       user_id: user?.id || "",
       username: currentProfile?.username || user?.fullName || "",
@@ -128,27 +126,28 @@ export default function EditProfileScreen() {
       }
     }
   };
-  const onSubmit = async (data: CreateProfileSchema) => {
-    if (!user) return;
+  const onSubmit = async (data: ProfileSchema) => {
+    console.log(data);
+    // if (!user) return;
 
-    try {
-      if (currentProfile) {
-        await updateProfile(user.id, {
-          ...data,
-          image_url,
-          gender: data.gender[0] as Gender,
-        });
-      } else {
-        await createProfile({
-          ...data,
-          image_url,
-          gender: data.gender[0] as Gender,
-        });
-      }
-      router.back();
-    } catch (error) {
-      console.error("Error saving profile:", error);
-    }
+    // try {
+    //   if (currentProfile) {
+    //     await updateProfile(user.id, {
+    //       ...data,
+    //       image_url,
+    //       gender: data.gender[0] as Gender,
+    //     });
+    //   } else {
+    //     await createProfile({
+    //       ...data,
+    //       image_url,
+    //       gender: data.gender[0] as Gender,
+    //     });
+    //   }
+    //   router.back();
+    // } catch (error) {
+    //   console.error("Error saving profile:", error);
+    // }
   };
 
   return (

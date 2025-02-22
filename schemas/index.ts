@@ -35,16 +35,15 @@ export const profileSchema = z.object({
 
 // Plan schema
 export const planSchema = z.object({
-  id: idSchema,
+  id: idSchema.optional(),
   creator_id: z.string().min(1, "ID del creador es requerido"),
-  category_id: z.string().min(1, "Categoría es requerida"),
+  categories: z.array(z.string()).min(1, "Selecciona al menos una categoría"),
   title: z.string().min(3, "Título debe tener al menos 3 caracteres"),
   description: z
     .string()
     .min(10, "Descripción debe tener al menos 10 caracteres"),
   location: z.string().min(1, "Ubicación es requerida"),
   date: z.date().min(new Date(), "Fecha debe ser mayor a hoy"),
-
   image_url: z.string().url("Debe ser una URL válida"),
   max_participants: z
     .number()
@@ -54,18 +53,11 @@ export const planSchema = z.object({
     errorMap: () => ({ message: "Estado no válido" }),
   }),
   participants: z.array(z.string()),
-  created_at: timestampSchema,
-  updated_at: timestampSchema,
 });
 
 // Form schemas (for creating/updating)
 export const createCategorySchema = categorySchema.omit({
   id: true,
-  created_at: true,
-});
-
-export const createProfileSchema = profileSchema.omit({
-  created_at: true,
 });
 
 export const createPlanSchema = planSchema.omit({
@@ -73,8 +65,6 @@ export const createPlanSchema = planSchema.omit({
   creator_id: true,
   status: true,
   participants: true,
-  created_at: true,
-  updated_at: true,
 });
 
 export const updatePlanSchema = createPlanSchema.partial();
@@ -84,6 +74,5 @@ export type CategorySchema = z.infer<typeof categorySchema>;
 export type ProfileSchema = z.infer<typeof profileSchema>;
 export type PlanSchema = z.infer<typeof planSchema>;
 export type CreateCategorySchema = z.infer<typeof createCategorySchema>;
-export type CreateProfileSchema = z.infer<typeof createProfileSchema>;
 export type CreatePlanSchema = z.infer<typeof createPlanSchema>;
 export type UpdatePlanSchema = z.infer<typeof updatePlanSchema>;

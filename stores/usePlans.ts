@@ -12,10 +12,7 @@ interface PlansState {
   fetchUserPlans: (userId: string) => Promise<void>;
   fetchPlanById: (id: string) => Promise<void>;
   createPlan: (
-    plan: Omit<
-      Plan,
-      "id" | "status" | "participants" | "created_at" | "updated_at"
-    >
+    plan: Omit<Plan, "id" | "status" | "participants">
   ) => Promise<void>;
   updatePlan: (id: string, plan: Partial<Plan>) => Promise<void>;
   deletePlan: (id: string) => Promise<void>;

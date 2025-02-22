@@ -28,18 +28,16 @@ export interface Profile {
 }
 
 export interface Plan {
-  id: string;
+  id?: string;
   creator_id: string;
-  category_id: string;
+  categories: string[];
   title: string;
   description: string;
-  image_url: string;
-  location: string;
   profiles?: Profile;
+  location: string;
   date: Date;
+  image_url: string;
   max_participants: number;
   status: PlanStatus;
   participants: string[];
-  created_at: string;
-  updated_at: string;
 }
