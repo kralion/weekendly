@@ -39,7 +39,9 @@ export const planSchema = z.object({
     .string()
     .min(10, "Descripción debe tener al menos 10 caracteres"),
   location: z.string().min(1, "Ubicación es requerida"),
-  date: z.string().min(1, "Fecha es requerida"),
+  date: z.date().min(new Date(), "Fecha debe ser mayor a hoy"),
+
+  image_url: z.string().url("Debe ser una URL válida"),
   max_participants: z
     .number()
     .min(2, "Mínimo 2 participantes")

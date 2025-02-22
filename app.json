@@ -24,7 +24,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.weekendly-app.vercel.app",
+      // "package": "com.weekendly-app.vercel.app",
       "intentFilters": [
         {
           "action": "VIEW",
@@ -49,6 +49,12 @@
       "expo-router",
       "expo-secure-store",
       "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Weekendly tendra acceso a tus fotos para poder crear tus planes."
+        }
+      ],
       [
         "@rnmapbox/maps",
         {

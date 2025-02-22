@@ -35,7 +35,7 @@ export const usePlans = create<PlansState>((set, get) => ({
       set({ loading: true });
       const { data, error } = await supabase
         .from("plans")
-        .select("*")
+        .select("*, profiles:creator_id(*)")
         .eq("status", "activo")
         .order("date", { ascending: true });
 

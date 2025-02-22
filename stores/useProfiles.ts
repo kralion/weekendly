@@ -5,10 +5,12 @@ import { toast } from "sonner-native";
 
 interface ProfilesState {
   profiles: Profile[];
+  profile: Profile | null;
   currentProfile: Profile | null;
   loading: boolean;
   fetchProfiles: () => Promise<void>;
   fetchProfileById: (userId: string) => Promise<void>;
+  fetchSpecificProfileById: (userId: string) => Promise<void>;
   createProfile: (profile: Omit<Profile, "created_at">) => Promise<void>;
   updateProfile: (userId: string, profile: Partial<Profile>) => Promise<void>;
   deleteProfile: (userId: string) => Promise<void>;
@@ -18,6 +20,7 @@ export const useProfiles = create<ProfilesState>((set, get) => ({
   profiles: [],
   currentProfile: null,
   loading: false,
+  profile: null,
 
   fetchProfiles: async () => {
     try {
@@ -48,6 +51,24 @@ export const useProfiles = create<ProfilesState>((set, get) => ({
 
       if (error) throw error;
       set({ currentProfile: data });
+    } catch (error) {
+      toast.error("Error al cargar perfil");
+      console.error(error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+  fetchSpecificProfileById: async (userId) => {
+    try {
+      set({ loading: true });
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", userId)
+        .single();
+
+      if (error) throw error;
+      set({ profile: data });
     } catch (error) {
       toast.error("Error al cargar perfil");
       console.error(error);

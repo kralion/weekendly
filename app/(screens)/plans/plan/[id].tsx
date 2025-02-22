@@ -1,8 +1,8 @@
-import { useUser } from "@clerk/clerk-expo";
+import { useAuth, useUser } from "@clerk/clerk-expo";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
-import { router, useLocalSearchParams } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import {
   Calendar,
   ChevronLeft,
@@ -14,6 +14,7 @@ import * as React from "react";
 import { ScrollView, Share, TouchableOpacity, View } from "react-native";
 import { toast } from "sonner-native";
 import { Confirmed } from "~/components/confirmed";
+import { Avatar } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { usePlans } from "~/stores";
@@ -23,6 +24,7 @@ export default function PlanDetail() {
   const { id } = useLocalSearchParams();
   const { user } = useUser();
   const { plans } = usePlans();
+
   const plan = plans.find((p) => p.id === id);
   const [showConfirmed, setShowConfirmed] = React.useState(false);
 
@@ -33,7 +35,7 @@ export default function PlanDetail() {
 
       const message = `¡Únete a mi plan "${plan?.title}"!\n\n📍 ${
         plan?.location
-      }\n📅 ${new Date(plan?.date as string).toLocaleDateString("es", {
+      }\n📅 ${plan?.date.toLocaleDateString("es", {
         weekday: "long",
         month: "long",
         day: "numeric",
@@ -100,7 +102,7 @@ export default function PlanDetail() {
         </View>
 
         <View className="px-4 mt-4">
-          <View className="flex flex-row justify-between items-center">
+          <View className="flex flex-row justify-between items-center ">
             <Text className="text-3xl font-bold mb-2">{plan.title}</Text>
             <Button
               size="icon"
@@ -112,8 +114,8 @@ export default function PlanDetail() {
             </Button>
           </View>
 
-          <View className="flex-row items-center mb-4">
-            <MapPin size={16} className="mr-1" />
+          <View className="flex-row items-center mb-4 gap-1">
+            <MapPin size={16} className="mr-1" color="#A020F0" />
             <Text className="text-sm">{plan.location}</Text>
           </View>
 
@@ -130,7 +132,7 @@ export default function PlanDetail() {
 
           <View className="flex-row justify-between mb-6 items-center">
             <View className="flex-row items-center gap-2">
-              <Calendar size={16} className="mr-2" />
+              <Calendar size={16} className="mr-2" color="#A020F0" />
               <Text>
                 {new Date(plan.date).toLocaleDateString("es", {
                   weekday: "long",
@@ -140,7 +142,7 @@ export default function PlanDetail() {
               </Text>
             </View>
             <View className="flex-row items-center gap-2">
-              <Users size={16} className="mr-2" />
+              <Users size={16} className="mr-2" color="#A020F0" />
               <Text>
                 {plan.participants.length}/{plan.max_participants}
               </Text>
@@ -149,6 +151,14 @@ export default function PlanDetail() {
 
           <Text className="text-lg font-semibold mb-2">Descripción</Text>
           <Text className="text-gray-600 mb-6">{plan.description}</Text>
+        </View>
+        <View className="flex-row items-center gap-1  p-4">
+          <Text className="  text-sm text-muted-foreground">Creado por</Text>
+          <Link href={`/(screens)/plans/profile/${plan.profiles?.user_id}`}>
+            <Text className="text-sm font-semibold text-brand">
+              @{plan.profiles?.username}
+            </Text>
+          </Link>
         </View>
       </ScrollView>
       <Button

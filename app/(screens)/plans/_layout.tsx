@@ -24,6 +24,13 @@ export default function TabLayout() {
           title: "Plan",
         }}
       />
+      <Stack.Screen
+        name="profile/[id]"
+        options={{
+          title: "Perfil",
+          presentation: "modal",
+        }}
+      />
     </Stack>
   );
 }

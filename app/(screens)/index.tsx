@@ -11,6 +11,7 @@ import {
   Pressable,
   RefreshControl,
   ScrollView,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -55,6 +56,7 @@ function CategoryButton({
 
 export default function Index() {
   const { plans, loading: plansLoading, fetchPlans } = usePlans();
+  const searchRef = React.useRef<TextInput>(null);
   const [notifications, setNotifications] = React.useState(2);
   const [refreshing, setRefreshing] = React.useState(false);
   const {
@@ -118,7 +120,7 @@ export default function Index() {
   if (categoriesLoading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#A020F0" />
       </View>
     );
   }
@@ -159,7 +161,9 @@ export default function Index() {
                 )}
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push("/(screens)/profile")}>
+            <TouchableOpacity
+              onPress={() => router.push("/(screens)/my-profile")}
+            >
               <Avatar alt="profile">
                 <AvatarImage source={{ uri: user?.imageUrl }} />
                 <AvatarFallback>
@@ -174,6 +178,7 @@ export default function Index() {
         <View className="flex-row items-center justify-between">
           <Input
             placeholder="Buscar planes..."
+            ref={searchRef}
             value={searchQuery}
             onChangeText={setSearchQuery}
             style={{
@@ -187,7 +192,7 @@ export default function Index() {
             variant="secondary"
             size="lg"
             className="rounded-full  px-4"
-            onPress={() => router.push("/(screens)/plans/create")}
+            onPress={() => searchRef.current?.focus()}
           >
             <Search color="#A020F0" size={20} />
           </Button>

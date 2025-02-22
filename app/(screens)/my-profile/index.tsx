@@ -43,7 +43,7 @@ export default function ProfileScreen() {
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#A020F0" />
       </View>
     );
   }
@@ -67,7 +67,7 @@ export default function ProfileScreen() {
       </View>
       <View className="p-4 flex-row mt-10 justify-between items-center absolute top-0 right-0 z-10">
         <TouchableOpacity
-          onPress={() => router.push(`/(screens)/profile/my-plans`)}
+          onPress={() => router.push(`/(screens)/my-profile/my-plans`)}
           className="w-28 h-10 justify-center items-center bg-black/20 rounded-full"
         >
           <Text className="text-white">Mis Planes </Text>
@@ -107,7 +107,7 @@ export default function ProfileScreen() {
             className="rounded-full absolute bottom-3 right-0"
             variant="secondary"
             size="icon"
-            onPress={() => router.push("/(screens)/profile/edit")}
+            onPress={() => router.push("/(screens)/my-profile/edit")}
           >
             <Pen color="#A020F0" size={18} />
           </Button>

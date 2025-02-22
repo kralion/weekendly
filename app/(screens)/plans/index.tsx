@@ -30,7 +30,7 @@ function PlanCard({ plan }: { plan: Plan }) {
   const { height: SCREEN_HEIGHT } = Dimensions.get("window");
   const [liked, setLiked] = React.useState(false);
 
-  const formatDate = (date: string) => {
+  const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString("es", {
       weekday: "long",
       day: "numeric",
@@ -154,7 +154,7 @@ export default function Plans() {
   if (plansLoading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#A020F0" />
       </View>
     );
   }

@@ -24,8 +24,10 @@ export interface Plan {
   category_id: string;
   title: string;
   description: string;
+  image_url: string;
   location: string;
-  date: string;
+  profiles?: Profile;
+  date: Date;
   max_participants: number;
   status: PlanStatus;
   participants: string[];
