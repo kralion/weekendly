@@ -30,7 +30,7 @@ import { usePlans } from "~/stores";
 export default function PlanDetail() {
   const { id } = useLocalSearchParams();
   const { user } = useUser();
-  const { plans } = usePlans();
+  const { plans, joinPlan, leavePlan } = usePlans();
 
   const plan = plans.find((p) => p.id === id);
   const [showConfirmed, setShowConfirmed] = React.useState(false);
@@ -54,6 +54,20 @@ export default function PlanDetail() {
     setSound(sound);
     await sound.playAsync();
   };
+
+  async function handleJoinPlan() {
+    if (!plan || !user) return;
+    await playFeedback();
+    joinPlan(plan.id as string, user?.id);
+    setShowConfirmed(true);
+  }
+
+  async function handleLeavePlan() {
+    if (!plan || !user) return;
+    await playFeedback();
+    leavePlan(plan.id as string, user?.id);
+    setShowConfirmed(true);
+  }
 
   const formatDate = (date: Date) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -212,18 +226,26 @@ export default function PlanDetail() {
             </Button>
           )}
       </ScrollView>
-      {user?.id !== plan.participants.find((id) => id === user?.id) && (
-        <Button
-          size="lg"
-          className="m-4 mb-8 rounded-full"
-          onPress={async () => {
-            await playFeedback();
-            setShowConfirmed(true);
-          }}
-        >
-          <Text className="text-white font-semibold">Unirme al plan</Text>
-        </Button>
-      )}
+      {user?.id !== plan.participants.find((id) => id === user?.id) &&
+        user?.id !== plan.creator_id && (
+          <Button
+            size="lg"
+            className="m-4 mb-8 rounded-full"
+            onPress={handleJoinPlan}
+          >
+            <Text className="text-white font-semibold">Unirme al plan</Text>
+          </Button>
+        )}
+      {user?.id === plan.participants.find((id) => id === user?.id) &&
+        user?.id !== plan.creator_id && (
+          <Button
+            size="lg"
+            className="m-4 mb-8 rounded-full"
+            onPress={handleLeavePlan}
+          >
+            <Text className="text-white font-semibold">Salir del plan</Text>
+          </Button>
+        )}
 
       {showConfirmed && (
         <Confirmed
