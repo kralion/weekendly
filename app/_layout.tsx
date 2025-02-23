@@ -1,6 +1,7 @@
 import "~/global.css";
 
 import { ClerkLoaded, ClerkProvider, useAuth } from "@clerk/clerk-expo";
+import NetInfo from "@react-native-community/netinfo";
 import {
   DMSans_400Regular,
   DMSans_700Bold,
@@ -15,7 +16,7 @@ import {
 } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { PortalHost } from "@rn-primitives/portal";
-import { router, Slot, SplashScreen } from "expo-router";
+import { router, Slot, SplashScreen, useSegments } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
@@ -23,7 +24,7 @@ import { Platform } from "react-native";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
-import { Toaster } from "sonner-native";
+import { toast, Toaster } from "sonner-native";
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -132,11 +133,25 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const { isLoaded, isSignedIn } = useAuth();
+
+  const segments = useSegments();
   React.useEffect(() => {
-    if (isLoaded && !isSignedIn) {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      if (!state.isConnected) {
+        toast.error("No tienes conexión a internet", {
+          description: "Verifica que tengas conexión a internet",
+        });
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+  React.useEffect(() => {
+    if (!isSignedIn && segments[0] === "(screens)") {
       router.push("/(auth)/onboarding/step-1");
+    } else if (isSignedIn && segments[0] === "(auth)") {
+      router.push("/(screens)");
     }
-  }, [isLoaded]);
+  }, [isLoaded, isSignedIn, segments]);
 
   return <Slot />;
 }
