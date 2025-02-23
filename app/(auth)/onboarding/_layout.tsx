@@ -12,7 +12,6 @@ export default function Layout() {
       <Stack.Screen name="step-1" {...OPTION_CONFIG} />
       <Stack.Screen name="step-2" {...OPTION_CONFIG} />
       <Stack.Screen name="step-3" {...OPTION_CONFIG} />
-      <Stack.Screen name="sign-in" />
     </Stack>
   );
 }

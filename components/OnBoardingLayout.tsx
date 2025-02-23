@@ -23,7 +23,7 @@ type ValidPaths =
   | "/onboarding/step-1"
   | "/onboarding/step-2"
   | "/onboarding/step-3"
-  | "/onboarding/welcome";
+  | "/onboarding/sign-in";
 interface OnBoardingLayoutProps {
   children: React.ReactNode;
   bgColor?: string;
@@ -48,7 +48,7 @@ export const OnBoardingLayout: React.FC<OnBoardingLayoutProps> = ({
   nextBgColor,
   bgColor,
   nextTextColor,
-  nextText = "NEXT",
+  nextText = "SIGUIENTE",
   nextHref,
   complete,
 }) => {
@@ -188,7 +188,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20,
     transformOrigin: "140% 60%",
     maxWidth: 400,
     width: "100%",
@@ -202,7 +201,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: "50%",
     paddingBottom: 10,
-    paddingRight: 10,
+    paddingRight: 20,
     transformOrigin: "bottom right",
   },
   nextBtn: {
@@ -213,7 +212,7 @@ const styles = StyleSheet.create({
   },
   nextText: {
     paddingRight: 6,
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "600",
     fontFamily: "Roboto_700Bold",
   },

@@ -7,8 +7,8 @@ const tintColorLight = "#0a7ea4";
 const tintColorDark = "#fff";
 
 const DEFAULTS = {
-  primary1: "#8AADBC",
-  primary2: "#EBD9BF",
+  primary1: "#A020F0",
+  primary2: "#0000FF",
 };
 
 export const Colors = {

@@ -10,8 +10,10 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { OnBoardingLayout } from "~/components/OnBoardingLayout";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
+import { useThemeColor } from "~/hooks/useThemeColor";
 
 export const useWarmUpBrowser = () => {
   React.useEffect(() => {
@@ -30,50 +32,53 @@ export const useWarmUpBrowser = () => {
 WebBrowser.maybeCompleteAuthSession();
 
 export default function SignInScreen() {
+  const bg = useThemeColor({}, "background");
   return (
-    <ImageBackground
-      source={require("../../../assets/images/mesh-gradient.png")}
-      style={styles.backgroundImage}
-    >
-      <ScrollView>
-        <View
-          style={styles.container}
-          className="flex flex-col gap-20 h-screen-safe justify-center px-4"
-        >
-          <View className="flex flex-col items-center gap-3">
-            <Image
-              style={{
-                width: 125,
-                height: 125,
-              }}
-              source={require("../../../assets/logo.png")}
-            />
-            <Text className="text-4xl font-bold">Bienvenido</Text>
-            <Text className="text-center px-14">
-              Inicia sesión con una de tus cuentas para empezar a usar{" "}
-              <Text className=" font-semibold">Weekendly</Text>
-            </Text>
-          </View>
-          <View className="flex flex-col gap-4 justify-center align-middle w-full">
-            <SignInWithOAuthGoogle />
-            <SignInWithOAuthFacebook />
-            <SignInWithOAuthTiktok />
-          </View>
-          <View>
-            <Text className="text-center">
-              Al inciar sesión aceptas nuestros{" "}
-              <Text className="text-primary font-semibold underline">
-                Términos y condiciones
-              </Text>{" "}
-              y nuestra{" "}
-              <Text className="text-primary font-semibold underline">
-                Política de Privacidad
+    <OnBoardingLayout nextBgColor={bg} bgColor={bg} complete>
+      <ImageBackground
+        source={require("../../../assets/images/mesh-gradient.png")}
+        style={styles.backgroundImage}
+      >
+        <ScrollView>
+          <View
+            style={styles.container}
+            className="flex flex-col gap-20 h-screen-safe justify-center px-4"
+          >
+            <View className="flex flex-col items-center gap-3">
+              <Image
+                style={{
+                  width: 125,
+                  height: 125,
+                }}
+                source={require("../../../assets/logo.png")}
+              />
+              <Text className="text-4xl font-bold">Bienvenido</Text>
+              <Text className="text-center px-14">
+                Inicia sesión con una de tus cuentas para empezar a usar{" "}
+                <Text className=" font-semibold">Weekendly</Text>
               </Text>
-            </Text>
+            </View>
+            <View className="flex flex-col gap-4 justify-center align-middle w-full">
+              <SignInWithOAuthGoogle />
+              <SignInWithOAuthFacebook />
+              <SignInWithOAuthTiktok />
+            </View>
+            <View>
+              <Text className="text-center">
+                Al inciar sesión aceptas nuestros{" "}
+                <Text className="text-primary font-semibold underline">
+                  Términos y condiciones
+                </Text>{" "}
+                y nuestra{" "}
+                <Text className="text-primary font-semibold underline">
+                  Política de Privacidad
+                </Text>
+              </Text>
+            </View>
           </View>
-        </View>
-      </ScrollView>
-    </ImageBackground>
+        </ScrollView>
+      </ImageBackground>
+    </OnBoardingLayout>
   );
 }
 
