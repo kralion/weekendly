@@ -25,7 +25,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
-import { usePlans } from "~/stores";
+import { usePlans, useProfiles } from "~/stores";
 import { Plan } from "~/types";
 
 const CATEGORIES = [
@@ -75,8 +75,8 @@ export default function Index() {
   const searchRef = React.useRef<TextInput>(null);
   const [notifications, setNotifications] = React.useState(2);
   const [refreshing, setRefreshing] = React.useState(false);
+  const { currentProfile } = useProfiles();
   const { user } = useUser();
-  const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedCategory, setSelectedCategory] = React.useState<string | null>(
     null
@@ -98,6 +98,7 @@ export default function Index() {
 
   const getFilteredPlans = () => {
     return plans.filter((plan) => {
+      // First check if plan matches selected category and search query
       const selectedCategoryName = selectedCategory
         ? CATEGORIES.find((cat) => cat.id === selectedCategory)?.name
         : null;
@@ -107,7 +108,30 @@ export default function Index() {
       const matchesSearch = plan.title
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
+
+      // If we have a specific category selected or search query, prioritize those filters
+      if (selectedCategory || searchQuery) {
+        return matchesCategory && matchesSearch;
+      }
+
+      // Otherwise, show plans that match user's hobbies
+      const matchesUserHobbies =
+        currentProfile?.hobbies?.some((hobby) =>
+          plan.categories.includes(hobby)
+        ) ?? false;
+
+      return matchesUserHobbies;
+    });
+  };
+
+  const getRelevantPlans = () => {
+    return plans.filter((plan) => {
+      const matchesUserHobbies =
+        currentProfile?.hobbies?.some((hobby) =>
+          plan.categories.includes(hobby)
+        ) ?? false;
+
+      return matchesUserHobbies;
     });
   };
 

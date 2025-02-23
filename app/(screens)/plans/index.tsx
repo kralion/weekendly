@@ -1,31 +1,21 @@
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { Calendar, ChevronLeft, MapPin } from "lucide-react-native";
 import * as React from "react";
 import {
-  Pressable,
-  View,
-  Dimensions,
-  TouchableOpacity,
   ActivityIndicator,
+  Dimensions,
+  Pressable,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { Text } from "~/components/ui/text";
-import {
-  MapPin,
-  Calendar,
-  Users,
-  DollarSign,
-  Heart,
-  Share2,
-  MessageCircle,
-  ChevronLeft,
-} from "lucide-react-native";
-import { usePlans } from "~/stores";
-import type { Plan } from "~/types";
-import { LinearGradient } from "expo-linear-gradient";
 import { Avatar, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
-import { useUser } from "@clerk/clerk-expo";
+import { Text } from "~/components/ui/text";
+import { usePlans } from "~/stores";
+import type { Plan } from "~/types";
 
 function PlanCard({ plan }: { plan: Plan }) {
   const { height: SCREEN_HEIGHT } = Dimensions.get("window");
