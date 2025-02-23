@@ -1,6 +1,5 @@
 import { useOAuth } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
-import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import React from "react";
 import {
@@ -33,7 +32,7 @@ WebBrowser.maybeCompleteAuthSession();
 export default function SignInScreen() {
   return (
     <ImageBackground
-      source={require("../../assets/images/mesh-gradient.png")}
+      source={require("../../../assets/images/mesh-gradient.png")}
       style={styles.backgroundImage}
     >
       <ScrollView>
@@ -47,7 +46,7 @@ export default function SignInScreen() {
                 width: 125,
                 height: 125,
               }}
-              source={require("../../assets/logo.png")}
+              source={require("../../../assets/logo.png")}
             />
             <Text className="text-4xl font-bold">Bienvenido</Text>
             <Text className="text-center px-14">

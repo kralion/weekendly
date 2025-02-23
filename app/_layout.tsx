@@ -134,7 +134,7 @@ function RootLayoutNav() {
   const { isLoaded, isSignedIn } = useAuth();
   React.useEffect(() => {
     if (isLoaded && !isSignedIn) {
-      router.push("/(auth)/sign-in");
+      router.push("/(auth)/onboarding/step-1");
     }
   }, [isLoaded]);
 
