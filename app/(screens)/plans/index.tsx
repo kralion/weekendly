@@ -9,6 +9,7 @@ import {
   Dimensions,
   Pressable,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { Avatar, AvatarImage } from "~/components/ui/avatar";
@@ -18,8 +19,7 @@ import { usePlans } from "~/stores";
 import type { Plan } from "~/types";
 
 function PlanCard({ plan }: { plan: Plan }) {
-  const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-
+  const { height: SCREEN_HEIGHT } = useWindowDimensions();
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString("es", {
       weekday: "long",
@@ -123,24 +123,12 @@ function PlanCard({ plan }: { plan: Plan }) {
 }
 
 export default function Plans() {
-  const { plans, loading: plansLoading, fetchPlans } = usePlans();
-  const [page, setPage] = React.useState(1);
-  const ITEMS_PER_PAGE = 10;
-  const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+  const { filteredPlans, loading: plansLoading, fetchPlans } = usePlans();
+  const { height: SCREEN_HEIGHT } = useWindowDimensions();
 
   React.useEffect(() => {
     fetchPlans();
   }, []);
-
-  const sortedPlans = React.useMemo(() => {
-    return [...plans].sort((a, b) => a.title.localeCompare(b.title));
-  }, [plans]);
-
-  const handleLoadMore = React.useCallback(() => {
-    if (page * ITEMS_PER_PAGE < sortedPlans.length) {
-      setPage((prev) => prev + 1);
-    }
-  }, [page, sortedPlans.length]);
 
   if (plansLoading) {
     return (
@@ -154,10 +142,8 @@ export default function Plans() {
     <View style={{ flex: 1 }} className="bg-background">
       <FlashList
         estimatedItemSize={SCREEN_HEIGHT}
-        data={sortedPlans.slice(0, page * ITEMS_PER_PAGE)}
+        data={filteredPlans}
         renderItem={({ item }) => <PlanCard plan={item} />}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
         showsVerticalScrollIndicator={false}
         snapToAlignment="start"
         decelerationRate="fast"

@@ -1,26 +1,21 @@
 import { useUser } from "@clerk/clerk-expo";
-import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { Bell, BellDot, MapPin, Search, X } from "lucide-react-native";
 import * as React from "react";
 import {
-  ActivityIndicator,
   Dimensions,
   Pressable,
   RefreshControl,
   ScrollView,
   TextInput,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
-import Animated, {
-  FadeIn,
-  FadeInDown,
-  withDelay,
-} from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Animated, { FadeInDown } from "react-native-reanimated";
+import { PlanCard } from "~/components/PlanCard";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -29,7 +24,6 @@ import { usePlans, useProfiles } from "~/stores";
 import { Plan } from "~/types";
 
 const CATEGORIES = [
-  { id: null, name: "Todos" },
   { id: "1", name: "Música" },
   { id: "2", name: "Arte" },
   { id: "3", name: "Deportes" },
@@ -71,16 +65,20 @@ function CategoryButton({
 }
 
 export default function Index() {
-  const { plans, loading: plansLoading, fetchPlans } = usePlans();
+  const {
+    fetchPlans,
+    filteredPlans,
+    selectedCategory,
+    searchQuery,
+    setSearchQuery,
+    setFilteredPlans,
+    setSelectedCategory,
+    plans,
+  } = usePlans();
   const searchRef = React.useRef<TextInput>(null);
   const [notifications, setNotifications] = React.useState(2);
   const [refreshing, setRefreshing] = React.useState(false);
-  const { currentProfile } = useProfiles();
   const { user } = useUser();
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [selectedCategory, setSelectedCategory] = React.useState<string | null>(
-    null
-  );
 
   const handleRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -88,52 +86,73 @@ export default function Index() {
     setRefreshing(false);
   }, []);
 
+  // Initial setup
   React.useEffect(() => {
-    fetchPlans();
+    const init = async () => {
+      await fetchPlans();
+      setSelectedCategory("1"); // Set default category to Música
+    };
+    init();
   }, []);
 
-  const handleCategoryPress = (categoryId: string | null) => {
-    setSelectedCategory(categoryId);
-  };
-
-  const getFilteredPlans = () => {
-    return plans.filter((plan) => {
-      // First check if plan matches selected category and search query
-      const selectedCategoryName = selectedCategory
-        ? CATEGORIES.find((cat) => cat.id === selectedCategory)?.name
-        : null;
-
-      const matchesCategory =
-        !selectedCategoryName || plan.categories.includes(selectedCategoryName);
-      const matchesSearch = plan.title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-
-      // If we have a specific category selected or search query, prioritize those filters
-      if (selectedCategory || searchQuery) {
-        return matchesCategory && matchesSearch;
+  // Effect to update filtered plans when plans array changes
+  React.useEffect(() => {
+    if (plans.length > 0) {
+      if (searchQuery) {
+        // If there's a search query, filter by relevance
+        const filtered = plans
+          .filter((plan) => {
+            const titleMatch = plan.title
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase());
+            const descriptionMatch = plan.description
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase());
+            const locationMatch = plan.location
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase());
+            const categoryMatch = plan.categories.some((cat) =>
+              cat.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            return (
+              titleMatch || descriptionMatch || locationMatch || categoryMatch
+            );
+          })
+          .sort((a, b) => {
+            // Calculate relevance score
+            const getScore = (plan: Plan) => {
+              let score = 0;
+              const lowerQuery = searchQuery.toLowerCase();
+              if (plan.title.toLowerCase().includes(lowerQuery)) score += 10;
+              if (plan.title.toLowerCase().startsWith(lowerQuery)) score += 5;
+              if (plan.description.toLowerCase().includes(lowerQuery))
+                score += 3;
+              if (plan.location.toLowerCase().includes(lowerQuery)) score += 2;
+              if (
+                plan.categories.some((cat) =>
+                  cat.toLowerCase().includes(lowerQuery)
+                )
+              )
+                score += 1;
+              return score;
+            };
+            return getScore(b) - getScore(a);
+          });
+        setFilteredPlans(filtered);
+      } else if (selectedCategory) {
+        // If there's a selected category, filter by it
+        const categoryName = CATEGORIES.find(
+          (cat) => cat.id === selectedCategory
+        )?.name;
+        if (categoryName) {
+          const filtered = plans.filter((plan) =>
+            plan.categories.includes(categoryName)
+          );
+          setFilteredPlans(filtered);
+        }
       }
-
-      // Otherwise, show plans that match user's hobbies
-      const matchesUserHobbies =
-        currentProfile?.hobbies?.some((hobby) =>
-          plan.categories.includes(hobby)
-        ) ?? false;
-
-      return matchesUserHobbies;
-    });
-  };
-
-  const getRelevantPlans = () => {
-    return plans.filter((plan) => {
-      const matchesUserHobbies =
-        currentProfile?.hobbies?.some((hobby) =>
-          plan.categories.includes(hobby)
-        ) ?? false;
-
-      return matchesUserHobbies;
-    });
-  };
+    }
+  }, [plans, searchQuery, selectedCategory]);
 
   return (
     <ScrollView
@@ -143,6 +162,7 @@ export default function Index() {
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
       }
       contentInsetAdjustmentBehavior="automatic"
+      showsVerticalScrollIndicator={false}
     >
       {/* Custom Header */}
       <Animated.View
@@ -151,7 +171,7 @@ export default function Index() {
           .damping(8)
           .stiffness(80)
           .duration(600)}
-        className="bg-background   flex flex-col gap-4"
+        className="bg-background flex flex-col gap-4"
       >
         <View className="flex-row items-center justify-between p-4">
           <View>
@@ -205,7 +225,7 @@ export default function Index() {
             variant="secondary"
             size="lg"
             hitSlop={10}
-            className="rounded-full  px-4"
+            className="rounded-full px-4"
             onPress={() => {
               searchQuery ? setSearchQuery("") : searchRef.current?.focus();
             }}
@@ -219,126 +239,57 @@ export default function Index() {
         </View>
 
         {/* Categories */}
-        <View>
-          <Text className="text-muted-foreground px-4  mb-4 ">Categorías</Text>
-          <View className="flex flex-col gap-2 ">
-            {/* First Row */}
-            <FlashList
-              estimatedItemSize={100}
-              data={CATEGORIES}
-              extraData={selectedCategory}
-              contentContainerClassName="pl-4"
-              renderItem={({ item }) => (
-                <CategoryButton
-                  key={item.id}
-                  category={item}
-                  isSelected={selectedCategory === item.id}
-                  onPress={() => handleCategoryPress(item.id)}
-                />
-              )}
+        {!searchQuery && (
+          <View>
+            <Text className="text-muted-foreground px-4 mb-4">Categorías</Text>
+            <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
-              keyExtractor={(item) => item.id ?? "all"}
-            />
+              className="pl-4"
+            >
+              {CATEGORIES.map((category) => (
+                <CategoryButton
+                  key={category.id}
+                  category={category}
+                  isSelected={selectedCategory === category.id}
+                  onPress={() => setSelectedCategory(category.id)}
+                />
+              ))}
+            </ScrollView>
           </View>
-        </View>
+        )}
       </Animated.View>
 
-      {/* Plans List */}
-      <Text className="text-muted-foreground mb-8  m-4 ">Planes Sugeridos</Text>
-      <FlashList
-        estimatedItemSize={Dimensions.get("window").height}
-        data={getFilteredPlans()}
-        renderItem={({ item, index }) => <PlanCard plan={item} index={index} />}
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => (item.id ? item.id : item.title)}
-        snapToAlignment="start"
-        horizontal
-        decelerationRate="fast"
-        pagingEnabled
-        getItemType={(item) => "plan"}
-        ListEmptyComponent={
-          <View className="flex-1 mt-16 justify-center items-center">
-            <Image
-              source={{
-                uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",
-              }}
-              style={{ width: 100, height: 100 }}
-            />
-            <Text className=" text-center text-muted-foreground mx-auto w-2/3 ">
-              No se encontraron planes que coincidan con el filtro o búsqueda.
+      <Text className="text-muted-foreground mb-8 m-4">
+        {searchQuery ? "Mejor coincidencia" : "Plan Sugerido"}
+      </Text>
+      {filteredPlans.length > 0 ? (
+        <>
+          <PlanCard plan={filteredPlans[0]} index={0} />
+          <View className="p-4 ">
+            <Text className="text-center text-sm text-muted-foreground">
+              {searchQuery
+                ? `Este es el plan que mejor coincide con "${searchQuery}". Toca para ver ${
+                    filteredPlans.length - 1
+                  } planes más que coinciden con tu búsqueda.`
+                : `TIP: Toca el plan y haz scroll para descubrir más.`}
             </Text>
           </View>
-        }
-      />
-    </ScrollView>
-  );
-}
-
-function PlanCard({ plan, index }: { plan: Plan; index: number }) {
-  return (
-    <Animated.View
-      entering={FadeInDown.delay(index * 100)
-        .springify()
-        .mass(0.5)
-        .damping(8)
-        .stiffness(80)}
-    >
-      <Pressable
-        style={{ width: 280, height: 400 }}
-        className="ml-4 bg-white rounded-3xl overflow-hidden relative"
-        onPress={() => router.push("/(screens)/plans")}
-      >
-        <Image
-          source={{
-            uri: plan.image_url,
-          }}
-          style={{ width: "100%", height: "100%" }}
-          className="absolute"
-        />
-
-        <LinearGradient
-          colors={["transparent", "rgba(0,0,0,0.8)"]}
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 200,
-          }}
-        />
-
-        <View className="absolute bottom-0 left-0 right-0 p-4">
-          <Text className="text-2xl font-bold mb-2 text-white">
-            {plan.title}
+        </>
+      ) : (
+        <View className="flex-1 mt-16 justify-center items-center">
+          <Image
+            source={{
+              uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",
+            }}
+            style={{ width: 100, height: 100 }}
+          />
+          <Text className="text-center text-muted-foreground mx-auto w-2/3">
+            No se encontraron planes que coincidan con{" "}
+            {searchQuery ? "tu búsqueda" : "la categoría seleccionada"}.
           </Text>
-
-          <View className="flex-row items-center mb-2 gap-1">
-            <MapPin size={16} color="white" className="mr-1" />
-            <Text className="text-white text-sm">{plan.location}</Text>
-          </View>
-
-          <View className="flex-row flex-wrap gap-2 mb-3">
-            {plan.categories.map((category, index) => (
-              <View key={index} className="bg-white/20 px-3 py-1 rounded-full">
-                <Text className="text-white text-sm">{category}</Text>
-              </View>
-            ))}
-          </View>
-
-          <View className="flex-row items-center justify-between">
-            <Text className="text-white text-sm">
-              {plan.participants.length}/{plan.max_participants} participantes
-            </Text>
-            <Text className="text-white text-sm">
-              {new Date(plan.date).toLocaleDateString("es", {
-                weekday: "long",
-                day: "numeric",
-              })}
-            </Text>
-          </View>
         </View>
-      </Pressable>
-    </Animated.View>
+      )}
+    </ScrollView>
   );
 }

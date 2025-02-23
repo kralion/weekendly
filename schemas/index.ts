@@ -27,9 +27,6 @@ export const profileSchema = z.object({
   country: z.string().min(1, "Pais es requerido"),
   languages: z.array(z.string()).min(1, "Selecciona al menos un idioma"),
   hobbies: z.array(z.string()).min(1, "Selecciona al menos un hobby"),
-  day_preferred: z.enum(["Sábado", "Domingo"], {
-    errorMap: () => ({ message: "Selecciona un día válido" }),
-  }),
   created_at: timestampSchema,
 });
 

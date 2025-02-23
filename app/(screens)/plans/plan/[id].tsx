@@ -24,6 +24,7 @@ import { toast } from "sonner-native";
 import { Confirmed } from "~/components/confirmed";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
+import { formatTime } from "~/lib/utils/time";
 import { usePlans } from "~/stores";
 
 //DOCS:  npx expo start --https when executing on the web
@@ -195,7 +196,15 @@ export default function PlanDetail() {
                   weekday: "long",
                   month: "long",
                   day: "numeric",
-                })}
+                })}{" "}
+                -{" "}
+                {new Date(plan.date)
+                  .toLocaleTimeString("es", {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  })
+                  .toUpperCase()}
               </Text>
             </View>
             <View className="flex-row items-center gap-2">

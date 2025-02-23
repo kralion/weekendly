@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { toast } from "sonner-native";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -24,6 +25,9 @@ import { Textarea } from "~/components/ui/textarea";
 import { planSchema } from "~/schemas";
 import { usePlans } from "~/stores";
 import { Plan } from "~/types";
+import { BlurView } from "expo-blur";
+
+const HEADER_HEIGHT = 100;
 
 const CATEGORIES = [
   "Música",
@@ -42,15 +46,25 @@ export default function CreatePlan() {
   const [isLoading, setIsLoading] = React.useState(false);
   const { id } = useLocalSearchParams();
   const [image_url, setImage_url] = React.useState<string>(
-    "https://images.unsplash.com/photo-1739741432363-8f5fa6ef4e7d?q=80&w=1434&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    "https://plus.unsplash.com/premium_photo-1663115409520-989b46bd6eca?q=80&w=1534&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   );
-  const { createPlan, loading } = usePlans();
+  const {
+    createPlan,
+    loading,
+    updatePlan,
+    fetchPlanById,
+    selectedPlan,
+    deletePlan,
+    setSelectedPlan,
+  } = usePlans();
   const { user } = useUser();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
+    setValue,
   } = useForm<Plan>({
     resolver: zodResolver(planSchema),
     defaultValues: {
@@ -59,11 +73,28 @@ export default function CreatePlan() {
       date: new Date(),
       participants: [user?.id],
       max_participants: 2,
-      image_url: "https://images.unsplash.com/photo-1513689125086-6c432170e843",
+      image_url:
+        "https://plus.unsplash.com/premium_photo-1663115409520-989b46bd6eca?q=80&w=1534&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       categories: [],
       status: "activo",
     },
   });
+
+  React.useEffect(() => {
+    if (id) {
+      fetchPlanById(id as string);
+      setValue("image_url", image_url);
+      setImage_url(image_url);
+      setValue("categories", selectedPlan?.categories || []);
+      setValue("title", selectedPlan?.title || "");
+      setValue("description", selectedPlan?.description || "");
+      setValue("location", selectedPlan?.location || "");
+      setValue("date", selectedPlan?.date || new Date());
+      setValue("max_participants", selectedPlan?.max_participants || 2);
+      setValue("status", selectedPlan?.status || "activo");
+    }
+    console.log("render");
+  }, [id, setSelectedPlan]);
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -98,21 +129,54 @@ export default function CreatePlan() {
     }
   };
 
-  const onSubmit = async (data: Plan) => {
-    if (!user) {
-      toast.error("Debes iniciar sesión para crear un plan");
-      return;
+  async function handleCreatePlan(data: Plan) {
+    if (!user) return;
+    setIsLoading(true);
+    try {
+      await createPlan({
+        title: data.title,
+        description: data.description,
+        location: data.location,
+        image_url,
+        date: data.date,
+        max_participants: data.max_participants,
+        creator_id: user.id,
+        categories: data.categories,
+      });
+    } catch (error) {
+      toast.error("Error al crear plan");
     }
-    await createPlan({
-      title: data.title,
-      description: data.description,
-      location: data.location,
-      image_url,
-      date: data.date,
-      max_participants: data.max_participants,
-      creator_id: user.id,
-      categories: data.categories,
-    });
+    setIsLoading(false);
+    reset();
+  }
+
+  async function handleUpdatePlan(data: Plan) {
+    if (!user) return;
+    setIsLoading(true);
+    try {
+      await updatePlan(data.id as string, {
+        title: data.title,
+        description: data.description,
+        location: data.location,
+        image_url,
+        date: data.date,
+        max_participants: data.max_participants,
+        creator_id: user.id,
+        categories: data.categories,
+      });
+    } catch (error) {
+      toast.error("Error al actualizar plan");
+    }
+    setIsLoading(false);
+    reset();
+  }
+
+  const onSubmit = async (data: Plan) => {
+    if (id) {
+      await handleUpdatePlan(data);
+    } else {
+      await handleCreatePlan(data);
+    }
   };
 
   return (
@@ -122,26 +186,76 @@ export default function CreatePlan() {
         contentContainerClassName="pb-4"
         showsVerticalScrollIndicator={false}
       >
-        <View className="p-4 flex-row justify-between mt-10 gap-4 items-center absolute top-0 left-0 right-0 z-10">
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="w-10 h-10 justify-center items-center bg-black/20 rounded-full"
-          >
-            <X size={24} color="white" />
-          </TouchableOpacity>
-          <Text className="text-2xl font-semibold text-white">
-            {id ? "Editar Plan" : "Crear Plan"}
-          </Text>
-          <TouchableOpacity
-            onPress={pickImage}
-            className="w-10 h-10 justify-center items-center bg-black/20 rounded-full"
-          >
-            {isLoading ? (
-              <ActivityIndicator animating color="white" />
-            ) : (
-              <Camera size={20} color="white" />
-            )}
-          </TouchableOpacity>
+        <View className="flex-1 bg-background">
+          <Image
+            source={{ uri: image_url }}
+            style={{
+              width: "100%",
+              height: HEADER_HEIGHT,
+              position: "absolute",
+              top: 0,
+            }}
+            className="bg-muted"
+          />
+          <LinearGradient
+            colors={["rgba(0,0,0,0.5)", "transparent"]}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: HEADER_HEIGHT,
+              zIndex: 5,
+            }}
+          />
+          <BlurView
+            intensity={10}
+            tint="dark"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: HEADER_HEIGHT * 1.1,
+              zIndex: 6,
+              transform: [{ translateY: -HEADER_HEIGHT * 0.15 }],
+            }}
+          />
+          <LinearGradient
+            colors={["transparent", "rgba(0,0,0,0.05)", "rgba(0,0,0,0.1)"]}
+            style={{
+              position: "absolute",
+              top: HEADER_HEIGHT * 0.6,
+              left: 0,
+              right: 0,
+              height: HEADER_HEIGHT * 0.4,
+              zIndex: 7,
+            }}
+          />
+          <View className="p-4 flex-row justify-between mt-8 gap-4 items-center absolute top-0 left-0 right-0 z-10">
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedPlan(null);
+                router.back();
+              }}
+              className="w-10 h-10 justify-center items-center bg-black/30 rounded-full active:opacity-70"
+            >
+              <X size={24} color="white" />
+            </TouchableOpacity>
+            <Text className="text-2xl font-bold text-white drop-shadow-xl">
+              {id ? "Editar Plan" : "Crear Plan"}
+            </Text>
+            <TouchableOpacity
+              onPress={pickImage}
+              className="w-10 h-10 justify-center items-center bg-black/30 rounded-full active:opacity-70"
+            >
+              {isLoading ? (
+                <ActivityIndicator animating color="white" />
+              ) : (
+                <Camera size={20} color="white" />
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
         <View className=" w-full h-[400px] rounded-b-3xl overflow-hidden mb-6">
           <Image
@@ -162,6 +276,7 @@ export default function CreatePlan() {
               render={({ field: { onChange, value } }) => (
                 <Input
                   onChangeText={onChange}
+                  autoCapitalize="sentences"
                   placeholder="Ej: Salida al café"
                   value={value}
                 />
@@ -267,10 +382,10 @@ export default function CreatePlan() {
               </Text>
             )}
           </View>
-          <View className="flex flex-row gap-2 justify-center">
+          <View className="flex flex-row gap-2 justify-center mt-5">
             <Button
               onPress={handleSubmit(onSubmit)}
-              className={`mt-10 rounded-full ${id ? "" : "w-full"}`}
+              className={`rounded-full ${id ? "" : "w-full"}`}
               size="lg"
             >
               {loading ? (
@@ -282,23 +397,17 @@ export default function CreatePlan() {
               )}
             </Button>
             {id && (
-              <View className="flex flex-row gap-2">
-                <Button
-                  onPress={handleSubmit(onSubmit)}
-                  className="mt-10 rounded-full px-4"
-                  variant="destructive"
-                  size="lg"
-                >
-                  <Trash color="white" size={18} />
-                </Button>
-                <Button
-                  onPress={handleSubmit(onSubmit)}
-                  className="mt-10 rounded-full px-4"
-                  size="lg"
-                >
-                  <Lock color="white" size={18} />
-                </Button>
-              </View>
+              <Button
+                onPress={() => {
+                  deletePlan(id as string);
+                  router.back();
+                }}
+                className="rounded-full"
+                variant="destructive"
+                size="lg"
+              >
+                <Text>Eliminar Plan</Text>
+              </Button>
             )}
           </View>
         </View>

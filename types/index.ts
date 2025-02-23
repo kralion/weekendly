@@ -19,7 +19,6 @@ export interface Profile {
   bio: string | null;
   image_url: string | null;
   hobbies: string[];
-  day_preferred: "Sábado" | "Domingo";
   created_at: string;
   country: string;
   languages: string[];

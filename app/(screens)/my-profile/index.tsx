@@ -3,15 +3,10 @@ import { router } from "expo-router";
 import {
   CheckCircle,
   ChevronLeft,
-  Instagram,
-  Twitter,
-  Pen,
-  MapPin,
   Globe,
-  MessageCircle,
-  MessageCircleDashedIcon,
+  MapPin,
+  Pen,
 } from "lucide-react-native";
-import { openBrowserAsync } from "expo-web-browser";
 import React from "react";
 import {
   ActivityIndicator,
@@ -21,7 +16,6 @@ import {
   View,
 } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
-import { LinearGradient } from "expo-linear-gradient";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { useProfiles } from "~/stores";
@@ -147,9 +141,7 @@ export default function ProfileScreen() {
         <View className="mt-8 flex flex-col gap-4">
           <View className="bg-muted p-4 rounded-lg">
             <Text className="text-gray-500 mb-1">Día preferido</Text>
-            <Text className="text-gray-900 font-medium">
-              {currentProfile?.day_preferred}
-            </Text>
+            <Text className="text-gray-900 font-medium">Domingo</Text>
           </View>
         </View>
 

@@ -1,5 +1,6 @@
 import { useUser } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { BlurView } from "expo-blur";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { Camera, X } from "lucide-react-native";
@@ -41,11 +42,6 @@ const HOBBIES_OPTIONS = [
   "Danza",
 ];
 
-const DAY_OPTIONS = [
-  { label: "Sábado", value: "Sábado" },
-  { label: "Domingo", value: "Domingo" },
-];
-
 const LANGUAGES = ["Español", "Ingles", "Portugues", "Aleman", "Italiano"];
 
 export default function EditProfileScreen() {
@@ -65,7 +61,6 @@ export default function EditProfileScreen() {
 
   const headerStyle = useAnimatedStyle(() => {
     return {
-      backgroundColor: "rgba(255, 240, 255, 1)",
       position: "absolute",
       top: 0,
       left: 0,
@@ -86,11 +81,9 @@ export default function EditProfileScreen() {
       username: currentProfile?.username || user?.fullName || "",
       bio: currentProfile?.bio || "",
       phone: currentProfile?.phone || "",
-      gender: (currentProfile?.gender as Gender) || "Hombre",
+      gender: currentProfile?.gender as Gender,
       country: currentProfile?.country || "",
       languages: currentProfile?.languages || [],
-      hobbies: currentProfile?.hobbies || [],
-      day_preferred: currentProfile?.day_preferred || "Sábado",
     },
   });
   const pickImage = async () => {
@@ -127,27 +120,26 @@ export default function EditProfileScreen() {
     }
   };
   const onSubmit = async (data: ProfileSchema) => {
-    console.log(data);
-    // if (!user) return;
+    if (!user) return;
 
-    // try {
-    //   if (currentProfile) {
-    //     await updateProfile(user.id, {
-    //       ...data,
-    //       image_url,
-    //       gender: data.gender[0] as Gender,
-    //     });
-    //   } else {
-    //     await createProfile({
-    //       ...data,
-    //       image_url,
-    //       gender: data.gender[0] as Gender,
-    //     });
-    //   }
-    //   router.back();
-    // } catch (error) {
-    //   console.error("Error saving profile:", error);
-    // }
+    try {
+      if (currentProfile) {
+        await updateProfile(user.id, {
+          ...data,
+          image_url,
+          gender: data.gender[0] as Gender,
+        });
+      } else {
+        await createProfile({
+          ...data,
+          image_url,
+          gender: data.gender[0] as Gender,
+        });
+      }
+      router.back();
+    } catch (error) {
+      console.error("Error saving profile:", error);
+    }
   };
 
   return (
@@ -157,7 +149,7 @@ export default function EditProfileScreen() {
     >
       {/* Header */}
       <Animated.View style={headerStyle}>
-        <View className="p-6 flex-row items-center">
+        <BlurView className="px-6 py-4 flex-row items-center">
           <Button
             className="rounded-full"
             onPress={() => router.back()}
@@ -167,11 +159,11 @@ export default function EditProfileScreen() {
             <X size={20} color="#A020F0" />
           </Button>
           <Text className="text-xl font-semibold ml-4">Editar perfil</Text>
-        </View>
+        </BlurView>
       </Animated.View>
       <Animated.ScrollView
         className="flex-1 p-6 bg-background"
-        contentContainerClassName="pb-20"
+        contentContainerClassName="pb-10"
         onScroll={scrollHandler}
         scrollEventThrottle={16}
       >
@@ -253,16 +245,20 @@ export default function EditProfileScreen() {
                     label: value,
                     value,
                   }}
+                  defaultValue={{
+                    value: currentProfile?.gender as Gender,
+                    label: currentProfile?.gender as string,
+                  }}
                   className="bg-white rounded-lg px-2 py-3"
                   onValueChange={(option) => onChange(option?.value)}
                 >
-                  <SelectItem value="Hombre" label="Hombre">
+                  <SelectItem value="hombre" label="Hombre">
                     Hombre
                   </SelectItem>
-                  <SelectItem value="Mujer" label="Mujer">
+                  <SelectItem value="mujer" label="Mujer">
                     Mujer
                   </SelectItem>
-                  <SelectItem value="Otro" label="Otro">
+                  <SelectItem value="otro" label="Otro">
                     Otro
                   </SelectItem>
                 </Select>
@@ -331,36 +327,6 @@ export default function EditProfileScreen() {
             {errors.hobbies?.message && (
               <Text className="text-xs text-red-500">
                 {errors.hobbies?.message}
-              </Text>
-            )}
-          </View>
-
-          <View>
-            <Text className="font-medium mb-2">Día preferido</Text>
-            <Controller
-              control={control}
-              name="day_preferred"
-              render={({ field: { onChange, value } }) => (
-                <Select
-                  value={{ label: value, value }}
-                  className="bg-white rounded-lg px-2 py-3"
-                  onValueChange={(option) => onChange(option?.value)}
-                >
-                  {DAY_OPTIONS.map((option) => (
-                    <SelectItem
-                      key={option.value}
-                      value={option.value}
-                      label={option.label}
-                    >
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </Select>
-              )}
-            />
-            {errors.day_preferred?.message && (
-              <Text className="text-xs text-red-500">
-                {errors.day_preferred?.message}
               </Text>
             )}
           </View>
