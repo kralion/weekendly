@@ -4,51 +4,62 @@
 
 @layer base {
   :root {
-    --background: 255 100% 97%; /* Light lavender for app background */
-    --foreground: 240 5% 10%; /* Dark gray for text */
-    --card: 255 100% 97%; /* Matches background for seamless cards */
-    --card-foreground: 240 10% 20%; /* Slightly darker text for cards */
-    --popover: 255 100% 97%; /* Matches background */
-    --popover-foreground: 240 5% 10%; /* Consistent with text */
-    --primary: 270 80% 50%; /* Vibrant purple for buttons/links */
-    --primary-foreground: 255 100% 97%; /* White for text on primary */
-    --secondary: 270 60% 90%; /* Soft lilac for secondary elements */
-    --secondary-foreground: 240 5% 10%; /* Dark text for secondary */
-    --muted: 240 10% 95%; /* Neutral soft gray */
-    --muted-foreground: 240 5% 30%; /* Medium gray for muted text */
-    --accent: 180 65% 50%; /* Vibrant teal for special elements */
-    --accent-foreground: 255 100% 97%; /* White for text on accent */
-    --destructive: 0 80% 65%; /* Bright red for destructive actions */
-    --destructive-foreground: 255 100% 97%; /* White for destructive text */
-    --border: 240 15% 85%; /* Light border gray */
-    --input: 240 15% 80%; /* Same as border for inputs */
-    --ring: 270 80% 50%; /* Matches primary for focus rings */
+    --background: 0 0% 97.65%;
+    --foreground: 0 0% 12.55%;
+    --muted: 0 0% 93.73%;
+    --muted-foreground: 0 0% 39.22%;
+    --popover: 0 0% 98.82%;
+    --popover-foreground: 0 0% 12.55%;
+    --card: 0 0% 98.82%;
+    --card-foreground: 0 0% 12.55%;
+    --border: 0 0% 84.71%;
+    --input: 0 0% 94.12%;
+    --primary: 22.93 92.59% 52.35%;
+    --primary-foreground: 44 0% 100%;
+    --secondary: 34.05 100% 85.49%;
+    --secondary-foreground: 16.27 50.43% 22.94%;
+    --accent: 0 0% 90.98%;
+    --accent-foreground: 0 0% 12.55%;
+    --destructive: 10.16 77.87% 53.92%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 24.8 79.79% 63.14%;
+    --chart-1: 22.93 92.59% 52.35%;
+    --chart-2: 34.05 100% 85.49%;
+    --chart-3: 0 0% 90.98%;
+    --chart-4: 34.05 100% 88.49%;
+    --chart-5: 22.93 95.59% 52.35%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 6.67%;
+    --foreground: 0 0% 93.33%;
+    --muted: 0 0% 13.33%;
+    --muted-foreground: 0 0% 70.59%;
+    --popover: 0 0% 9.8%;
+    --popover-foreground: 0 0% 93.33%;
+    --card: 0 0% 9.8%;
+    --card-foreground: 0 0% 93.33%;
+    --border: 44 14% 11%;
+    --input: 0 0% 28.24%;
+    --primary: 22.93 92.59% 52.35%;
+    --primary-foreground: 29.51 0% 100%;
+    --secondary: 28.5 64.52% 12.16%;
+    --secondary-foreground: 29.51 100% 88.04%;
+    --accent: 0 0% 16.47%;
+    --accent-foreground: 0 0% 93.33%;
+    --destructive: 10.16 77.87% 53.92%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 23.11 59.8% 40%;
+    --chart-1: 22.93 92.59% 52.35%;
+    --chart-2: 28.5 64.52% 12.16%;
+    --chart-3: 0 0% 16.47%;
+    --chart-4: 28.5 64.52% 15.16%;
+    --chart-5: 22.93 95.59% 52.35%;
     --rounded-md: 0.75rem; /*12px */
     --rounded-lg: 1rem; /* 16px */
     --rounded-xl: 1.25rem; /* 20px */
     --rounded-2xl: 1.5rem; /* 24px */
     --rounded-full: 9999px; /* For fully rounded elements */
-  }
-
-  .dark:root {
-    --background: 240 15% 10%; /* Dark navy for dark mode */
-    --foreground: 0 0% 98%; /* White for text */
-    --card: 240 15% 12%; /* Slightly lighter dark mode cards */
-    --card-foreground: 0 0% 98%; /* White for text */
-    --popover: 240 15% 10%; /* Matches dark background */
-    --popover-foreground: 0 0% 98%; /* White for text */
-    --primary: 270 80% 60%; /* Lighter purple for dark mode */
-    --primary-foreground: 0 0% 98%; /* White for text on primary */
-    --secondary: 270 60% 20%; /* Deeper lilac for dark mode */
-    --secondary-foreground: 0 0% 98%; /* White for text */
-    --muted: 240 10% 20%; /* Soft dark gray */
-    --muted-foreground: 240 5% 70%; /* Lighter muted text */
-    --accent: 180 65% 60%; /* Vibrant teal for dark mode */
-    --accent-foreground: 0 0% 98%; /* White for accent text */
-    --destructive: 0 80% 55%; /* Slightly softer red for dark mode */
-    --destructive-foreground: 0 0% 98%; /* White for text */
-    --border: 240 10% 30%; /* Dark gray for borders */
-    --input: 240 10% 30%; /* Matches dark borders */
-    --ring: 270 80% 60%; /* Matches primary */
   }
 }
