@@ -82,7 +82,7 @@ export default function EditProfileScreen() {
       bio: currentProfile?.bio || "",
       phone: currentProfile?.phone || "",
       gender: currentProfile?.gender as Gender,
-      country: currentProfile?.country || "",
+      residency: currentProfile?.residency || "",
       languages: currentProfile?.languages || [],
     },
   });
@@ -275,7 +275,7 @@ export default function EditProfileScreen() {
             <Text className="font-medium mb-2">Ubicación</Text>
             <Controller
               control={control}
-              name="country"
+              name="residency"
               render={({ field: { onChange, value } }) => (
                 <Input
                   value={value || ""}
@@ -285,9 +285,9 @@ export default function EditProfileScreen() {
                 />
               )}
             />
-            {errors.country?.message && (
+            {errors.residency?.message && (
               <Text className="text-xs text-red-500">
-                {errors.country?.message}
+                {errors.residency?.message}
               </Text>
             )}
           </View>

@@ -20,11 +20,18 @@ export interface Profile {
   image_url: string | null;
   hobbies: string[];
   created_at: string;
-  country: string;
+  residency: string;
   languages: string[];
-  phone: string;
+  phone: string | null;
   gender: Gender;
 }
+
+export type ReniecResponse = {
+  dni: string;
+  nombres: string;
+  apellidoPaterno: string;
+  apellidoMaterno: string;
+};
 
 export interface Plan {
   id?: string;

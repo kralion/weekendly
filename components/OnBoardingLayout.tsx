@@ -23,7 +23,7 @@ type ValidPaths =
   | "/onboarding/step-1"
   | "/onboarding/step-2"
   | "/onboarding/step-3"
-  | "/onboarding/sign-in";
+  | "/onboarding/auth/sign-in";
 interface OnBoardingLayoutProps {
   children: React.ReactNode;
   bgColor?: string;

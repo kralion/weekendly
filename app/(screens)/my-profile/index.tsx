@@ -125,7 +125,7 @@ export default function ProfileScreen() {
           <View className="flex flex-row gap-1 items-center">
             <MapPin size={18} color="gray" />
             <Text className="text-gray-500 mt-1">
-              {currentProfile?.country}
+              {currentProfile?.residency}
             </Text>
           </View>
           <View className="flex flex-row gap-1 items-center">
@@ -164,7 +164,7 @@ export default function ProfileScreen() {
           <Button
             variant="destructive"
             size="lg"
-            className="w-full"
+            className=" rounded-full"
             onPress={() => signOut()}
           >
             <Text className="text-white font-medium">Cerrar sesión</Text>

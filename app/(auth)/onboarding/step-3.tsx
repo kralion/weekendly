@@ -18,7 +18,7 @@ export default function OnboardingStepTwo() {
       nextTextColor={text}
       bgColor={primary2}
       nextText="Empezar"
-      nextHref="/onboarding/sign-in"
+      nextHref="/onboarding/auth/sign-in"
     >
       <View style={generalStyles.container}>
         <ImageBackground

@@ -24,7 +24,7 @@ export const profileSchema = z.object({
     errorMap: () => ({ message: "Selecciona un sexo válido" }),
   }),
   phone: z.string().min(1, "Telefono es requerido"),
-  country: z.string().min(1, "Pais es requerido"),
+  residency: z.string().min(1, "Pais es requerido"),
   languages: z.array(z.string()).min(1, "Selecciona al menos un idioma"),
   hobbies: z.array(z.string()).min(1, "Selecciona al menos un hobby"),
   created_at: timestampSchema,

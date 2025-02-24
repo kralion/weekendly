@@ -29,6 +29,11 @@
     --chart-4: 34.05 100% 88.49%;
     --chart-5: 22.93 95.59% 52.35%;
     --radius: 0.5rem;
+    --rounded-md: 0.75rem; /*12px */
+    --rounded-lg: 1rem; /* 16px */
+    --rounded-xl: 1.25rem; /* 20px */
+    --rounded-2xl: 1.5rem; /* 24px */
+    --rounded-full: 9999px; /* For fully rounded elements */
   }
 
   .dark {
@@ -56,10 +61,5 @@
     --chart-3: 0 0% 16.47%;
     --chart-4: 28.5 64.52% 15.16%;
     --chart-5: 22.93 95.59% 52.35%;
-    --rounded-md: 0.75rem; /*12px */
-    --rounded-lg: 1rem; /* 16px */
-    --rounded-xl: 1.25rem; /* 20px */
-    --rounded-2xl: 1.5rem; /* 24px */
-    --rounded-full: 9999px; /* For fully rounded elements */
   }
 }

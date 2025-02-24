@@ -176,7 +176,7 @@ export default function Index() {
         <View className="flex-row items-center justify-between p-4">
           <View>
             <Text className="text-3xl font-bold">
-              ¡Hola! {user?.firstName} 👋
+              ¡Hola! {user?.firstName?.split(" ")[0]} 👋
             </Text>
             <Text className="text-base text-muted-foreground">
               Descubre planes increíbles
