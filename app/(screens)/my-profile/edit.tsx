@@ -86,6 +86,7 @@ export default function EditProfileScreen() {
       languages: currentProfile?.languages || [],
     },
   });
+
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,

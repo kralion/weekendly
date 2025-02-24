@@ -17,6 +17,7 @@ import { useSignUpStore } from "~/stores/useSignUpStore";
 import { useProfiles } from "~/stores/useProfiles";
 import { Gender } from "~/types";
 import { useSignUp, useUser } from "@clerk/clerk-expo";
+import { ChevronLeft } from "lucide-react-native";
 
 const LANGUAGES = [
   "Inglés",
@@ -129,8 +130,6 @@ export default function Preferences2Screen() {
         session: signUpAttempt.createdSessionId,
       });
 
-      reset();
-
       router.replace("/(screens)");
     } catch (error: any) {
       console.error(error);
@@ -147,6 +146,14 @@ export default function Preferences2Screen() {
         contentInsetAdjustmentBehavior="automatic"
       >
         <View className="flex flex-col gap-12 p-6">
+          <Button
+            variant="secondary"
+            className="rounded-full"
+            size="icon"
+            onPress={() => router.back()}
+          >
+            <ChevronLeft color="orange" size={24} />
+          </Button>
           <View className="flex flex-col items-center">
             <Text className="text-4xl font-bold">Últimos detalles</Text>
             <Text className="text-base text-muted-foreground text-center mt-2 px-10">
@@ -156,7 +163,9 @@ export default function Preferences2Screen() {
 
           <View className="flex flex-col gap-10">
             <View>
-              <Text className="font-medium mb-2">¿Dónde vives?</Text>
+              <Text className="font-medium mb-2 text-muted-foreground">
+                ¿Lugar de residencia?
+              </Text>
               <Controller
                 control={control}
                 name="residency"
@@ -176,7 +185,9 @@ export default function Preferences2Screen() {
             </View>
 
             <View>
-              <Text className="font-medium mb-2">Idiomas que hablas</Text>
+              <Text className="font-medium mb-2 text-muted-foreground">
+                Idiomas que hablas
+              </Text>
               <View className="flex flex-row flex-wrap gap-2">
                 {LANGUAGES.map((language) => (
                   <Button
@@ -186,7 +197,6 @@ export default function Preferences2Screen() {
                         ? "default"
                         : "outline"
                     }
-                    size="sm"
                     onPress={() => toggleLanguage(language)}
                   >
                     <Text>{language}</Text>
@@ -201,13 +211,14 @@ export default function Preferences2Screen() {
             </View>
 
             <View>
-              <Text className="font-medium mb-2">Género</Text>
+              <Text className="font-medium mb-2 text-muted-foreground">
+                Género
+              </Text>
               <View className="flex flex-row flex-wrap gap-2">
                 {["Hombre", "Mujer", "Otro"].map((gender) => (
                   <Button
                     key={gender}
                     variant={selectedGender === gender ? "default" : "outline"}
-                    size="sm"
                     onPress={() => selectGender(gender)}
                   >
                     <Text>{gender}</Text>
@@ -222,7 +233,9 @@ export default function Preferences2Screen() {
             </View>
 
             <View>
-              <Text className="font-medium mb-2">Teléfono (opcional)</Text>
+              <Text className="font-medium mb-2 text-muted-foreground">
+                Teléfono (opcional)
+              </Text>
               <Controller
                 control={control}
                 name="phone"

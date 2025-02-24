@@ -9,6 +9,7 @@ import { Text } from "~/components/ui/text";
 import { Input } from "~/components/ui/input";
 import { useSignUpStore } from "~/stores/useSignUpStore";
 import { Textarea } from "~/components/ui/textarea";
+import { ChevronLeft } from "lucide-react-native";
 
 const HOBBIES = [
   "Juegos",
@@ -75,8 +76,17 @@ export default function Preferences1Screen() {
         contentInsetAdjustmentBehavior="automatic"
       >
         <View className="flex flex-col gap-12 p-6">
+          <Button
+            variant="secondary"
+            className="rounded-full"
+            size="icon"
+            onPress={() => router.back()}
+          >
+            <ChevronLeft color="orange" size={24} />
+          </Button>
           <View className="flex flex-col items-center">
             <Text className="text-4xl font-bold">Cuéntanos sobre ti</Text>
+
             <Text className="text-base text-muted-foreground text-center mt-2">
               Esto nos ayudará a encontrar planes que te interesen
             </Text>
@@ -84,7 +94,9 @@ export default function Preferences1Screen() {
 
           <View className="flex flex-col gap-10">
             <View>
-              <Text className="font-medium mb-2">Biografía</Text>
+              <Text className="font-medium mb-2 text-muted-foreground">
+                Biografía
+              </Text>
               <Controller
                 control={control}
                 name="bio"
@@ -108,7 +120,9 @@ export default function Preferences1Screen() {
             </View>
 
             <View>
-              <Text className="font-medium mb-2">Hobbies</Text>
+              <Text className="font-medium mb-2 text-muted-foreground">
+                Hobbies
+              </Text>
               <View className="flex flex-row flex-wrap gap-2">
                 {HOBBIES.map((hobby) => (
                   <Button
@@ -116,7 +130,6 @@ export default function Preferences1Screen() {
                     variant={
                       selectedHobbies.includes(hobby) ? "default" : "outline"
                     }
-                    size="sm"
                     onPress={() => toggleHobby(hobby)}
                   >
                     <Text>{hobby}</Text>

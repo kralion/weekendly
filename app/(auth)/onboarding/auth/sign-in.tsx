@@ -50,7 +50,7 @@ export default function SignInScreen() {
       });
 
       if (completeSignIn?.status === "complete") {
-        toast.success("¡Bienvenido de vuelta!");
+        router.push("/(screens)");
       } else {
         toast.error("Hubo un error al iniciar sesión");
       }

@@ -8,6 +8,7 @@ interface PlansState {
   plans: Plan[];
   userPlans: Plan[];
   participants: Profile[];
+  getPlanById: (id: string) => Promise<Plan | null>;
   loading: boolean;
   setFilteredPlans: (plans: Plan[]) => void;
   selectedPlan: Plan | null;
@@ -190,6 +191,23 @@ export const usePlans = create<PlansState>((set, get) => ({
       set({ loading: false });
     }
   },
+
+  getPlanById: async (id: string) => {
+    try {
+      set({ loading: true });
+      const { data, error } = await supabase
+        .from("plans")
+        .select("*, profiles:creator_id(*)")
+        .eq("id", id)
+        .single();
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      set({ loading: false });
+    }
+  },
   fetchUserPlans: async (userId) => {
     try {
       set({ loading: true });
@@ -360,7 +378,7 @@ export const usePlans = create<PlansState>((set, get) => ({
         userPlans: state.userPlans.filter((p) => p.id !== planId),
         selectedPlan: data,
       }));
-      toast.success("Has abandonado el plan exitosamente");
+      toast.success("Saliste del plan");
     } catch (error) {
       toast.error("Error al abandonar el plan");
       console.error(error);

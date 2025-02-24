@@ -2,7 +2,6 @@ import { useUser } from "@clerk/clerk-expo";
 import { Audio } from "expo-av";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import * as Linking from "expo-linking";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import {
   Calendar,
@@ -12,28 +11,32 @@ import {
   Share2,
   Users,
 } from "lucide-react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import {
+  ActivityIndicator,
   ScrollView,
   Share,
   TouchableOpacity,
-  View,
   Vibration,
+  View,
 } from "react-native";
 import { toast } from "sonner-native";
 import { Confirmed } from "~/components/confirmed";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
-import { formatTime } from "~/lib/utils/time";
 import { usePlans } from "~/stores";
+import { Plan } from "~/types";
 
 //DOCS:  npx expo start --https when executing on the web
 export default function PlanDetail() {
   const { id } = useLocalSearchParams();
   const { user } = useUser();
-  const { plans, joinPlan, leavePlan } = usePlans();
+  const [plan, setPlan] = React.useState<Plan | null>(null);
+  const { joinPlan, leavePlan, getPlanById, isLoading } = usePlans();
 
-  const plan = plans.find((p) => p.id === id);
+  useEffect(() => {
+    getPlanById(id as string).then(setPlan);
+  }, [id]);
   const [showConfirmed, setShowConfirmed] = React.useState(false);
   const [sound, setSound] = React.useState<Audio.Sound | null>(null);
 
@@ -67,7 +70,7 @@ export default function PlanDetail() {
     if (!plan || !user) return;
     await playFeedback();
     leavePlan(plan.id as string, user?.id);
-    setShowConfirmed(true);
+    router.back();
   }
 
   const formatDate = (date: Date) => {
@@ -108,10 +111,10 @@ export default function PlanDetail() {
     }
   };
 
-  if (!plan) {
+  if (!plan || isLoading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <Text>Plan no encontrado</Text>
+        <ActivityIndicator size="large" color="#FF5733" />
       </View>
     );
   }
@@ -230,7 +233,11 @@ export default function PlanDetail() {
         )}
         {user?.id === plan.participants.find((id) => id === user?.id) &&
           user?.id !== plan.creator_id && (
-            <Button size="lg" className=" rounded-full m-4">
+            <Button
+              size="lg"
+              className=" rounded-full m-4"
+              onPress={handleLeavePlan}
+            >
               <Text className="text-white font-semibold">Salir del Plan</Text>
             </Button>
           )}
@@ -245,23 +252,17 @@ export default function PlanDetail() {
             <Text className="text-white font-semibold">Unirme al plan</Text>
           </Button>
         )}
-      {user?.id === plan.participants.find((id) => id === user?.id) &&
-        user?.id !== plan.creator_id && (
-          <Button
-            size="lg"
-            className="m-4 mb-8 rounded-full"
-            onPress={handleLeavePlan}
-          >
-            <Text className="text-white font-semibold">Salir del plan</Text>
-          </Button>
-        )}
 
       {showConfirmed && (
         <Confirmed
           planTitle={plan.title}
-          planImage="https://images.unsplash.com/photo-1513689125086-6c432170e843"
+          planImage={plan.image_url}
           userImage={user?.imageUrl as string}
-          onClose={() => setShowConfirmed(false)}
+          onClose={() => {
+            setShowConfirmed(false);
+            router.back();
+          }}
+          creatorPhone={plan.profiles?.phone}
         />
       )}
     </View>

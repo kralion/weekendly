@@ -130,14 +130,6 @@ export default function Plans() {
     fetchPlans();
   }, []);
 
-  if (plansLoading) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#FF5733" />
-      </View>
-    );
-  }
-
   return (
     <View style={{ flex: 1 }} className="bg-background">
       <FlashList
