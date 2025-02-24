@@ -186,6 +186,7 @@ export default function MyPlansScreen() {
           <FlashList
             data={userPlans}
             renderItem={renderPlanCard}
+            contentContainerClassName="pb-48"
             showsVerticalScrollIndicator={false}
             estimatedItemSize={200}
             refreshControl={
@@ -214,6 +215,7 @@ export default function MyPlansScreen() {
             data={joinedPlans}
             renderItem={renderPlanCard}
             showsVerticalScrollIndicator={false}
+            contentContainerClassName="pb-48"
             estimatedItemSize={200}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

@@ -20,9 +20,7 @@ interface PlansState {
   fetchPlans: () => Promise<void>;
   fetchUserPlans: (userId: string) => Promise<void>;
   fetchPlanById: (id: string) => Promise<void>;
-  createPlan: (
-    plan: Omit<Plan, "id" | "status" | "participants">
-  ) => Promise<void>;
+  createPlan: (plan: Omit<Plan, "id">) => Promise<Plan>;
   updatePlan: (id: string, plan: Partial<Plan>) => Promise<void>;
   deletePlan: (id: string) => Promise<void>;
   joinPlan: (planId: string, userId: string) => Promise<void>;
@@ -250,8 +248,8 @@ export const usePlans = create<PlansState>((set, get) => ({
     try {
       const newPlan = {
         ...plan,
+        date: plan.date.toISOString(), // Convert Date to ISO string for Supabase
         status: "activo" as const,
-        participants: [],
       };
 
       const { data, error } = await supabase
@@ -260,17 +258,28 @@ export const usePlans = create<PlansState>((set, get) => ({
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw new Error(error.message);
+      }
+
+      if (!data) {
+        throw new Error("No se pudo crear el plan");
+      }
 
       set((state) => ({
         plans: [...state.plans, data],
         userPlans: [...state.userPlans, data],
       }));
+      
       toast.success("Plan creado exitosamente");
       router.back();
+      return data;
     } catch (error) {
-      toast.error("Error al crear plan");
-      console.error(error);
+      console.error("Error creating plan:", error);
+      const message = error instanceof Error ? error.message : "Error al crear plan";
+      toast.error(message);
+      throw error; // Re-throw to handle in component
     }
   },
 

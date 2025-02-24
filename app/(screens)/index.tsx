@@ -4,6 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { Bell, BellDot, MapPin, Search, X } from "lucide-react-native";
 import * as React from "react";
+import { ActivityIndicator } from "react-native";
 import {
   Dimensions,
   Pressable,
@@ -153,6 +154,15 @@ export default function Index() {
       }
     }
   }, [plans, searchQuery, selectedCategory]);
+
+  if (!filteredPlans)
+    return (
+      <ActivityIndicator
+        className="flex-1"
+        style={{ flex: 1 }}
+        animating={true}
+      />
+    );
 
   return (
     <ScrollView
