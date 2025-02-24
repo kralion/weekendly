@@ -1,24 +1,23 @@
 import { useSignIn } from "@clerk/clerk-expo";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { router } from "expo-router";
 import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Image,
-  ImageBackground,
+  KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
   View,
 } from "react-native";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
 import { toast } from "sonner-native";
+import { z } from "zod";
 import { OnBoardingLayout } from "~/components/OnBoardingLayout";
 import { Button } from "~/components/ui/button";
-import { Text } from "~/components/ui/text";
 import { Input } from "~/components/ui/input";
+import { Text } from "~/components/ui/text";
 import { useThemeColor } from "~/hooks/useThemeColor";
-import { KeyboardAvoidingView } from "react-native";
-import { router } from "expo-router";
 
 const signInSchema = z.object({
   username: z.string().min(1, "El usuario es requerido"),
@@ -50,7 +49,6 @@ export default function SignInScreen() {
       });
 
       if (completeSignIn?.status === "complete") {
-        router.push("/(screens)");
       } else {
         toast.error("Hubo un error al iniciar sesión");
       }

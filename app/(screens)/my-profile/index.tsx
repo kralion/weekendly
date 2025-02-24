@@ -100,7 +100,7 @@ export default function ProfileScreen() {
       <View style={{ position: "relative", width: "100%", height: 200 }}>
         <Image
           source={{
-            uri: "https://images.unsplash.com/photo-1513689125086-6c432170e843",
+            uri: "https://plus.unsplash.com/premium_photo-1701766169067-412484e22158?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8b3JhbmdlJTIwZ3JhZGllbnR8ZW58MHx8MHx8fDA%3D",
           }}
           style={{
             width: "100%",
@@ -166,12 +166,7 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Bio */}
-        <Text className="my-4 text-gray-600 text-center">
-          {currentProfile?.bio || "No hay biografía aún"}
-        </Text>
-
-        <View className="flex flex-row gap-4 mx-auto">
+        <View className="flex flex-row gap-4 mx-auto mt-2">
           <View className="flex flex-row gap-1 items-center">
             <MapPin size={18} color="gray" />
             <Text className="text-gray-500 mt-1">
@@ -188,10 +183,10 @@ export default function ProfileScreen() {
         {/* Social Links */}
 
         {/* Profile Details Cards */}
-        <View className="mt-8 flex flex-col gap-4">
+        <View className="mt-8 flex flex-col ">
+          <Text className="text-lg font-semibold mb-2 text-gray-900">Bio</Text>
           <View className="bg-muted p-4 rounded-lg">
-            <Text className="text-gray-500 mb-1">Día preferido</Text>
-            <Text className="text-gray-900 font-medium">Domingo</Text>
+            <Text className="text-muted-foreground">{currentProfile?.bio}</Text>
           </View>
         </View>
 
