@@ -78,9 +78,9 @@ export default function SignInScreen() {
                 source={require("../../../../assets/logo.png")}
               />
               <Text className="text-4xl font-bold">Bienvenido</Text>
-              <Text className="text-center  text-xl">
+              <Text className="text-center text-muted-foreground">
                 Inicia sesión en tu cuenta de{" "}
-                <Text className="font-semibold text-xl">Weekendly</Text>
+                <Text className="font-semibold">Weekendly</Text>
               </Text>
             </View>
 
@@ -151,7 +151,7 @@ export default function SignInScreen() {
               </Button>
 
               <View>
-                <Text className="text-center">
+                <Text className="text-center text-muted-foreground">
                   ¿Nuevo en Weekendly?{" "}
                   <Text
                     className="text-primary font-semibold underline"
@@ -163,7 +163,7 @@ export default function SignInScreen() {
               </View>
             </View>
             <View className="mt-10">
-              <Text className="text-center">
+              <Text className="text-center text-muted-foreground">
                 Al inciar sesión aceptas nuestros{" "}
                 <Text className="text-primary font-semibold underline">
                   Términos y condiciones

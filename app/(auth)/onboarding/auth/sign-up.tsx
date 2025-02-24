@@ -19,6 +19,7 @@ import { validateDni } from "~/lib/validateDni";
 import { capitalize } from "~/lib/utils";
 import { useSignUpStore } from "~/stores/useSignUpStore";
 import type { ReniecResponse } from "~/types";
+import { CheckCircle, CheckCircle2 } from "lucide-react-native";
 
 const signUpSchema = z.object({
   dni: z.string().length(8, "El DNI debe tener 8 dígitos"),
@@ -102,7 +103,18 @@ export default function SignUpScreen() {
               }}
               source={require("../../../../assets/logo.png")}
             />
-            <Text className="text-4xl font-bold">Crear cuenta</Text>
+            <Text className="text-4xl font-bold">Crear Cuenta</Text>
+            <View>
+              <Text className="text-center text-muted-foreground">
+                ¿Ya tienes una cuenta?{" "}
+                <Text
+                  className="text-primary font-semibold underline"
+                  onPress={() => router.back()}
+                >
+                  Inicia sesión
+                </Text>
+              </Text>
+            </View>
           </View>
 
           <View className="flex flex-col gap-4 w-full">
@@ -123,15 +135,23 @@ export default function SignUpScreen() {
                   />
                 )}
               />
+
               {errors.dni?.message && (
                 <Text className="text-xs text-red-500">
                   {errors.dni?.message}
                 </Text>
               )}
-              {userInfo && (
-                <Text className="text-muted-foreground">
-                  {userInfo.nombres} {userInfo.apellidoPaterno}{" "}
-                  {userInfo.apellidoMaterno}
+              {userInfo ? (
+                <View className="flex flex-row justify-between px-2 py-1 items-center">
+                  <Text className="text-muted-foreground">
+                    {userInfo.nombres} {userInfo.apellidoPaterno}{" "}
+                    {userInfo.apellidoMaterno}
+                  </Text>
+                  <CheckCircle2 size={18} color="#22C55E" />
+                </View>
+              ) : (
+                <Text className="text-xs text-muted-foreground px-2">
+                  Solo para verificar tu indentidad utilizamos tu DNI.
                 </Text>
               )}
             </View>
@@ -143,7 +163,7 @@ export default function SignUpScreen() {
                 name="username"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
-                    placeholder="Tu nombre de usuario"
+                    placeholder="usuario123"
                     onChangeText={onChange}
                     onBlur={onBlur}
                     value={value}
