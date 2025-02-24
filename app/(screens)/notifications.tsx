@@ -115,7 +115,7 @@ export default function NotificationsScreen() {
           variant="secondary"
           size="icon"
         >
-          <ChevronLeft size={24} color="#A020F0" />
+          <ChevronLeft size={24} color="#FF5733" />
         </Button>
         <Text className="text-xl font-semibold ml-4">Notificaciones</Text>
       </View>

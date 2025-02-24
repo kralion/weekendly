@@ -45,7 +45,7 @@ export const usePlans = create<PlansState>((set, get) => ({
   setSearchQuery: (query) => {
     set({ searchQuery: query });
     const { plans } = get();
-    
+
     if (!query.trim()) {
       // If search is cleared, revert to category filtering if any
       const { selectedCategory } = get();
@@ -59,39 +59,52 @@ export const usePlans = create<PlansState>((set, get) => ({
     set({ selectedCategory: null });
 
     // Filter and sort plans by relevance
-    const filtered = plans.filter((plan) => {
-      const titleMatch = plan.title.toLowerCase().includes(query.toLowerCase());
-      const descriptionMatch = plan.description.toLowerCase().includes(query.toLowerCase());
-      const locationMatch = plan.location.toLowerCase().includes(query.toLowerCase());
-      const categoryMatch = plan.categories.some(cat => 
-        cat.toLowerCase().includes(query.toLowerCase())
-      );
-      
-      return titleMatch || descriptionMatch || locationMatch || categoryMatch;
-    }).sort((a, b) => {
-      // Calculate relevance score
-      const getScore = (plan: Plan) => {
-        let score = 0;
-        const lowerQuery = query.toLowerCase();
-        
-        // Title matches are most important
-        if (plan.title.toLowerCase().includes(lowerQuery)) score += 10;
-        if (plan.title.toLowerCase().startsWith(lowerQuery)) score += 5;
-        
-        // Description matches
-        if (plan.description.toLowerCase().includes(lowerQuery)) score += 3;
-        
-        // Location matches
-        if (plan.location.toLowerCase().includes(lowerQuery)) score += 2;
-        
-        // Category matches
-        if (plan.categories.some(cat => cat.toLowerCase().includes(lowerQuery))) score += 1;
-        
-        return score;
-      };
-      
-      return getScore(b) - getScore(a);
-    });
+    const filtered = plans
+      .filter((plan) => {
+        const titleMatch = plan.title
+          .toLowerCase()
+          .includes(query.toLowerCase());
+        const descriptionMatch = plan.description
+          .toLowerCase()
+          .includes(query.toLowerCase());
+        const locationMatch = plan.location
+          .toLowerCase()
+          .includes(query.toLowerCase());
+        const categoryMatch = plan.categories.some((cat) =>
+          cat.toLowerCase().includes(query.toLowerCase())
+        );
+
+        return titleMatch || descriptionMatch || locationMatch || categoryMatch;
+      })
+      .sort((a, b) => {
+        // Calculate relevance score
+        const getScore = (plan: Plan) => {
+          let score = 0;
+          const lowerQuery = query.toLowerCase();
+
+          // Title matches are most important
+          if (plan.title.toLowerCase().includes(lowerQuery)) score += 10;
+          if (plan.title.toLowerCase().startsWith(lowerQuery)) score += 5;
+
+          // Description matches
+          if (plan.description.toLowerCase().includes(lowerQuery)) score += 3;
+
+          // Location matches
+          if (plan.location.toLowerCase().includes(lowerQuery)) score += 2;
+
+          // Category matches
+          if (
+            plan.categories.some((cat) =>
+              cat.toLowerCase().includes(lowerQuery)
+            )
+          )
+            score += 1;
+
+          return score;
+        };
+
+        return getScore(b) - getScore(a);
+      });
 
     set({ filteredPlans: filtered });
   },
@@ -104,17 +117,25 @@ export const usePlans = create<PlansState>((set, get) => ({
 
     set({ selectedCategory: category });
     const { plans } = get();
-    
-    const categoryName = category === "1" ? "Música" : 
-                       category === "2" ? "Arte" :
-                       category === "3" ? "Deportes" :
-                       category === "4" ? "Cine" :
-                       category === "5" ? "Teatro" :
-                       category === "6" ? "Lectura" :
-                       category === "7" ? "Ocio" :
-                       "Eventos";
 
-    const filtered = plans.filter((plan) => 
+    const categoryName =
+      category === "1"
+        ? "Música"
+        : category === "2"
+        ? "Arte"
+        : category === "3"
+        ? "Deportes"
+        : category === "4"
+        ? "Cine"
+        : category === "5"
+        ? "Teatro"
+        : category === "6"
+        ? "Lectura"
+        : category === "7"
+        ? "Ocio"
+        : "Eventos";
+
+    const filtered = plans.filter((plan) =>
       plan.categories.includes(categoryName)
     );
 
@@ -307,7 +328,6 @@ export const usePlans = create<PlansState>((set, get) => ({
         userPlans: [...state.userPlans, data],
         selectedPlan: data,
       }));
-      toast.success("Te has unido al plan exitosamente");
     } catch (error) {
       toast.error("Error al unirse al plan");
       console.error(error);

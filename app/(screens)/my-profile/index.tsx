@@ -43,7 +43,7 @@ export default function ProfileScreen() {
   if (loading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#A020F0" />
+        <ActivityIndicator size="large" color="#FF5733" />
       </View>
     );
   }
@@ -102,7 +102,7 @@ export default function ProfileScreen() {
             size="icon"
             onPress={() => router.push("/(screens)/my-profile/edit")}
           >
-            <Pen color="#A020F0" size={18} />
+            <Pen color="#FF5733" size={18} />
           </Button>
         </View>
 

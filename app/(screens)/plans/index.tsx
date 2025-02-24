@@ -133,7 +133,7 @@ export default function Plans() {
   if (plansLoading) {
     return (
       <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" color="#A020F0" />
+        <ActivityIndicator size="large" color="#FF5733" />
       </View>
     );
   }

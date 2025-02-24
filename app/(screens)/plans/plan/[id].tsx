@@ -168,12 +168,12 @@ export default function PlanDetail() {
               variant="secondary"
               onPress={handleShare}
             >
-              <Share2 size={20} color="#A020F0" />
+              <Share2 size={20} color="#FF5733" />
             </Button>
           </View>
 
           <View className="flex-row items-center mb-4 gap-1">
-            <MapPin size={16} className="mr-1" color="#A020F0" />
+            <MapPin size={16} className="mr-1" color="#FF5733" />
             <Text className="text-sm">{plan.location}</Text>
           </View>
 
@@ -190,7 +190,7 @@ export default function PlanDetail() {
 
           <View className="flex-row justify-between mb-6 items-center">
             <View className="flex-row items-center gap-2">
-              <Calendar size={16} className="mr-2" color="#A020F0" />
+              <Calendar size={16} className="mr-2" color="#FF5733" />
               <Text>
                 {new Date(plan.date).toLocaleDateString("es", {
                   weekday: "long",
@@ -208,7 +208,7 @@ export default function PlanDetail() {
               </Text>
             </View>
             <View className="flex-row items-center gap-2">
-              <Users size={16} className="mr-2" color="#A020F0" />
+              <Users size={16} className="mr-2" color="#FF5733" />
               <Text>
                 {plan.participants.length}/{plan.max_participants}
               </Text>

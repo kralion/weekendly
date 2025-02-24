@@ -91,7 +91,6 @@ export const useProfiles = create<ProfilesState>((set, get) => ({
         profiles: [...state.profiles, data],
         currentProfile: data,
       }));
-      toast.success("Perfil creado exitosamente");
     } catch (error) {
       toast.error("Error al crear perfil");
       console.error(error);

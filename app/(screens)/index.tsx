@@ -188,9 +188,9 @@ export default function Index() {
             >
               <View className="relative">
                 {notifications > 0 ? (
-                  <BellDot color="#A020F0" size={24} />
+                  <BellDot color="#FF5733" size={24} />
                 ) : (
-                  <Bell color="#A020F0" size={24} />
+                  <Bell color="#FF5733" size={24} />
                 )}
               </View>
             </TouchableOpacity>
@@ -231,9 +231,9 @@ export default function Index() {
             }}
           >
             {searchQuery ? (
-              <X color="#A020F0" size={20} />
+              <X color="#FF5733" size={20} />
             ) : (
-              <Search color="#A020F0" size={20} />
+              <Search color="#FF5733" size={20} />
             )}
           </Button>
         </View>
@@ -268,11 +268,7 @@ export default function Index() {
           <PlanCard plan={filteredPlans[0]} index={0} />
           <View className="p-4 ">
             <Text className="text-center text-sm text-muted-foreground">
-              {searchQuery
-                ? `Este es el plan que mejor coincide con "${searchQuery}". Toca para ver ${
-                    filteredPlans.length - 1
-                  } planes más que coinciden con tu búsqueda.`
-                : `TIP: Toca el plan y haz scroll para descubrir más.`}
+              TIP: Tap en plan para ver un scroll de planes relacionados.
             </Text>
           </View>
         </>

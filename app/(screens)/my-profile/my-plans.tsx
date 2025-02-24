@@ -132,7 +132,7 @@ export default function MyPlansScreen() {
           variant="secondary"
           size="icon"
         >
-          <ChevronLeft color="#A020F0" size={24} />
+          <ChevronLeft color="#FF5733" size={24} />
         </Button>
         <Tabs
           value={value}
@@ -172,7 +172,7 @@ export default function MyPlansScreen() {
           variant="secondary"
           size="icon"
         >
-          <Plus color="#A020F0" size={24} />
+          <Plus color="#FF5733" size={24} />
         </Button>
       </View>
 

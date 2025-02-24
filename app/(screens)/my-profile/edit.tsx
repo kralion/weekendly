@@ -156,7 +156,7 @@ export default function EditProfileScreen() {
             variant="secondary"
             size="icon"
           >
-            <X size={20} color="#A020F0" />
+            <X size={20} color="#FF5733" />
           </Button>
           <Text className="text-xl font-semibold ml-4">Editar perfil</Text>
         </BlurView>
@@ -176,7 +176,7 @@ export default function EditProfileScreen() {
             />
             {isLoading && (
               <View className="absolute inset-0 flex items-center justify-center">
-                <ActivityIndicator size="large" color="#A020F0" />
+                <ActivityIndicator size="large" color="#FF5733" />
               </View>
             )}
             <Button
@@ -186,7 +186,7 @@ export default function EditProfileScreen() {
               onPress={() => pickImage()}
               disabled={isLoading}
             >
-              <Camera size={20} color="#A020F0" />
+              <Camera size={20} color="#FF5733" />
             </Button>
           </View>
         </View>
