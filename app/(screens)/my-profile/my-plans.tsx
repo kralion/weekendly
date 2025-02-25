@@ -3,8 +3,9 @@ import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import { ChevronLeft, Plus } from "lucide-react-native";
 import React from "react";
-import { Image, TouchableOpacity, View } from "react-native";
+import { Alert, Image, TouchableOpacity, Vibration, View } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
+import { toast } from "sonner-native";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
@@ -23,7 +24,30 @@ export default function MyPlansScreen() {
     loading,
     getParticipants,
     participants,
+    deletePlan,
   } = usePlans();
+
+  const handleDeletePlan = React.useCallback(
+    (planId: string) => {
+      Vibration.vibrate();
+      Alert.alert(
+        "Eliminar plan",
+        "¿Estás seguro de que deseas eliminar este plan?",
+        [
+          {
+            text: "Cancelar",
+            style: "cancel",
+          },
+          {
+            text: "Eliminar",
+            style: "destructive",
+            onPress: async () => await deletePlan(planId),
+          },
+        ]
+      );
+    },
+    [deletePlan]
+  );
 
   // Get plans where user is joined
   const joinedPlans = React.useMemo(() => {
@@ -70,6 +94,7 @@ export default function MyPlansScreen() {
     ({ item }: { item: Plan }) => (
       <TouchableOpacity
         className="my-4 bg-white rounded-xl shadow-sm overflow-hidden"
+        onLongPress={() => handleDeletePlan(item.id as string)}
         onPress={() => router.push(`/(screens)/plans/plan/${item.id}`)}
       >
         <Image

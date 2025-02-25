@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { Bell, BellDot, MapPin, Search, X } from "lucide-react-native";
 import * as React from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, KeyboardAvoidingView } from "react-native";
 import {
   Dimensions,
   Pressable,
@@ -165,137 +165,141 @@ export default function Index() {
     );
 
   return (
-    <ScrollView
-      style={{ flex: 1 }}
-      className="bg-background"
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-      }
-      contentInsetAdjustmentBehavior="automatic"
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Custom Header */}
-      <Animated.View
-        entering={FadeInDown.springify()
-          .mass(0.5)
-          .damping(8)
-          .stiffness(80)
-          .duration(600)}
-        className="bg-background flex flex-col gap-4"
+    <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        className="bg-background"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+        contentInsetAdjustmentBehavior="automatic"
+        showsVerticalScrollIndicator={false}
       >
-        <View className="flex-row items-center justify-between p-4">
-          <View>
-            <Text className="text-3xl font-bold">
-              ¡Hola! {user?.firstName?.split(" ")[0]} 👋
-            </Text>
-            <Text className="text-base text-muted-foreground">
-              Descubre planes increíbles
-            </Text>
+        {/* Custom Header */}
+        <Animated.View
+          entering={FadeInDown.springify()
+            .mass(0.5)
+            .damping(8)
+            .stiffness(80)
+            .duration(600)}
+          className="bg-background flex flex-col gap-4"
+        >
+          <View className="flex-row items-center justify-between p-4">
+            <View>
+              <Text className="text-3xl font-bold">
+                ¡Hola! {user?.firstName?.split(" ")[0]} 👋
+              </Text>
+              <Text className="text-base text-muted-foreground">
+                Descubre planes increíbles
+              </Text>
+            </View>
+            <View className="flex-row items-center gap-6">
+              <TouchableOpacity
+                onPress={() => router.push("/(screens)/notifications")}
+              >
+                <View className="relative">
+                  {notifications > 0 ? (
+                    <BellDot color="#FF5733" size={24} />
+                  ) : (
+                    <Bell color="#FF5733" size={24} />
+                  )}
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => router.push("/(screens)/my-profile")}
+              >
+                <Avatar alt="profile">
+                  <AvatarImage source={{ uri: user?.imageUrl }} />
+                  <AvatarFallback>
+                    <Text>{user?.firstName?.[0]}</Text>
+                  </AvatarFallback>
+                </Avatar>
+              </TouchableOpacity>
+            </View>
           </View>
-          <View className="flex-row items-center gap-6">
-            <TouchableOpacity
-              onPress={() => router.push("/(screens)/notifications")}
+
+          {/* Search Bar */}
+          <View className="flex-row items-center justify-between p-4">
+            <Input
+              placeholder="Buscar planes..."
+              ref={searchRef}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              style={{
+                width: 300,
+                height: 50,
+                borderRadius: 999,
+                paddingLeft: 24,
+              }}
+            />
+            <Button
+              variant="secondary"
+              size="lg"
+              hitSlop={10}
+              className="rounded-full px-4"
+              onPress={() => {
+                searchQuery ? setSearchQuery("") : searchRef.current?.focus();
+              }}
             >
-              <View className="relative">
-                {notifications > 0 ? (
-                  <BellDot color="#FF5733" size={24} />
-                ) : (
-                  <Bell color="#FF5733" size={24} />
-                )}
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => router.push("/(screens)/my-profile")}
-            >
-              <Avatar alt="profile">
-                <AvatarImage source={{ uri: user?.imageUrl }} />
-                <AvatarFallback>
-                  <Text>{user?.firstName?.[0]}</Text>
-                </AvatarFallback>
-              </Avatar>
-            </TouchableOpacity>
+              {searchQuery ? (
+                <X color="#FF5733" size={20} />
+              ) : (
+                <Search color="#FF5733" size={20} />
+              )}
+            </Button>
           </View>
-        </View>
 
-        {/* Search Bar */}
-        <View className="flex-row items-center justify-between p-4">
-          <Input
-            placeholder="Buscar planes..."
-            ref={searchRef}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            style={{
-              width: 300,
-              height: 50,
-              borderRadius: 999,
-              paddingLeft: 24,
-            }}
-          />
-          <Button
-            variant="secondary"
-            size="lg"
-            hitSlop={10}
-            className="rounded-full px-4"
-            onPress={() => {
-              searchQuery ? setSearchQuery("") : searchRef.current?.focus();
-            }}
-          >
-            {searchQuery ? (
-              <X color="#FF5733" size={20} />
-            ) : (
-              <Search color="#FF5733" size={20} />
-            )}
-          </Button>
-        </View>
+          {/* Categories */}
+          {!searchQuery && (
+            <View>
+              <Text className="text-muted-foreground px-4 mb-4">
+                Categorías
+              </Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                className="pl-4"
+              >
+                {CATEGORIES.map((category) => (
+                  <CategoryButton
+                    key={category.id}
+                    category={category}
+                    isSelected={selectedCategory === category.id}
+                    onPress={() => setSelectedCategory(category.id)}
+                  />
+                ))}
+              </ScrollView>
+            </View>
+          )}
+        </Animated.View>
 
-        {/* Categories */}
-        {!searchQuery && (
-          <View>
-            <Text className="text-muted-foreground px-4 mb-4">Categorías</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              className="pl-4"
-            >
-              {CATEGORIES.map((category) => (
-                <CategoryButton
-                  key={category.id}
-                  category={category}
-                  isSelected={selectedCategory === category.id}
-                  onPress={() => setSelectedCategory(category.id)}
-                />
-              ))}
-            </ScrollView>
+        <Text className="text-muted-foreground mb-8 m-4">
+          {searchQuery ? "Mejor coincidencia" : "Plan Sugerido"}
+        </Text>
+        {filteredPlans.length > 0 ? (
+          <>
+            <PlanCard plan={filteredPlans[0]} index={0} />
+            <View className="p-4 ">
+              <Text className="text-center text-sm text-muted-foreground">
+                TIP: Tap en plan para ver un scroll de planes relacionados.
+              </Text>
+            </View>
+          </>
+        ) : (
+          <View className="flex-1 mt-16 justify-center items-center">
+            <Image
+              source={{
+                uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",
+              }}
+              style={{ width: 100, height: 100 }}
+            />
+            <Text className="text-center text-muted-foreground mx-auto w-2/3">
+              No se encontraron planes que coincidan con{" "}
+              {searchQuery ? "tu búsqueda" : "la categoría seleccionada"}.
+            </Text>
           </View>
         )}
-      </Animated.View>
-
-      <Text className="text-muted-foreground mb-8 m-4">
-        {searchQuery ? "Mejor coincidencia" : "Plan Sugerido"}
-      </Text>
-      {filteredPlans.length > 0 ? (
-        <>
-          <PlanCard plan={filteredPlans[0]} index={0} />
-          <View className="p-4 ">
-            <Text className="text-center text-sm text-muted-foreground">
-              TIP: Tap en plan para ver un scroll de planes relacionados.
-            </Text>
-          </View>
-        </>
-      ) : (
-        <View className="flex-1 mt-16 justify-center items-center">
-          <Image
-            source={{
-              uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",
-            }}
-            style={{ width: 100, height: 100 }}
-          />
-          <Text className="text-center text-muted-foreground mx-auto w-2/3">
-            No se encontraron planes que coincidan con{" "}
-            {searchQuery ? "tu búsqueda" : "la categoría seleccionada"}.
-          </Text>
-        </View>
-      )}
-    </ScrollView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

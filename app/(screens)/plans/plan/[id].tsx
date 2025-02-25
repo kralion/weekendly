@@ -31,6 +31,7 @@ import InviteBottomSheet from "~/components/Invite";
 import ReportPlan from "~/components/ReportPlan";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
+import { capitalize } from "~/lib/utils";
 import { usePlans } from "~/stores";
 import { useComments } from "~/stores/comments";
 import { Plan } from "~/types";
@@ -240,11 +241,13 @@ export default function PlanDetail() {
             <View className="flex-row items-center gap-2">
               <Calendar size={16} className="mr-2" color="#FF5733" />
               <Text>
-                {new Date(plan.date).toLocaleDateString("es", {
-                  weekday: "long",
-                  month: "long",
-                  day: "numeric",
-                })}{" "}
+                {capitalize(
+                  new Date(plan.date).toLocaleDateString("es", {
+                    weekday: "long",
+                    month: "long",
+                    day: "numeric",
+                  })
+                )}{" "}
                 -{" "}
                 {new Date(plan.date)
                   .toLocaleTimeString("es", {
@@ -267,7 +270,7 @@ export default function PlanDetail() {
           <Text className="text-gray-600 mb-6">{plan.description}</Text>
         </View>
         {user?.id !== plan.creator_id && (
-          <View className="flex-row items-center gap-1  p-4">
+          <View className="flex-row items-center gap-1  px-4">
             <Text className="  text-sm text-muted-foreground">Creado por</Text>
             <Link href={`/(screens)/plans/profile/${plan.creator_id}`}>
               <Text className="text-sm font-semibold text-brand">

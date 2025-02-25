@@ -5,8 +5,6 @@ import { router } from "expo-router";
 import { Calendar, ChevronLeft, MapPin } from "lucide-react-native";
 import * as React from "react";
 import {
-  ActivityIndicator,
-  Dimensions,
   Pressable,
   TouchableOpacity,
   useWindowDimensions,
