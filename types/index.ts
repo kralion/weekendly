@@ -16,7 +16,10 @@ export enum Gender {
 export interface Invitation {
   id: string;
   sender_id: string;
+  created_at: Date;
   receiver_id: string;
+  sender?: Profile;
+  receiver?: Profile;
   plan_id: string;
   status: string;
   message: string;

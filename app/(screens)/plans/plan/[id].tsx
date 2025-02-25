@@ -321,7 +321,7 @@ export default function PlanDetail() {
                       uri: comment.profiles?.image_url,
                     }}
                     className="rounded-full"
-                    style={{ width: 40, height: 40 }}
+                    style={{ width: 40, height: 40, borderRadius: 999 }}
                   />
                   <View className="flex flex-col">
                     <View className="flex flex-row gap-2 items-center">
