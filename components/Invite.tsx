@@ -22,7 +22,7 @@ export default function InviteBottomSheet({
   bottomSheetRef: React.RefObject<BottomSheet>;
   id: string;
 }) {
-  const snapPoints = useMemo(() => ["50%"], []);
+  const snapPoints = useMemo(() => ["55%"], []);
   const { isDarkColorScheme: isDarkMode } = useColorScheme();
   const [message, setMessage] = React.useState<string>("");
   const { createInvitation, loading: invitationsLoading } = useInvitations();

@@ -27,6 +27,7 @@ interface PlansState {
   leavePlan: (planId: string, userId: string) => Promise<void>;
   setSelectedPlan: (plan: Plan | null) => void;
   getParticipants: (planId: string) => Promise<void>;
+  reportPlan: (planId: string) => Promise<void>;
 }
 
 export const usePlans = create<PlansState>((set, get) => ({
@@ -391,6 +392,44 @@ export const usePlans = create<PlansState>((set, get) => ({
     } catch (error) {
       toast.error("Error al abandonar el plan");
       console.error(error);
+    }
+  },
+
+  reportPlan: async (planId: string) => {
+    try {
+      set({ loading: true });
+      
+      const { data: currentPlan, error: fetchError } = await supabase
+        .from("plans")
+        .select("reports")
+        .eq("id", planId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const currentReports = currentPlan?.reports || 0;
+      
+      const { error: updateError } = await supabase
+        .from("plans")
+        .update({ reports: currentReports + 1 })
+        .eq("id", planId);
+
+      if (updateError) throw updateError;
+
+      // Update the local plan state
+      const plans = get().plans;
+      const updatedPlans = plans.map(plan => 
+        plan.id === planId 
+          ? { ...plan, reports: (plan.reports || 0) + 1 }
+          : plan
+      );
+      set({ plans: updatedPlans });
+
+    } catch (error) {
+      console.error("Error reporting plan:", error);
+      throw error;
+    } finally {
+      set({ loading: false });
     }
   },
 }));

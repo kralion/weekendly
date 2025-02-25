@@ -1,17 +1,18 @@
 import { useUser } from "@clerk/clerk-expo";
+import BottomSheet from "@gorhom/bottom-sheet";
 import { Audio } from "expo-av";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import {
+  AlertTriangle,
   Calendar,
   ChevronLeft,
+  Flag,
   MapPin,
-  MessageSquareShare,
   Pen,
   Share2,
-  ShareIcon,
-  UserRoundSearch,
+  UserPlus,
   Users,
 } from "lucide-react-native";
 import React, { useEffect } from "react";
@@ -24,26 +25,35 @@ import {
   View,
 } from "react-native";
 import { toast } from "sonner-native";
+import AddComment from "~/components/AddComment";
 import { Confirmed } from "~/components/confirmed";
 import InviteBottomSheet from "~/components/Invite";
+import ReportPlan from "~/components/ReportPlan";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { usePlans } from "~/stores";
+import { useComments } from "~/stores/comments";
 import { Plan } from "~/types";
-import BottomSheet from "@gorhom/bottom-sheet";
 
 //DOCS:  npx expo start --https when executing on the web
 export default function PlanDetail() {
   const { id } = useLocalSearchParams();
   const { user } = useUser();
   const bottomSheetRef = React.useRef<BottomSheet>(null);
+  const commentSheetRef = React.useRef<BottomSheet>(null);
+  const reportSheetRef = React.useRef<BottomSheet>(null);
 
   const [plan, setPlan] = React.useState<Plan | null>(null);
   const { joinPlan, leavePlan, getPlanById } = usePlans();
+  const { comments, getCommentsByPlanId } = useComments();
 
   useEffect(() => {
-    getPlanById(id as string).then(setPlan);
+    if (id) {
+      getPlanById(id as string).then(setPlan);
+      getCommentsByPlanId(id as string);
+    }
   }, [id]);
+
   const [showConfirmed, setShowConfirmed] = React.useState(false);
   const [sound, setSound] = React.useState<Audio.Sound | null>(null);
 
@@ -179,7 +189,7 @@ export default function PlanDetail() {
                 variant="ghost"
                 onPress={() => bottomSheetRef.current?.expand()}
               >
-                <MessageSquareShare size={20} color="#FF5733" />
+                <UserPlus size={20} color="#FF5733" />
               </Button>
               <Button
                 size="icon"
@@ -189,8 +199,26 @@ export default function PlanDetail() {
               >
                 <Share2 size={20} color="#FF5733" />
               </Button>
+              <Button
+                size="icon"
+                className="rounded-full"
+                variant="ghost"
+                onPress={() => reportSheetRef.current?.expand()}
+              >
+                <Flag size={20} color="#FF5733" />
+              </Button>
             </View>
           </View>
+
+          {(plan.reports || 0) > 10 && (
+            <View className="bg-destructive/10 p-4 rounded-lg mb-4 flex-row items-center gap-2">
+              <AlertTriangle size={20} color="#FF5733" />
+              <Text className="text-sm text-destructive flex-1">
+                Este plan ha sido reportado múltiples veces. Te recomendamos ser
+                precavido antes de unirte.
+              </Text>
+            </View>
+          )}
 
           <View className="flex-row items-center mb-4 gap-1">
             <MapPin size={16} className="mr-1" color="#FF5733" />
@@ -258,31 +286,83 @@ export default function PlanDetail() {
               <Text className="text-white font-semibold">Salir del Plan</Text>
             </Button>
           )}
-      </ScrollView>
-      {user?.id !== plan.participants.find((id) => id === user?.id) &&
-        user?.id !== plan.creator_id && (
-          <Button
-            size="lg"
-            className="m-4 mb-8 rounded-full"
-            onPress={handleJoinPlan}
-          >
-            <Text className="text-white font-semibold">Unirme al plan</Text>
-          </Button>
-        )}
 
-      {showConfirmed && (
-        <Confirmed
-          planTitle={plan.title}
-          planImage={plan.image_url}
-          userImage={user?.imageUrl as string}
-          onClose={() => {
-            setShowConfirmed(false);
-            router.back();
-          }}
-          creatorPhone={plan.profiles?.phone}
+        {user?.id !== plan.participants.find((id) => id === user?.id) &&
+          user?.id !== plan.creator_id && (
+            <Button
+              size="lg"
+              className="m-4 mb-8 rounded-full"
+              onPress={handleJoinPlan}
+            >
+              <Text className="text-white font-semibold">Unirme al plan</Text>
+            </Button>
+          )}
+
+        <View className="mt-6 px-6">
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="text-lg font-semibold">Comentarios</Text>
+            <TouchableOpacity onPress={() => commentSheetRef.current?.expand()}>
+              <Text className=" text-primary">Comentar</Text>
+            </TouchableOpacity>
+          </View>
+
+          {comments.length > 0 ? (
+            <View className="flex flex-col gap-4">
+              {comments.map((comment) => (
+                <View
+                  className="flex-row items-center gap-2 mb-2"
+                  key={comment.id}
+                >
+                  <Image
+                    source={{
+                      uri: comment.profiles?.image_url,
+                    }}
+                    className="rounded-full"
+                    style={{ width: 40, height: 40 }}
+                  />
+                  <View className="flex flex-col">
+                    <View className="flex flex-row gap-2 items-center">
+                      <Text className="font-medium text-muted-foreground">
+                        {comment.profiles?.username}
+                      </Text>
+                      <Text className="text-sm">
+                        {new Date(comment.created_at).toLocaleDateString()}
+                      </Text>
+                    </View>
+                    <Text className="font-medium">{comment.message}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <View className="bg-muted p-4 rounded-lg">
+              <Text className="text-center text-muted-foreground">
+                No hay comentarios aún
+              </Text>
+            </View>
+          )}
+        </View>
+
+        {showConfirmed && (
+          <Confirmed
+            planTitle={plan.title}
+            planImage={plan.image_url}
+            userImage={user?.imageUrl as string}
+            onClose={() => {
+              setShowConfirmed(false);
+              router.back();
+            }}
+            creatorPhone={plan.profiles?.phone}
+          />
+        )}
+        <InviteBottomSheet bottomSheetRef={bottomSheetRef} id={id as string} />
+        <AddComment
+          planId={id as string}
+          userId={user?.id as string}
+          bottomSheetRef={commentSheetRef}
         />
-      )}
-      <InviteBottomSheet bottomSheetRef={bottomSheetRef} id={id as string} />
+        <ReportPlan planId={id as string} bottomSheetRef={reportSheetRef} />
+      </ScrollView>
     </View>
   );
 }

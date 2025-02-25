@@ -46,6 +46,7 @@ export interface Plan {
   id?: string;
   creator_id: string;
   categories: string[];
+  reports?: number;
   title: string;
   description: string;
   profiles?: Profile;
