@@ -11,6 +11,7 @@ interface ProfilesState {
   fetchProfiles: () => Promise<void>;
   fetchProfileById: (userId: string) => Promise<void>;
   fetchSpecificProfileById: (userId: string) => Promise<void>;
+  searchProfilesByUsername: (username: string) => Promise<Profile[]>;
   createProfile: (profile: Omit<Profile, "created_at">) => Promise<void>;
   updateProfile: (userId: string, profile: Partial<Profile>) => Promise<void>;
   deleteProfile: (userId: string) => Promise<void>;
@@ -40,6 +41,25 @@ export const useProfiles = create<ProfilesState>((set, get) => ({
     }
   },
 
+  searchProfilesByUsername: async (username) => {
+    try {
+      set({ loading: true });
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .ilike("username", `%${username}%`)
+        .limit(5);
+
+      if (error) throw error;
+      return data || []; // Return empty array if no data
+    } catch (error) {
+      toast.error("Error al cargar perfil");
+      console.error(error);
+      return []; // Return empty array on error
+    } finally {
+      set({ loading: false });
+    }
+  },
   fetchProfileById: async (userId) => {
     try {
       set({ loading: true });

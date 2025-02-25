@@ -7,8 +7,11 @@ import {
   Calendar,
   ChevronLeft,
   MapPin,
+  MessageSquareShare,
   Pen,
   Share2,
+  ShareIcon,
+  UserRoundSearch,
   Users,
 } from "lucide-react-native";
 import React, { useEffect } from "react";
@@ -22,17 +25,21 @@ import {
 } from "react-native";
 import { toast } from "sonner-native";
 import { Confirmed } from "~/components/confirmed";
+import InviteBottomSheet from "~/components/Invite";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { usePlans } from "~/stores";
 import { Plan } from "~/types";
+import BottomSheet from "@gorhom/bottom-sheet";
 
 //DOCS:  npx expo start --https when executing on the web
 export default function PlanDetail() {
   const { id } = useLocalSearchParams();
   const { user } = useUser();
+  const bottomSheetRef = React.useRef<BottomSheet>(null);
+
   const [plan, setPlan] = React.useState<Plan | null>(null);
-  const { joinPlan, leavePlan, getPlanById, isLoading } = usePlans();
+  const { joinPlan, leavePlan, getPlanById } = usePlans();
 
   useEffect(() => {
     getPlanById(id as string).then(setPlan);
@@ -111,7 +118,7 @@ export default function PlanDetail() {
     }
   };
 
-  if (!plan || isLoading) {
+  if (!plan) {
     return (
       <View className="flex-1 justify-center items-center">
         <ActivityIndicator size="large" color="#FF5733" />
@@ -164,15 +171,25 @@ export default function PlanDetail() {
 
         <View className="px-4 mt-4">
           <View className="flex flex-row justify-between items-center ">
-            <Text className="text-3xl font-bold mb-2">{plan.title}</Text>
-            <Button
-              size="icon"
-              className="rounded-full"
-              variant="secondary"
-              onPress={handleShare}
-            >
-              <Share2 size={20} color="#FF5733" />
-            </Button>
+            <Text className="text-2xl font-bold mb-2">{plan.title}</Text>
+            <View className="flex flex-row items-center">
+              <Button
+                size="icon"
+                className="rounded-full"
+                variant="ghost"
+                onPress={() => bottomSheetRef.current?.expand()}
+              >
+                <MessageSquareShare size={20} color="#FF5733" />
+              </Button>
+              <Button
+                size="icon"
+                className="rounded-full"
+                variant="ghost"
+                onPress={handleShare}
+              >
+                <Share2 size={20} color="#FF5733" />
+              </Button>
+            </View>
           </View>
 
           <View className="flex-row items-center mb-4 gap-1">
@@ -265,6 +282,7 @@ export default function PlanDetail() {
           creatorPhone={plan.profiles?.phone}
         />
       )}
+      <InviteBottomSheet bottomSheetRef={bottomSheetRef} id={id as string} />
     </View>
   );
 }

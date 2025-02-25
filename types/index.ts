@@ -13,6 +13,15 @@ export enum Gender {
   Otro = "Otro",
 }
 
+export interface Invitation {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  plan_id: string;
+  status: string;
+  message: string;
+}
+
 export interface Profile {
   user_id: string;
   username: string;

@@ -1,9 +1,8 @@
-import { router, Stack } from "expo-router";
-import { TouchableOpacity } from "react-native";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { Text } from "~/components/ui/text";
+import { Stack } from "expo-router";
+import React from "react";
 
 export default function TabLayout() {
+
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
