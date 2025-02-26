@@ -1,27 +1,28 @@
 import { useUser } from "@clerk/clerk-expo";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import { useLocalSearchParams } from "expo-router";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Camera, X } from "lucide-react-native";
 import * as React from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   TouchableOpacity,
   View,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { toast } from "sonner-native";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
 import { Textarea } from "~/components/ui/textarea";
 import { usePlans } from "~/stores";
-import { BlurView } from "expo-blur";
 
 const HEADER_HEIGHT = 100;
 
@@ -55,6 +56,8 @@ export default function CreatePlan() {
   );
   const [maxParticipants, setMaxParticipants] = React.useState(2);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const [showDatePicker, setShowDatePicker] = React.useState(false);
+  const [showTimePicker, setShowTimePicker] = React.useState(false);
 
   const {
     createPlan,
@@ -289,19 +292,88 @@ export default function CreatePlan() {
 
           <View>
             <Text className="text-base mb-2 web:md:text-lg">Fecha y Hora</Text>
-            <DateTimePicker
-              value={date}
-              style={{ marginLeft: -18 }}
-              mode="datetime"
-              display="default"
-              minuteInterval={15}
-              locale="es-ES"
-              onChange={(_, selectedDate) => {
-                if (selectedDate) {
-                  setDate(selectedDate);
-                }
-              }}
-            />
+            {Platform.OS === "web" ? (
+              <View className="flex flex-row gap-4">
+                <DatePicker
+                  selected={date}
+                  onChange={(newDate: Date | null) => {
+                    if (newDate) {
+                      setDate(newDate);
+                    }
+                  }}
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={15}
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  locale="es"
+                  className="flex-1 h-12 px-4 rounded-lg bg-muted/50 text-base web:md:text-base"
+                  placeholderText="Selecciona fecha y hora"
+                />
+              </View>
+            ) : (
+              <View className="flex flex-row gap-4">
+                <TouchableOpacity
+                  onPress={() => setShowDatePicker(true)}
+                  className="flex-1 h-12 px-4 rounded-lg bg-muted/50 justify-center"
+                >
+                  <Text className="text-base">
+                    {date.toLocaleDateString("es-ES", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setShowTimePicker(true)}
+                  className="flex-1 h-12 px-4 rounded-lg bg-muted/50 justify-center"
+                >
+                  <Text className="text-base">
+                    {date.toLocaleTimeString("es-ES", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {showDatePicker && Platform.OS !== "web" && (
+              <DateTimePicker
+                value={date}
+                mode="date"
+                display="default"
+                onChange={(event, selectedDate) => {
+                  setShowDatePicker(false);
+                  if (selectedDate) {
+                    setDate(selectedDate);
+                  }
+                }}
+                locale="es-ES"
+              />
+            )}
+
+            {showTimePicker && Platform.OS !== "web" && (
+              <DateTimePicker
+                value={date}
+                mode="time"
+                display="default"
+                onChange={(event, selectedDate) => {
+                  setShowTimePicker(false);
+                  if (selectedDate) {
+                    setDate(selectedDate);
+                  }
+                }}
+                locale="es-ES"
+              />
+            )}
+
+            {errors.date && (
+              <Text className="text-red-500 text-sm web:md:text-base">
+                {errors.date}
+              </Text>
+            )}
           </View>
 
           <View>

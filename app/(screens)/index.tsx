@@ -288,13 +288,24 @@ export default function Index() {
           </View>
         ) : (
           <View className="flex-1 mt-16 justify-center items-center web:md:max-w-4xl web:md:mx-auto">
-            <Image
-              source={{
-                uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",
+            <View
+              style={{
+                backgroundColor: "#E5E5E5",
+                borderRadius: 999,
+                padding: 10,
               }}
-              style={{ width: 100, height: 100 }}
-            />
-            <Text className="text-center text-muted-foreground mx-auto w-2/3">
+            >
+              <Image
+                source={{
+                  uri: "https://img.icons8.com/?size=100&id=97CiUKVEgclT&format=png&color=000000",
+                }}
+                style={{
+                  width: 100,
+                  height: 100,
+                }}
+              />
+            </View>
+            <Text className="text-center mt-5 text-muted-foreground mx-auto w-2/3">
               No se encontraron planes que coincidan con{" "}
               {searchQuery ? "tu búsqueda" : "la categoría seleccionada"}.
             </Text>
