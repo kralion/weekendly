@@ -29,7 +29,7 @@ type SignInForm = z.infer<typeof signInSchema>;
 export default function SignInScreen() {
   const bg = useThemeColor({}, "background");
   const [isLoading, setIsLoading] = React.useState(false);
-  const { signIn } = useSignIn();
+  const { signIn, setActive } = useSignIn();
 
   const {
     control,
@@ -49,6 +49,9 @@ export default function SignInScreen() {
       });
 
       if (completeSignIn?.status === "complete") {
+        await setActive?.({
+          session: completeSignIn.createdSessionId,
+        });
       } else {
         toast.error("Hubo un error al iniciar sesión");
       }

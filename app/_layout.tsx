@@ -147,7 +147,7 @@ function RootLayoutNav() {
   }, []);
   React.useEffect(() => {
     if (!isSignedIn && segments[0] === "(screens)") {
-      router.push("/(auth)/onboarding/step-1");
+      router.push("/(auth)/onboarding/auth/sign-in");
     } else if (isSignedIn && segments[0] === "(auth)") {
       router.push("/(screens)");
     }
