@@ -6,11 +6,21 @@ import React from "react";
 import { View, Text, Dimensions } from "react-native";
 import { ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { useOnboardingStatus } from "@/hooks/useOnboardingStatus";
+import { router } from "expo-router";
 
-export default function OnboardingStepTwo() {
+export default function OnboardingStepThree() {
   const bg = useThemeColor({}, "background");
   const text = useThemeColor({}, "text");
   const primary2 = useThemeColor({}, "primary2");
+  const { completeOnboarding } = useOnboardingStatus();
+
+  const handleComplete = async () => {
+    // Mark onboarding as completed
+    await completeOnboarding();
+    // Navigate to sign-in screen
+    router.replace("/onboarding/auth/sign-in");
+  };
 
   return (
     <OnBoardingLayout
@@ -19,6 +29,7 @@ export default function OnboardingStepTwo() {
       bgColor={primary2}
       nextText="Empezar"
       nextHref="/onboarding/auth/sign-in"
+      onNext={handleComplete}
     >
       <View style={generalStyles.container}>
         <ImageBackground
@@ -56,7 +67,6 @@ export default function OnboardingStepTwo() {
           <Text className="text-4xl font-bold text-center text-white">
             Unete a planes
           </Text>
-
           <Text className="text-center text-xl text-white">
             Puedes unirte a planes que gente ha creado, ir con un amigo tuyo o
             simplemente lanzarte a conocer gente.

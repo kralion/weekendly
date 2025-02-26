@@ -135,6 +135,7 @@ function RootLayoutNav() {
   const { isLoaded, isSignedIn } = useAuth();
 
   const segments = useSegments();
+
   React.useEffect(() => {
     const unsubscribe = NetInfo.addEventListener((state) => {
       if (!state.isConnected) {
@@ -145,6 +146,7 @@ function RootLayoutNav() {
     });
     return () => unsubscribe();
   }, []);
+
   React.useEffect(() => {
     if (!isSignedIn && segments[0] === "(screens)") {
       router.push("/(auth)/onboarding/auth/sign-in");

@@ -32,6 +32,7 @@ interface OnBoardingLayoutProps {
   nextText?: string;
   nextHref?: ValidPaths;
   complete?: boolean;
+  onNext?: () => void;
 }
 
 const SPRING_CONFIG = {
@@ -51,6 +52,7 @@ export const OnBoardingLayout: React.FC<OnBoardingLayoutProps> = ({
   nextText = "SIGUIENTE",
   nextHref,
   complete,
+  onNext,
 }) => {
   const bg = useThemeColor({}, "background");
   const text = useThemeColor({}, "text");
@@ -161,7 +163,13 @@ export const OnBoardingLayout: React.FC<OnBoardingLayoutProps> = ({
             ]}
           >
             <Pressable
-              onPress={() => router.push(nextHref as any)}
+              onPress={() => {
+                if (onNext) {
+                  onNext();
+                } else {
+                  router.push(nextHref as any);
+                }
+              }}
               style={styles.nextBtn}
             >
               <Text style={[styles.nextText, { color: nextColor }]}>

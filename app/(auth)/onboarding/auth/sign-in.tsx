@@ -1,7 +1,7 @@
 import { useSignIn } from "@clerk/clerk-expo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
@@ -18,6 +18,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
 import { useThemeColor } from "~/hooks/useThemeColor";
+import { useOnboardingStatus } from "~/hooks/useOnboardingStatus";
 
 const signInSchema = z.object({
   username: z.string().min(1, "El usuario es requerido"),
@@ -30,6 +31,16 @@ export default function SignInScreen() {
   const bg = useThemeColor({}, "background");
   const [isLoading, setIsLoading] = React.useState(false);
   const { signIn, setActive } = useSignIn();
+  const { isOnboardingCompleted, isLoading: isOnboardingLoading } =
+    useOnboardingStatus();
+
+  // Check if onboarding is completed
+  useEffect(() => {
+    if (!isOnboardingLoading && isOnboardingCompleted === false) {
+      // Redirect to first onboarding step if onboarding is not completed
+      router.replace("/(auth)/onboarding/step-1");
+    }
+  }, [isOnboardingCompleted, isOnboardingLoading]);
 
   const {
     control,
