@@ -182,7 +182,7 @@ export default function Index() {
             .damping(8)
             .stiffness(80)
             .duration(600)}
-          className="bg-background flex flex-col gap-4"
+          className="bg-background flex flex-col gap-4 web:md:max-w-4xl web:md:mx-auto web:md:px-4"
         >
           <View className="flex-row items-center justify-between p-4">
             <View>
@@ -219,7 +219,7 @@ export default function Index() {
           </View>
 
           {/* Search Bar */}
-          <View className="flex-row items-center justify-between p-4">
+          <View className="flex-row items-center justify-between p-4 web:md:justify-center web:md:gap-4">
             <Input
               placeholder="Buscar planes..."
               ref={searchRef}
@@ -231,6 +231,7 @@ export default function Index() {
                 borderRadius: 999,
                 paddingLeft: 24,
               }}
+              className="web:md:w-96"
             />
             <Button
               variant="secondary"
@@ -251,14 +252,14 @@ export default function Index() {
 
           {/* Categories */}
           {!searchQuery && (
-            <View>
+            <View className="web:md:px-4">
               <Text className="text-muted-foreground px-4 mb-4">
                 Categorías
               </Text>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                className="pl-4"
+                className="pl-4 web:md:pl-4"
               >
                 {CATEGORIES.map((category) => (
                   <CategoryButton
@@ -273,20 +274,20 @@ export default function Index() {
           )}
         </Animated.View>
 
-        <Text className="text-muted-foreground mb-8 m-4">
+        <Text className="text-muted-foreground mb-8 m-4 web:md:max-w-4xl web:md:mx-auto web:md:px-4">
           {searchQuery ? "Mejor coincidencia" : "Plan Sugerido"}
         </Text>
         {filteredPlans.length > 0 ? (
-          <>
+          <View className="web:md:max-w-4xl web:md:mx-auto">
             <PlanCard plan={filteredPlans[0]} index={0} />
             <View className="p-4 ">
               <Text className="text-center text-sm text-muted-foreground">
                 TIP: Tap en plan para ver un scroll de planes relacionados.
               </Text>
             </View>
-          </>
+          </View>
         ) : (
-          <View className="flex-1 mt-16 justify-center items-center">
+          <View className="flex-1 mt-16 justify-center items-center web:md:max-w-4xl web:md:mx-auto">
             <Image
               source={{
                 uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",

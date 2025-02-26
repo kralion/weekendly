@@ -46,7 +46,7 @@ function PlanCard({ plan }: { plan: Plan }) {
         }}
         contentFit="cover"
         style={{ width: "100%", height: "100%" }}
-        className="absolute"
+        className="absolute web:md:object-cover"
       />
 
       <LinearGradient
@@ -61,23 +61,23 @@ function PlanCard({ plan }: { plan: Plan }) {
       />
 
       {/* Main Content */}
-      <View className="absolute bottom-4 left-0 right-0 p-6">
+      <View className="absolute bottom-4 left-0 right-0 p-6 web:md:max-w-2xl web:md:mx-auto">
         <View className="flex-row items-center justify-between mb-3">
-          <Text className="text-3xl font-bold text-white">{plan.title}</Text>
+          <Text className="text-3xl font-bold text-white web:md:text-4xl">{plan.title}</Text>
         </View>
 
         {/* Date and Location */}
         <View className="flex flex-col gap-2 mb-4">
           <View className="flex-row items-center gap-2">
             <Calendar size={20} color="white" className="mr-2" />
-            <Text className="text-white text-base">
+            <Text className="text-white text-base web:md:text-lg">
               {formatDate(plan.date)}
             </Text>
           </View>
           <View className="flex-row items-center gap-2">
             <MapPin size={20} color="white" className="mr-2" />
-            <Text className="text-white text-base">{plan.location}</Text>
-            <Text className="text-white/60 text-sm ml-2">(2.5 km)</Text>
+            <Text className="text-white text-base web:md:text-lg">{plan.location}</Text>
+            <Text className="text-white/60 text-sm ml-2 web:md:text-base">(2.5 km)</Text>
           </View>
         </View>
 
@@ -92,7 +92,7 @@ function PlanCard({ plan }: { plan: Plan }) {
               </Avatar>
             ))}
           </View>
-          <Text className="text-white text-base">
+          <Text className="text-white text-base web:md:text-lg">
             {plan.participants.length}/{plan.max_participants} participantes
           </Text>
         </View>
@@ -101,7 +101,7 @@ function PlanCard({ plan }: { plan: Plan }) {
         <View className="flex-row flex-wrap gap-2 mb-6">
           {["Música", "Fotografía", "Arte"].map((interest, index) => (
             <View key={index} className="bg-white/20 px-4 py-2 rounded-full">
-              <Text className="text-white">{interest}</Text>
+              <Text className="text-white web:md:text-base">{interest}</Text>
             </View>
           ))}
         </View>
@@ -109,7 +109,7 @@ function PlanCard({ plan }: { plan: Plan }) {
         {/* Action Buttons */}
 
         <Button
-          className="flex-1  rounded-full"
+          className="flex-1 rounded-full web:md:max-w-xs web:md:self-center"
           size="lg"
           onPress={() => router.push(`/(screens)/plans/plan/${plan.id}`)}
         >

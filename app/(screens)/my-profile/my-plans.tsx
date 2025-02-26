@@ -93,7 +93,7 @@ export default function MyPlansScreen() {
   const renderPlanCard = React.useCallback(
     ({ item }: { item: Plan }) => (
       <TouchableOpacity
-        className="my-4 bg-white rounded-xl shadow-sm overflow-hidden"
+        className="my-4 bg-white rounded-xl shadow-sm overflow-hidden  web:md:mx-auto"
         onLongPress={() => handleDeletePlan(item.id as string)}
         onPress={() => router.push(`/(screens)/plans/plan/${item.id}`)}
       >
@@ -101,19 +101,24 @@ export default function MyPlansScreen() {
           source={{
             uri: item.image_url,
           }}
-          className="w-full h-40"
+          className="w-full h-40 web:md:h-48"
         />
-        <View className="p-4">
+        <View className="p-4 web:md:p-5">
           <View className="flex-row justify-between items-center mb-2">
-            <Text className="text-lg font-semibold">{item.title}</Text>
+            <Text className="text-lg font-semibold web:md:text-xl">
+              {item.title}
+            </Text>
             <View className="bg-blue-100 px-3 py-1 rounded-full">
-              <Text className="text-blue-800 text-sm">
+              <Text className="text-blue-800 text-sm web:md:text-base">
                 {new Date(item.date).toLocaleDateString()}
               </Text>
             </View>
           </View>
 
-          <Text className="text-gray-600 mb-3" numberOfLines={2}>
+          <Text
+            className="text-gray-600 mb-3 web:md:text-base"
+            numberOfLines={2}
+          >
             {item.description}
           </Text>
 
@@ -121,7 +126,11 @@ export default function MyPlansScreen() {
             <View className="flex-row items-center">
               <View className="flex-row -space-x-2">
                 {participants.slice(0, 3).map((participant, index) => (
-                  <Avatar key={index} alt={participant.username}>
+                  <Avatar
+                    key={index}
+                    alt={participant.username}
+                    className="web:md:h-9 web:md:w-9"
+                  >
                     <AvatarImage
                       source={{ uri: participant.image_url as string }}
                     />
@@ -131,14 +140,14 @@ export default function MyPlansScreen() {
                   </Avatar>
                 ))}
               </View>
-              <Text className="text-gray-600 ml-2">
+              <Text className="text-gray-600 ml-2 web:md:text-base">
                 {item.participants.length} personas
               </Text>
             </View>
 
             <View className="flex-row items-center">
-              <View className="w-2 h-2 rounded-full bg-green-500 mr-2" />
-              <Text className="text-gray-600">Activo</Text>
+              <View className="w-2 h-2 rounded-full bg-green-500 mr-2 web:md:w-3 web:md:h-3" />
+              <Text className="text-gray-600 web:md:text-base">Activo</Text>
             </View>
           </View>
         </View>
@@ -148,9 +157,9 @@ export default function MyPlansScreen() {
   );
 
   return (
-    <View className="flex-1 bg-background pt-12">
+    <View className="flex-1 bg-background pt-12 web:md:mx-auto web:md:w-[650px]">
       {/* Header */}
-      <View className="p-6 flex-row justify-between items-center bg-background">
+      <View className="p-6 flex-row justify-between items-center bg-background  ">
         <Button
           className="rounded-full"
           onPress={() => router.back()}
@@ -162,7 +171,7 @@ export default function MyPlansScreen() {
         <Tabs
           value={value}
           onValueChange={setValue}
-          className="flex-1 w-full  max-w-[250px]  mx-auto flex-col gap-1.5"
+          className="flex-1 w-full max-w-[250px] mx-auto flex-col gap-1.5 web:md:w-full"
         >
           <TabsList className="flex-row w-full rounded-full border border-gray-200 bg-white">
             <TabsTrigger
@@ -172,7 +181,7 @@ export default function MyPlansScreen() {
               <Text
                 className={`${
                   value === "created" ? "text-black" : "text-zinc-400"
-                }`}
+                } web:md:text-base`}
               >
                 Creados
               </Text>
@@ -184,7 +193,7 @@ export default function MyPlansScreen() {
               <Text
                 className={`${
                   value === "joined" ? "text-black" : "text-zinc-400"
-                }`}
+                } web:md:text-base`}
               >
                 Unidos
               </Text>
@@ -205,7 +214,7 @@ export default function MyPlansScreen() {
       <Tabs
         value={value}
         onValueChange={setValue}
-        className="flex-1 min-h-screen flex-col gap-1.5 px-4"
+        className="flex-1 min-h-screen flex-col gap-1.5 px-4 "
       >
         <TabsContent value="created" className="flex-1">
           <FlashList
@@ -224,8 +233,9 @@ export default function MyPlansScreen() {
                     uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",
                   }}
                   style={{ width: 100, height: 100 }}
+                  className="web:md:w-32 web:md:h-32"
                 />
-                <Text className="text-center text-muted-foreground mx-auto w-2/3">
+                <Text className="text-center text-muted-foreground mx-auto w-2/3 web:md:text-lg web:md:mt-4">
                   {loading
                     ? "Cargando tus planes..."
                     : "Aún no has creado ningún plan. ¡Crea uno nuevo!"}
@@ -252,8 +262,9 @@ export default function MyPlansScreen() {
                     uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",
                   }}
                   style={{ width: 100, height: 100 }}
+                  className="web:md:w-32 web:md:h-32"
                 />
-                <Text className="text-center text-muted-foreground mx-auto w-2/3">
+                <Text className="text-center text-muted-foreground mx-auto w-2/3 web:md:text-lg web:md:mt-4">
                   No te has unido a ningún plan aún
                 </Text>
               </View>

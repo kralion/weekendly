@@ -20,7 +20,7 @@ export function PlanCard({ plan, index }: { plan: Plan; index: number }) {
     >
       <Pressable
         style={{ height: height * 0.5 }}
-        className=" bg-white rounded-3xl overflow-hidden relative"
+        className="bg-white rounded-3xl overflow-hidden relative web:md:max-h-[500px]"
         onPress={() => router.push("/(screens)/plans")}
       >
         <Image
@@ -42,14 +42,14 @@ export function PlanCard({ plan, index }: { plan: Plan; index: number }) {
           }}
         />
 
-        <View className="absolute bottom-0 left-0 right-0 p-4">
-          <Text className="text-2xl font-bold mb-2 text-white">
+        <View className="absolute bottom-0 left-0 right-0 p-4 web:md:p-6">
+          <Text className="text-2xl font-bold mb-2 text-white web:md:text-3xl">
             {plan.title}
           </Text>
 
           <View className="flex-row items-center mb-2 gap-1">
             <MapPin size={16} color="white" className="mr-1" />
-            <Text className="text-white text-sm">{plan.location}</Text>
+            <Text className="text-white text-sm web:md:text-base">{plan.location}</Text>
           </View>
 
           <View className="flex-row flex-wrap gap-2 mb-3">
@@ -60,11 +60,11 @@ export function PlanCard({ plan, index }: { plan: Plan; index: number }) {
             ))}
           </View>
 
-          <View className="flex-row items-center justify-between">
-            <Text className="text-white text-sm">
+          <View className="flex-row items-center justify-between web:md:mt-2">
+            <Text className="text-white text-sm web:md:text-base">
               {plan.participants.length}/{plan.max_participants} participantes
             </Text>
-            <Text className="text-white text-sm">
+            <Text className="text-white text-sm web:md:text-base">
               {new Date(plan.date).toLocaleDateString("es", {
                 weekday: "long",
                 day: "numeric",

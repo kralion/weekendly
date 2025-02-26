@@ -139,14 +139,14 @@ export default function PlanDetail() {
 
   return (
     <View className="flex-1 bg-background">
-      <ScrollView contentContainerClassName="pb-10">
+      <ScrollView contentContainerClassName="pb-10 web:md:max-w-4xl web:md:mx-auto">
         <View className="relative " style={{ height: 400 }}>
           <Image
             source={{
               uri: plan.image_url,
             }}
             style={{ width: "100%", height: "100%" }}
-            className="absolute"
+            className="absolute web:md:rounded-xl"
           />
 
           <LinearGradient
@@ -158,6 +158,7 @@ export default function PlanDetail() {
               left: 0,
               right: 0,
             }}
+            className="web:md:rounded-xl"
           />
 
           <View className="p-4 flex-row mt-10 justify-between items-center absolute top-0 left-0 right-0 z-10">
@@ -180,7 +181,7 @@ export default function PlanDetail() {
           </View>
         </View>
 
-        <View className="px-4 mt-4">
+        <View className="px-4 mt-4 web:md:px-8">
           <View className="flex flex-row justify-between items-center ">
             <Text className="text-2xl font-bold mb-2">{plan.title}</Text>
             <View className="flex flex-row items-center">
@@ -237,7 +238,7 @@ export default function PlanDetail() {
             ))}
           </View>
 
-          <View className="flex-row justify-between mb-6 items-center">
+          <View className="flex-row justify-between mb-6 items-center web:md:flex-row">
             <View className="flex-row items-center gap-2">
               <Calendar size={16} className="mr-2" color="#FF5733" />
               <Text>
@@ -267,10 +268,12 @@ export default function PlanDetail() {
           </View>
 
           <Text className="text-lg font-semibold mb-2">Descripción</Text>
-          <Text className="text-gray-600 mb-6">{plan.description}</Text>
+          <Text className="text-gray-600 mb-6 web:md:text-base">
+            {plan.description}
+          </Text>
         </View>
         {user?.id !== plan.creator_id && (
-          <View className="flex-row items-center gap-1  px-4">
+          <View className="flex-row items-center gap-1 px-4 web:md:px-8">
             <Text className="  text-sm text-muted-foreground">Creado por</Text>
             <Link href={`/(screens)/plans/profile/${plan.creator_id}`}>
               <Text className="text-sm font-semibold text-brand">
@@ -283,7 +286,7 @@ export default function PlanDetail() {
           user?.id !== plan.creator_id && (
             <Button
               size="lg"
-              className=" rounded-full m-4"
+              className="rounded-full m-4 web:md:mx-8 web:md:max-w-xs web:md:self-center"
               onPress={handleLeavePlan}
             >
               <Text className="text-white font-semibold">Salir del Plan</Text>
@@ -294,14 +297,14 @@ export default function PlanDetail() {
           user?.id !== plan.creator_id && (
             <Button
               size="lg"
-              className="m-4 mb-8 rounded-full"
+              className="m-4 mb-8 rounded-full web:md:mx-8 web:md:max-w-xs web:md:self-center"
               onPress={handleJoinPlan}
             >
               <Text className="text-white font-semibold">Unirme al plan</Text>
             </Button>
           )}
 
-        <View className="mt-6 px-6">
+        <View className="mt-6 px-6 web:md:px-8">
           <View className="flex-row justify-between items-center mb-4">
             <Text className="text-lg font-semibold">Comentarios</Text>
             <TouchableOpacity onPress={() => commentSheetRef.current?.expand()}>
@@ -310,7 +313,7 @@ export default function PlanDetail() {
           </View>
 
           {comments.length > 0 ? (
-            <View className="flex flex-col gap-4">
+            <View className="flex flex-col gap-4 web:md:max-w-2xl">
               {comments.map((comment) => (
                 <View
                   className="flex-row items-center gap-2 mb-2"
@@ -338,7 +341,7 @@ export default function PlanDetail() {
               ))}
             </View>
           ) : (
-            <View className="bg-muted p-4 rounded-lg">
+            <View className="bg-muted p-4 rounded-lg web:md:max-w-2xl">
               <Text className="text-center text-muted-foreground">
                 No hay comentarios aún
               </Text>

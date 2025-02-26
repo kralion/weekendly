@@ -148,7 +148,7 @@ export default function ProfileScreen() {
   return (
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
       <ScrollView
-        className="flex-1 bg-background "
+        className="flex-1 bg-background"
         contentContainerClassName="pb-10"
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -167,6 +167,7 @@ export default function ProfileScreen() {
               top: 0,
               left: 0,
             }}
+            className="web:md:rounded-b-3xl"
           />
         </View>
 
@@ -189,12 +190,12 @@ export default function ProfileScreen() {
         </View>
 
         {/* Profile Info */}
-        <View className="px-6 -mt-16">
+        <View className="px-6 -mt-16 web:md:max-w-2xl web:md:mx-auto">
           <View className="relative flex items-center">
             <View className="relative">
               <Image
                 source={{ uri: image_url }}
-                className="w-32 h-32 rounded-full overflow-hidden"
+                className="w-32 h-32 rounded-full overflow-hidden web:md:w-40 web:md:h-40"
                 style={{ opacity: isLoading ? 0.8 : 1 }}
               />
               {isLoading && (
@@ -204,7 +205,7 @@ export default function ProfileScreen() {
               )}
               <Button
                 size="icon"
-                className="bg-white rounded-full p-1 absolute bottom-0 right-0"
+                className="bg-white rounded-full p-1 absolute bottom-0 right-0 web:md:p-2"
                 variant="outline"
                 onPress={() => pickImage()}
                 disabled={isLoading}
@@ -217,23 +218,23 @@ export default function ProfileScreen() {
           {/* Name and Verification */}
           <View className="mt-4 flex flex-col justify-center items-center">
             <View className="flex-row items-center justify-center gap-2">
-              <Text className="text-2xl font-bold text-gray-900">
+              <Text className="text-2xl font-bold text-gray-900 web:md:text-3xl">
                 {user?.firstName?.split(" ")[0]} {user?.lastName?.split(" ")[0]}
               </Text>
-              <CheckCircle size={20} color="#1DA1F2" />
+              <CheckCircle size={20} color="#1DA1F2" className="web:md:w-6 web:md:h-6" />
             </View>
           </View>
 
           <View className="flex flex-row gap-4 mx-auto mt-2">
             <View className="flex flex-row gap-1 items-center">
-              <MapPin size={18} color="gray" />
-              <Text className="text-gray-500 mt-1">
+              <MapPin size={18} color="gray" className="web:md:w-5 web:md:h-5" />
+              <Text className="text-gray-500 mt-1 web:md:text-base">
                 {currentProfile?.residency}
               </Text>
             </View>
             <View className="flex flex-row gap-1 items-center">
-              <Globe size={18} color="gray" />
-              <Text className="text-gray-500 mt-1">
+              <Globe size={18} color="gray" className="web:md:w-5 web:md:h-5" />
+              <Text className="text-gray-500 mt-1 web:md:text-base">
                 {currentProfile?.languages?.join(", ")}
               </Text>
             </View>
@@ -241,12 +242,12 @@ export default function ProfileScreen() {
           {/* Social Links */}
 
           {/* Profile Details Cards */}
-          <View className="mt-8 flex flex-col ">
-            <Text className="text-lg font-semibold mb-2 text-gray-900">
+          <View className="mt-8 flex flex-col">
+            <Text className="text-lg font-semibold mb-2 text-gray-900 web:md:text-xl">
               Bio
             </Text>
-            <View className="bg-muted p-4 rounded-lg">
-              <Text className="text-muted-foreground">
+            <View className="bg-muted p-4 rounded-lg web:md:p-6">
+              <Text className="text-muted-foreground web:md:text-base">
                 {currentProfile?.bio}
               </Text>
             </View>
@@ -254,13 +255,13 @@ export default function ProfileScreen() {
 
           {/* Interests/Hobbies */}
           <View className="mt-8">
-            <Text className="text-lg font-semibold mb-4 text-gray-900">
+            <Text className="text-lg font-semibold mb-4 text-gray-900 web:md:text-xl">
               Intereses
             </Text>
             <View className="flex-row flex-wrap gap-2">
               {currentProfile?.hobbies?.map((hobby, index) => (
-                <View key={index} className="px-4 py-2 rounded-xl bg-gray-100">
-                  <Text className="text-gray-800 font-medium">{hobby}</Text>
+                <View key={index} className="px-4 py-2 rounded-xl bg-gray-100 web:md:px-5 web:md:py-3">
+                  <Text className="text-gray-800 font-medium web:md:text-base">{hobby}</Text>
                 </View>
               ))}
             </View>
@@ -268,22 +269,24 @@ export default function ProfileScreen() {
 
           {/* Feedback Section */}
 
-          <View className="mt-6 flex flex-col gap-4 rounded-lg border border-border bg-card p-2">
+          <View className="mt-6 flex flex-col gap-4 rounded-lg border border-border bg-card p-2 web:md:p-4">
             <Textarea
               multiline
               numberOfLines={4}
               placeholder="Si tienes algún feedback sobre la app, escríbelo aquí..."
               value={feedbackText}
               onChangeText={setFeedbackText}
+              className="web:md:text-base"
             />
             <Button
               disabled={!feedbackText.trim() || isSendingFeedback}
               onPress={handleSendFeedback}
+              className="web:md:max-w-xs web:md:self-center"
             >
               {isSendingFeedback ? (
                 <ActivityIndicator color="white" />
               ) : (
-                <Text> Enviar Feedback</Text>
+                <Text className="web:md:text-base"> Enviar Feedback</Text>
               )}
             </Button>
           </View>
@@ -293,10 +296,10 @@ export default function ProfileScreen() {
             <Button
               variant="destructive"
               size="lg"
-              className=" rounded-full"
+              className="rounded-full web:md:max-w-xs web:md:mx-auto"
               onPress={() => signOut()}
             >
-              <Text className="text-white font-medium">Cerrar sesión</Text>
+              <Text className="text-white font-medium web:md:text-base">Cerrar sesión</Text>
             </Button>
           </View>
         </View>

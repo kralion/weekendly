@@ -187,42 +187,29 @@ export default function CreatePlan() {
         contentContainerClassName="pb-4"
         showsVerticalScrollIndicator={false}
       >
-        <View className="flex-1 bg-background">
+        {/* Main Image */}
+        <View className="w-full h-[400px] overflow-hidden web:md:max-w-2xl web:md:mx-auto web:md:h-[500px] web:md:rounded-b-3xl">
           <Image
-            source={{ uri: imageUrl }}
-            style={{
-              width: "100%",
-              height: HEADER_HEIGHT,
-              position: "absolute",
-              top: 0,
+            source={{
+              uri: imageUrl,
             }}
-            className="bg-muted"
+            style={{ width: "100%", height: "100%" }}
           />
-          <LinearGradient
-            colors={["rgba(0,0,0,0.5)", "transparent"]}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height: HEADER_HEIGHT,
-              zIndex: 5,
-            }}
-          />
+        </View>
+
+        {/* Header Section with Blur */}
+        <View className="absolute top-0 left-0 right-0 z-10">
           <BlurView
             intensity={10}
             tint="dark"
             style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height: HEADER_HEIGHT * 1.1,
-              zIndex: 6,
-              transform: [{ translateY: -HEADER_HEIGHT * 0.15 }],
+              width: "100%",
+              height: HEADER_HEIGHT,
             }}
           />
-          <View className="p-4 flex-row justify-between mt-8 gap-4 items-center absolute top-0 left-0 right-0 z-10">
+
+          {/* Header Navigation */}
+          <View className="p-4 flex-row justify-between mt-8 gap-4 items-center z-20 h-16 absolute top-0 left-0 right-0">
             <TouchableOpacity
               onPress={() => {
                 setSelectedPlan(null);
@@ -247,55 +234,61 @@ export default function CreatePlan() {
             </TouchableOpacity>
           </View>
         </View>
-        <View className="w-full h-[400px] rounded-b-3xl overflow-hidden mb-6">
-          <Image
-            source={{
-              uri: imageUrl,
-            }}
-            style={{ width: "100%", height: "100%" }}
-          />
-        </View>
 
-        <View className="flex flex-col gap-8 p-6">
+        {/* Content Section */}
+        <View className="flex flex-col gap-8 p-6 mt-4 web:md:max-w-2xl web:md:mx-auto">
           <View>
-            <Text className="text-base mb-2">Título del Plan</Text>
+            <Text className="text-base mb-2 web:md:text-lg">
+              Título del Plan
+            </Text>
             <Input
               value={title}
               onChangeText={setTitle}
               autoCapitalize="sentences"
               placeholder="Ej: Salida al café"
+              className="web:md:text-base web:md:h-12"
             />
             {errors.title && (
-              <Text className="text-red-500 text-sm">{errors.title}</Text>
+              <Text className="text-red-500 text-sm web:md:text-base">
+                {errors.title}
+              </Text>
             )}
           </View>
 
           <View>
-            <Text className="text-muted-foreground mb-2">Descripción</Text>
+            <Text className="text-muted-foreground mb-2 web:md:text-lg">
+              Descripción
+            </Text>
             <Textarea
               value={description}
               onChangeText={setDescription}
               placeholder="Describe tu plan..."
+              className="web:md:text-base"
             />
             {errors.description && (
-              <Text className="text-red-500 text-sm">{errors.description}</Text>
+              <Text className="text-red-500 text-sm web:md:text-base">
+                {errors.description}
+              </Text>
             )}
           </View>
 
           <View>
-            <Text className="text-base mb-2">Ubicación</Text>
+            <Text className="text-base mb-2 web:md:text-lg">Ubicación</Text>
             <Input
               value={location}
               onChangeText={setLocation}
               placeholder="¿Dónde será el plan?"
+              className="web:md:text-base web:md:h-12"
             />
             {errors.location && (
-              <Text className="text-red-500 text-sm">{errors.location}</Text>
+              <Text className="text-red-500 text-sm web:md:text-base">
+                {errors.location}
+              </Text>
             )}
           </View>
 
           <View>
-            <Text className="text-base mb-2">Fecha y Hora</Text>
+            <Text className="text-base mb-2 web:md:text-lg">Fecha y Hora</Text>
             <DateTimePicker
               value={date}
               style={{ marginLeft: -18 }}
@@ -312,24 +305,24 @@ export default function CreatePlan() {
           </View>
 
           <View>
-            <Text className="text-base mb-2">Categorías</Text>
+            <Text className="text-base mb-2 web:md:text-lg">Categorías</Text>
             <View className="flex flex-row gap-2 flex-wrap">
               {CATEGORIES.map((category) => (
                 <Pressable
                   key={category}
                   onPress={() => toggleCategory(category)}
-                  className={`rounded-md px-6 py-2 ${
+                  className={`rounded-md px-6 py-2 web:md:px-8 web:md:py-3 ${
                     selectedCategories.includes(category)
                       ? "bg-primary"
                       : "bg-zinc-100"
                   }`}
                 >
                   <Text
-                    className={
+                    className={`${
                       selectedCategories.includes(category)
                         ? "text-white"
                         : "text-black"
-                    }
+                    } web:md:text-base`}
                   >
                     {category}
                   </Text>
@@ -337,14 +330,16 @@ export default function CreatePlan() {
               ))}
             </View>
             {errors.categories && (
-              <Text className="text-red-500 text-sm">{errors.categories}</Text>
+              <Text className="text-red-500 text-sm web:md:text-base">
+                {errors.categories}
+              </Text>
             )}
           </View>
 
           <View className="flex flex-row gap-2 justify-center mt-5">
             <Button
               onPress={handleSubmit}
-              className={`rounded-full ${id ? "" : "w-full"}`}
+              className={`rounded-full ${id ? "" : "w-full"} web:md:max-w-xs`}
               size="lg"
             >
               {isLoading || loading ? (
@@ -361,11 +356,11 @@ export default function CreatePlan() {
                   deletePlan(id as string);
                   router.back();
                 }}
-                className="rounded-full"
+                className="rounded-full web:md:max-w-xs"
                 variant="destructive"
                 size="lg"
               >
-                <Text>Eliminar Plan</Text>
+                <Text className="web:md:text-base">Eliminar Plan</Text>
               </Button>
             )}
           </View>

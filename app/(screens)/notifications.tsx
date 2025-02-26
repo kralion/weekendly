@@ -37,7 +37,7 @@ export default function NotificationsScreen() {
   const renderNotification = (notification: Invitation) => (
     <TouchableOpacity
       key={notification.id}
-      className="p-4 border-b border-gray-200 "
+      className="p-4 border-b border-gray-200 web:md:max-w-2xl web:md:mx-auto web:md:p-5"
       onPress={() => {
         setSelectedNotification(
           notification.id === selectedNotification?.id ? null : notification
@@ -50,24 +50,27 @@ export default function NotificationsScreen() {
             uri: notification.sender?.image_url,
           }}
           style={{ width: 40, height: 40, borderRadius: 999 }}
+          className="web:md:w-12 web:md:h-12"
         />
         <View className="flex-1 flex flex-col gap-0">
           <View className="flex-row justify-between items-center">
-            <Text className="font-semibold">
+            <Text className="font-semibold web:md:text-lg">
               {notification.sender?.username} te invitó a este plan
             </Text>
-            <Text className="text-sm text-gray-500">
+            <Text className="text-sm text-gray-500 web:md:text-base">
               {format(new Date(notification.created_at), "dd/MM/yyyy", {
                 locale: es,
               })}
             </Text>
           </View>
-          <Text className="text-gray-600 mb-2">{notification.message}</Text>
+          <Text className="text-gray-600 mb-2 web:md:text-base">
+            {notification.message}
+          </Text>
         </View>
       </View>
 
       {selectedNotification?.id === notification.id && (
-        <View className="flex-row gap-2 items-center mt-4 ">
+        <View className="flex-row gap-2 items-center mt-4 web:md:max-w-md web:md:mx-auto">
           <Button
             className="flex-1"
             onPress={() => {
@@ -76,10 +79,10 @@ export default function NotificationsScreen() {
               );
             }}
           >
-            <Text className="text-white">Ver detalles</Text>
+            <Text className="text-white web:md:text-base">Ver detalles</Text>
           </Button>
           <Button
-            className="flex-1"
+            className="flex-1 "
             variant="secondary"
             onPress={() => {
               markAsRead(selectedNotification.id);
@@ -87,7 +90,7 @@ export default function NotificationsScreen() {
               Vibration.vibrate(50);
             }}
           >
-            <Text>Marcar como leído</Text>
+            <Text className="web:md:text-base">Marcar como leído</Text>
           </Button>
         </View>
       )}
@@ -97,7 +100,7 @@ export default function NotificationsScreen() {
   return (
     <View className="flex-1 bg-background pt-12">
       {/* Header */}
-      <View className="p-6 flex-row items-center bg-background">
+      <View className="p-6 flex-row items-center bg-background web:md:max-w-2xl web:md:mx-auto">
         <Button
           className="rounded-full"
           onPress={() => router.back()}
@@ -106,7 +109,9 @@ export default function NotificationsScreen() {
         >
           <ChevronLeft size={24} color="#FF5733" />
         </Button>
-        <Text className="text-xl font-semibold ml-4">Notificaciones</Text>
+        <Text className="text-xl font-semibold ml-4 web:md:text-2xl">
+          Notificaciones
+        </Text>
       </View>
 
       {/* Notifications List */}
@@ -119,8 +124,8 @@ export default function NotificationsScreen() {
         {notifications.length > 0 ? (
           notifications.map(renderNotification)
         ) : (
-          <View className="flex-1 justify-center items-center p-8">
-            <Text className="text-gray-500 text-center">
+          <View className="flex-1 justify-center items-center p-8 web:md:p-16">
+            <Text className="text-gray-500 text-center web:md:text-lg">
               No tienes notificaciones nuevas
             </Text>
           </View>

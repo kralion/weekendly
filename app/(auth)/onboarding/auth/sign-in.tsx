@@ -79,7 +79,7 @@ export default function SignInScreen() {
         <ScrollView>
           <View
             style={styles.container}
-            className="flex flex-col gap-8 h-screen-safe justify-center p-6"
+            className="flex flex-col gap-8 h-screen-safe justify-center p-6 web:md:max-w-md web:md:mx-auto"
           >
             <View className="flex flex-col items-center">
               <Image
@@ -175,7 +175,7 @@ export default function SignInScreen() {
               </View>
             </View>
             <View className="mt-10">
-              <Text className="text-center text-muted-foreground">
+              <Text className="text-center text-muted-foreground web:md:text-sm">
                 Al inciar sesión aceptas nuestros{" "}
                 <Text className="text-primary font-semibold underline">
                   Términos y condiciones

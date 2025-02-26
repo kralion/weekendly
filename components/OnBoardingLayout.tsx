@@ -147,8 +147,9 @@ export const OnBoardingLayout: React.FC<OnBoardingLayoutProps> = ({
             },
             animatedStyle,
           ]}
+          className="web:md:rounded-3xl"
         />
-        <Animated.View style={[styles.content, contentAnimatedStyle]}>
+        <Animated.View style={[styles.content, contentAnimatedStyle]} className="web:md:px-8">
           {children}
         </Animated.View>
         {nextHref && (
@@ -161,6 +162,7 @@ export const OnBoardingLayout: React.FC<OnBoardingLayoutProps> = ({
               },
               btnAnimatedStyle,
             ]}
+            className="web:md:rounded-3xl"
           >
             <Pressable
               onPress={() => {

@@ -45,6 +45,7 @@ export default function OnboardingStepThree() {
             width: "100%",
             height: "100%",
           }}
+          className="web:md:rounded-xl"
         />
         <LinearGradient
           colors={[
@@ -62,12 +63,13 @@ export default function OnboardingStepThree() {
             bottom: 0,
             height: "100%",
           }}
+          className="web:md:rounded-xl"
         />
-        <View className="pt-36 px-8 flex flex-col gap-4">
+        <View className="pt-36 px-8 flex flex-col gap-4 web:md:pt-48">
           <Text className="text-4xl font-bold text-center text-white">
             Unete a planes
           </Text>
-          <Text className="text-center text-xl text-white">
+          <Text className="text-center text-xl text-white web:md:max-w-lg web:md:mx-auto">
             Puedes unirte a planes que gente ha creado, ir con un amigo tuyo o
             simplemente lanzarte a conocer gente.
           </Text>
