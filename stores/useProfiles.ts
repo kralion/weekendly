@@ -68,7 +68,6 @@ export const useProfiles = create<ProfilesState>((set, get) => ({
         .select("*")
         .eq("user_id", userId)
         .single();
-
       if (error) throw error;
       set({ currentProfile: data });
     } catch (error) {

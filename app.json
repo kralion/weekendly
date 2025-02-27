@@ -42,16 +42,11 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "server",
+      "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      [
-        "expo-router",
-        {
-          "origin": "https://weekendly-app.vercel.app"
-        }
-      ],
+      "expo-router",
       "expo-secure-store",
       "expo-font",
       [

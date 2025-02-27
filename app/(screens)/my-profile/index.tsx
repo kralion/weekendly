@@ -1,4 +1,5 @@
 import { useAuth, useUser } from "@clerk/clerk-expo";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import {
   Camera,
@@ -7,50 +8,38 @@ import {
   Globe,
   MapPin,
   Moon,
-  Pen,
   Sun,
 } from "lucide-react-native";
 import React from "react";
 import {
   ActivityIndicator,
+  Appearance,
   Image,
   KeyboardAvoidingView,
   ScrollView,
   TouchableOpacity,
   View,
-  Animated as AnimatedNative,
-  Pressable,
 } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
-import { Button } from "~/components/ui/button";
-import { Text } from "~/components/ui/text";
-import { useProfiles } from "~/stores";
-import * as ImagePicker from "expo-image-picker";
-import { toast } from "sonner-native";
-import { Textarea } from "~/components/ui/textarea";
 import Animated, {
-  FadeIn,
   FadeInDown,
-  FadeInUp,
-  FadeOutUp,
-  SlideInDown,
   SlideInUp,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
 } from "react-native-reanimated";
+import { toast } from "sonner-native";
+import { Button } from "~/components/ui/button";
+import { Text } from "~/components/ui/text";
+import { Textarea } from "~/components/ui/textarea";
 import { useColorScheme } from "~/lib/useColorScheme";
-import { Appearance } from "react-native";
-import { StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Switch } from "~/components/ui/switch";
+import { useProfiles } from "~/stores";
 
 const pageId = process.env.EXPO_PUBLIC_NOTION_DATABASE_ID!;
 const apiKey = process.env.EXPO_PUBLIC_NOTION_TOKEN!;
 export default function ProfileScreen() {
   const { signOut } = useAuth();
-  const { isDarkColorScheme, setColorScheme } = useColorScheme();
+  const { isDarkColorScheme } = useColorScheme();
   const [isDarkMode, setIsDarkMode] = React.useState(
     isDarkColorScheme ? "dark" : "light"
   );

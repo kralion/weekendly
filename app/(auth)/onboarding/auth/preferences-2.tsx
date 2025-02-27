@@ -121,7 +121,7 @@ export default function Preferences2Screen() {
         hobbies,
         residency: data.residency,
         languages: selectedLanguages,
-        phone: data.phone || null,
+        phone: data.phone ? `+51${data.phone}` : null,
         image_url: null,
         gender: data.gender as Gender,
       });
@@ -234,7 +234,7 @@ export default function Preferences2Screen() {
 
             <View>
               <Text className="font-medium mb-2 text-muted-foreground">
-                Teléfono (opcional)
+                Teléfono
               </Text>
               <Controller
                 control={control}

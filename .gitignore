@@ -8,6 +8,12 @@ node_modules/
 dist/
 web-build/
 
+# Rules
+.windsurf/
+.windsurfrules
+.rules
+
+
 # Native
 *.orig.*
 *.jks

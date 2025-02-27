@@ -36,16 +36,6 @@ import { usePlans } from "~/stores";
 import { useComments } from "~/stores/comments";
 import { Plan } from "~/types";
 
-interface CreatorProfile {
-  id: string;
-  firstName: string;
-  lastName: string;
-  username: string;
-  imageUrl: string;
-  phoneNumbers: any[];
-  primaryPhoneId: string | null;
-}
-
 //DOCS:  npx expo start --https when executing on the web
 export default function PlanDetail() {
   const { id } = useLocalSearchParams();
@@ -53,9 +43,8 @@ export default function PlanDetail() {
   const bottomSheetRef = React.useRef<BottomSheet>(null);
   const commentSheetRef = React.useRef<BottomSheet>(null);
   const reportSheetRef = React.useRef<BottomSheet>(null);
-
   const [plan, setPlan] = React.useState<Plan | null>(null);
-  const [creatorProfile, setCreatorProfile] = useState<CreatorProfile | null>(null);
+
   const { joinPlan, leavePlan, getPlanById } = usePlans();
   const { comments, getCommentsByPlanId } = useComments();
 
@@ -65,26 +54,6 @@ export default function PlanDetail() {
       getCommentsByPlanId(id as string);
     }
   }, [id]);
-
-  // Fetch creator profile when plan data is available
-  useEffect(() => {
-    if (plan?.creator_id) {
-      fetchCreatorProfile(plan.creator_id);
-    }
-  }, [plan?.creator_id]);
-
-  const fetchCreatorProfile = async (creatorId: string) => {
-    try {
-      const response = await fetch(`/api/profile/${creatorId}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch creator profile');
-      }
-      const data = await response.json();
-      setCreatorProfile(data);
-    } catch (error) {
-      console.error('Error fetching creator profile:', error);
-    }
-  };
 
   const [showConfirmed, setShowConfirmed] = React.useState(false);
   const [sound, setSound] = React.useState<Audio.Sound | null>(null);
@@ -167,17 +136,6 @@ export default function PlanDetail() {
       </View>
     );
   }
-
-  // Get primary phone for contacting the creator
-  const getCreatorPhone = () => {
-    if (!creatorProfile?.phoneNumbers?.length) return null;
-    
-    const primaryPhone = creatorProfile.primaryPhoneId 
-      ? creatorProfile.phoneNumbers.find(ph => ph.id === creatorProfile.primaryPhoneId)
-      : creatorProfile.phoneNumbers[0];
-      
-    return primaryPhone?.phone_number || null;
-  };
 
   return (
     <View className="flex-1 bg-background">
@@ -319,7 +277,7 @@ export default function PlanDetail() {
             <Text className="text-sm text-muted-foreground">Creado por</Text>
             <Link href={`/(screens)/plans/profile/${plan.creator_id}`}>
               <Text className="text-sm font-semibold text-brand">
-                @{creatorProfile?.username || plan.profiles?.username || "usuario"}
+                @{plan.profiles?.username || "usuario"}
               </Text>
             </Link>
           </View>
@@ -400,7 +358,7 @@ export default function PlanDetail() {
               setShowConfirmed(false);
               router.back();
             }}
-            creatorPhone={getCreatorPhone() || plan.profiles?.phone}
+            creatorPhone={plan.profiles?.phone}
           />
         )}
         <InviteBottomSheet bottomSheetRef={bottomSheetRef} id={id as string} />
