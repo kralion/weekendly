@@ -1,5 +1,8 @@
-import { useSignUp } from "@clerk/clerk-expo";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { router } from "expo-router";
+import { CheckCircle } from "lucide-react-native";
 import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Image,
@@ -7,19 +10,14 @@ import {
   ScrollView,
   View,
 } from "react-native";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
 import { toast } from "sonner-native";
-import { router } from "expo-router";
+import { z } from "zod";
 import { Button } from "~/components/ui/button";
-import { Text } from "~/components/ui/text";
 import { Input } from "~/components/ui/input";
-import { validateDni } from "~/lib/validateDni";
-import { capitalize } from "~/lib/utils";
+import { Text } from "~/components/ui/text";
+import { capitalize, generateAPIUrl } from "~/lib/utils";
 import { useSignUpStore } from "~/stores/useSignUpStore";
 import type { ReniecResponse } from "~/types";
-import { CheckCircle, CheckCircle2 } from "lucide-react-native";
 
 const signUpSchema = z.object({
   dni: z.string().length(8, "El DNI debe tener 8 dígitos"),
@@ -51,11 +49,19 @@ export default function SignUpScreen() {
     onChange(value);
 
     if (value.length === 8) {
-      const result = await validateDni(value);
-      if (result.status === "success" && result.data) {
-        setUserInfo(result.data);
-      } else {
-        toast.error(result.help);
+      try {
+        const result = await fetch(generateAPIUrl(`/api/reniec/${value}`));
+        const data = await result.json();
+
+        if (data.status === "success" && data.data) {
+          setUserInfo(data.data);
+        } else {
+          toast.error(data.help);
+          setUserInfo(null);
+        }
+      } catch (error) {
+        console.error("Error validating DNI:", error);
+        toast.error("Error al validar DNI");
         setUserInfo(null);
       }
     } else {
@@ -147,7 +153,7 @@ export default function SignUpScreen() {
                     {userInfo.nombres} {userInfo.apellidoPaterno}{" "}
                     {userInfo.apellidoMaterno}
                   </Text>
-                  <CheckCircle2 size={18} color="#22C55E" />
+                  <CheckCircle size={18} color="#22C55E" />
                 </View>
               ) : (
                 <Text className="text-xs text-muted-foreground px-2">

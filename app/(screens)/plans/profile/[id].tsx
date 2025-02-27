@@ -11,28 +11,8 @@ import {
 import { toast } from "sonner-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
+import { generateAPIUrl } from "~/lib/utils";
 import { useProfiles } from "~/stores";
-import Constants from "expo-constants";
-const API_URL = "https://weekendly-app.vercel.app";
-
-const generateAPIUrl = (relativePath: string) => {
-  console.log("Constants", Constants.experienceUrl);
-
-  const origin =
-    Constants?.experienceUrl?.replace("exp://", "http://") || API_URL;
-
-  const path = relativePath.startsWith("/") ? relativePath : `/${relativePath}`;
-
-  if (process.env.NODE_ENV === "development") {
-    return origin?.concat(path);
-  }
-
-  if (!API_URL) {
-    throw new Error("API_URL environment variable is not defined");
-  }
-
-  return API_URL.concat(path);
-};
 
 export default function ProfileScreen() {
   const { id } = useLocalSearchParams();

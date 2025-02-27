@@ -33,10 +33,9 @@ import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { Textarea } from "~/components/ui/textarea";
 import { useColorScheme } from "~/lib/useColorScheme";
+import { generateAPIUrl } from "~/lib/utils";
 import { useProfiles } from "~/stores";
 
-const pageId = process.env.EXPO_PUBLIC_NOTION_DATABASE_ID!;
-const apiKey = process.env.EXPO_PUBLIC_NOTION_TOKEN!;
 export default function ProfileScreen() {
   const { signOut } = useAuth();
   const { isDarkColorScheme } = useColorScheme();
@@ -84,26 +83,37 @@ export default function ProfileScreen() {
       try {
         setIsLoading(true);
         const base64Img = result.assets[0].base64;
-        const formData = new FormData();
-        formData.append("file", `data:image/jpeg;base64,${base64Img}`);
-        formData.append("upload_preset", "ml_default");
-        formData.append("folder", "weekendly/plans");
+        const base64ImageData = `data:image/jpeg;base64,${base64Img}`;
 
-        const response = await fetch(
-          "https://api.cloudinary.com/v1_1/diqe1byxy/image/upload",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
+        const response = await fetch(generateAPIUrl("/api/cloudinary"), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            base64Image: base64ImageData,
+            folder: "weekendly/plans",
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Upload failed: ${JSON.stringify(errorData)}`);
+        }
 
         const data = await response.json();
-        setImage_url(data.secure_url);
-        setIsLoading(false);
-        user?.setProfileImage(data.secure_url);
-        return data.secure_url;
+
+        if (data.status === "success") {
+          setImage_url(data.data.secure_url);
+          user?.setProfileImage(data.data.secure_url);
+        } else {
+          throw new Error(data.error || "Failed to upload image");
+        }
       } catch (err) {
         console.error("Upload error:", err);
+        toast.error("Error al subir la imagen");
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -123,56 +133,42 @@ export default function ProfileScreen() {
     }
   }, [user?.id]);
 
-  const handleSendFeedback = async () => {
-    if (!feedbackText.trim()) return;
+  async function handleSendFeedback() {
+    if (!feedbackText.trim()) {
+      toast.error("Por favor escribe un mensaje de feedback");
+      return;
+    }
+
+    setIsSendingFeedback(true);
 
     try {
-      setIsSendingFeedback(true);
-      const response = await fetch("https://api.notion.com/v1/pages", {
+      const response = await fetch(generateAPIUrl("/api/feedback"), {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
-          "Notion-Version": "2022-06-28",
         },
         body: JSON.stringify({
-          parent: { database_id: pageId },
-          properties: {
-            Name: {
-              title: [
-                {
-                  text: {
-                    content: ` ${user?.firstName || "Anonymous"}`,
-                  },
-                },
-              ],
-            },
-            Message: {
-              rich_text: [
-                {
-                  text: {
-                    content: feedbackText,
-                  },
-                },
-              ],
-            },
+          feedbackText,
+          user: {
+            firstName: user?.firstName || "Anonymous",
           },
         }),
       });
 
-      const responseData = await response.json();
-
       if (!response.ok) {
-        console.error("Notion API Error:", responseData);
+        const error = await response.json();
+        throw new Error(error.error || "Failed to send feedback");
       }
 
-      toast.success("¡Feedback enviado con éxito!");
+      setFeedbackText("");
+      toast.success("Feedback enviado con éxito");
     } catch (error) {
+      console.error("Error sending feedback:", error);
       toast.error("No se pudo enviar el feedback");
     } finally {
       setIsSendingFeedback(false);
     }
-  };
+  }
 
   if (loading) {
     return (

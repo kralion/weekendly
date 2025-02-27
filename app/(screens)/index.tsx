@@ -1,18 +1,14 @@
 import { useUser } from "@clerk/clerk-expo";
-import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { Bell, BellDot, MapPin, Search, X } from "lucide-react-native";
+import { Bell, BellDot, Search, X } from "lucide-react-native";
 import * as React from "react";
-import { ActivityIndicator, KeyboardAvoidingView } from "react-native";
 import {
-  Dimensions,
-  Pressable,
+  ActivityIndicator,
+  KeyboardAvoidingView,
   RefreshControl,
   ScrollView,
   TextInput,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
@@ -21,7 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
-import { usePlans, useProfiles } from "~/stores";
+import { usePlans } from "~/stores";
 import { Plan } from "~/types";
 
 const CATEGORIES = [

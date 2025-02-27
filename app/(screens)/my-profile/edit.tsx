@@ -19,12 +19,14 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { toast } from "sonner-native";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { MultiSelect } from "~/components/ui/multi-select";
 import { Select, SelectItem } from "~/components/ui/select";
 import { Text } from "~/components/ui/text";
 import { Textarea } from "~/components/ui/textarea";
+import { generateAPIUrl } from "~/lib/utils";
 import { ProfileSchema, profileSchema } from "~/schemas";
 import { useProfiles } from "~/stores";
 import { Gender } from "~/types";
@@ -98,28 +100,40 @@ export default function EditProfileScreen() {
       try {
         setIsLoading(true);
         const base64Img = result.assets[0].base64;
-        const formData = new FormData();
-        formData.append("file", `data:image/jpeg;base64,${base64Img}`);
-        formData.append("upload_preset", "ml_default");
-        formData.append("folder", "weekendly/plans");
+        const base64ImageData = `data:image/jpeg;base64,${base64Img}`;
+        
+        const response = await fetch(generateAPIUrl('/api/cloudinary'), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            base64Image: base64ImageData,
+            folder: 'weekendly/plans',
+          }),
+        });
 
-        const response = await fetch(
-          "https://api.cloudinary.com/v1_1/diqe1byxy/image/upload",
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(`Upload failed: ${JSON.stringify(errorData)}`);
+        }
 
         const data = await response.json();
-        setImage_url(data.secure_url);
-        setIsLoading(false);
-        return data.secure_url;
+        
+        if (data.status === 'success') {
+          setImage_url(data.data.secure_url);
+        } else {
+          throw new Error(data.error || 'Failed to upload image');
+        }
       } catch (err) {
-        console.error("Upload error:", err);
+        console.error('Upload error:', err);
+        toast.error('Error al subir la imagen');
+      } finally {
+        setIsLoading(false);
       }
     }
   };
+
   const onSubmit = async (data: ProfileSchema) => {
     if (!user) return;
 
