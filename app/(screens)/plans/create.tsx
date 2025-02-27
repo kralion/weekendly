@@ -292,81 +292,84 @@ export default function CreatePlan() {
 
           <View>
             <Text className="text-base mb-2 web:md:text-lg">Fecha y Hora</Text>
-            {Platform.OS === "web" ? (
-              <View className="flex flex-row gap-4">
-                <DatePicker
-                  selected={date}
-                  onChange={(newDate: Date | null) => {
-                    if (newDate) {
-                      setDate(newDate);
+            {Platform.OS === "web" && (
+              <View className="flex flex-col gap-2">
+                <View className="flex flex-row gap-4">
+                  <View style={{ position: "relative", zIndex: 10 }}>
+                    <DatePicker
+                      selected={date}
+                      onChange={(newDate: Date | null) => {
+                        if (newDate) {
+                          setDate(newDate);
+                        }
+                      }}
+                      showTimeSelect
+                      timeFormat="HH:mm"
+                      timeIntervals={15}
+                      dateFormat="MMMM d, yyyy h:mm aa"
+                      locale="es"
+                      className="flex-1 h-12 px-4 rounded-lg bg-muted/50 text-base web:md:text-base"
+                      placeholderText="Selecciona fecha y hora"
+                    />
+                  </View>
+                </View>
+                <View className="flex flex-row gap-4">
+                  <TouchableOpacity
+                    onPress={() => setShowDatePicker(true)}
+                    className="flex-1 h-12 px-4 rounded-lg bg-muted/50 justify-center"
+                  >
+                    <Text className="text-base">
+                      {date.toLocaleDateString("es-ES", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setShowTimePicker(true)}
+                    className="flex-1 h-12 px-4 rounded-lg bg-muted/50 justify-center"
+                  >
+                    <Text className="text-base">
+                      {date.toLocaleTimeString("es-ES", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+
+            {Platform.OS !== "web" && (
+              <View className="flex flex-row ">
+                <DateTimePicker
+                  style={{ marginLeft: -16 }}
+                  value={date}
+                  mode="date"
+                  display="default"
+                  onChange={(event, selectedDate) => {
+                    setShowDatePicker(false);
+                    if (selectedDate) {
+                      setDate(selectedDate);
                     }
                   }}
-                  showTimeSelect
-                  timeFormat="HH:mm"
-                  timeIntervals={15}
-                  dateFormat="MMMM d, yyyy h:mm aa"
-                  locale="es"
-                  className="flex-1 h-12 px-4 rounded-lg bg-muted/50 text-base web:md:text-base"
-                  placeholderText="Selecciona fecha y hora"
+                  locale="es-ES"
+                />
+                <DateTimePicker
+                  value={date}
+                  mode="time"
+                  display="default"
+                  onChange={(event, selectedDate) => {
+                    setShowTimePicker(false);
+                    if (selectedDate) {
+                      setDate(selectedDate);
+                    }
+                  }}
+                  locale="es-ES"
                 />
               </View>
-            ) : (
-              <View className="flex flex-row gap-4">
-                <TouchableOpacity
-                  onPress={() => setShowDatePicker(true)}
-                  className="flex-1 h-12 px-4 rounded-lg bg-muted/50 justify-center"
-                >
-                  <Text className="text-base">
-                    {date.toLocaleDateString("es-ES", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setShowTimePicker(true)}
-                  className="flex-1 h-12 px-4 rounded-lg bg-muted/50 justify-center"
-                >
-                  <Text className="text-base">
-                    {date.toLocaleTimeString("es-ES", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
-
-            {showDatePicker && Platform.OS !== "web" && (
-              <DateTimePicker
-                value={date}
-                mode="date"
-                display="default"
-                onChange={(event, selectedDate) => {
-                  setShowDatePicker(false);
-                  if (selectedDate) {
-                    setDate(selectedDate);
-                  }
-                }}
-                locale="es-ES"
-              />
-            )}
-
-            {showTimePicker && Platform.OS !== "web" && (
-              <DateTimePicker
-                value={date}
-                mode="time"
-                display="default"
-                onChange={(event, selectedDate) => {
-                  setShowTimePicker(false);
-                  if (selectedDate) {
-                    setDate(selectedDate);
-                  }
-                }}
-                locale="es-ES"
-              />
             )}
 
             {errors.date && (
@@ -386,14 +389,14 @@ export default function CreatePlan() {
                   className={`rounded-md px-6 py-2 web:md:px-8 web:md:py-3 ${
                     selectedCategories.includes(category)
                       ? "bg-primary"
-                      : "bg-zinc-100"
+                      : "bg-muted/50"
                   }`}
                 >
                   <Text
                     className={`${
                       selectedCategories.includes(category)
                         ? "text-white"
-                        : "text-black"
+                        : "text-muted-foreground"
                     } web:md:text-base`}
                   >
                     {category}

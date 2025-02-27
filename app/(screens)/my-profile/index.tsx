@@ -6,7 +6,9 @@ import {
   ChevronLeft,
   Globe,
   MapPin,
+  Moon,
   Pen,
+  Sun,
 } from "lucide-react-native";
 import React from "react";
 import {
@@ -16,6 +18,8 @@ import {
   ScrollView,
   TouchableOpacity,
   View,
+  Animated as AnimatedNative,
+  Pressable,
 } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
 import { Button } from "~/components/ui/button";
@@ -28,6 +32,7 @@ import Animated, {
   FadeIn,
   FadeInDown,
   FadeInUp,
+  FadeOutUp,
   SlideInDown,
   SlideInUp,
   useAnimatedStyle,
@@ -35,11 +40,20 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { useColorScheme } from "~/lib/useColorScheme";
+import { Appearance } from "react-native";
+import { StyleSheet } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Switch } from "~/components/ui/switch";
 
 const pageId = process.env.EXPO_PUBLIC_NOTION_DATABASE_ID!;
 const apiKey = process.env.EXPO_PUBLIC_NOTION_TOKEN!;
 export default function ProfileScreen() {
   const { signOut } = useAuth();
+  const { isDarkColorScheme, setColorScheme } = useColorScheme();
+  const [isDarkMode, setIsDarkMode] = React.useState(
+    isDarkColorScheme ? "dark" : "light"
+  );
   const { user } = useUser();
   const [feedbackText, setFeedbackText] = React.useState("");
   const [isSendingFeedback, setIsSendingFeedback] = React.useState(false);
@@ -56,6 +70,11 @@ export default function ProfileScreen() {
       transform: [{ scale: avatarScale.value }],
     };
   });
+
+  const handleToggleDarkMode = () => {
+    setIsDarkMode(isDarkMode === "dark" ? "light" : "dark");
+    Appearance.setColorScheme(isDarkMode === "dark" ? "light" : "dark");
+  };
 
   const handleAvatarPressIn = () => {
     avatarScale.value = withSpring(1.05, { damping: 10, stiffness: 100 });
@@ -260,7 +279,7 @@ export default function ProfileScreen() {
           {/* Name and Verification */}
           <View className="mt-4 flex flex-col justify-center items-center">
             <View className="flex-row items-center justify-center gap-2">
-              <Text className="text-2xl font-bold text-gray-900 web:md:text-3xl">
+              <Text className="text-2xl font-bold  web:md:text-3xl">
                 {user?.firstName?.split(" ")[0]} {user?.lastName?.split(" ")[0]}
               </Text>
               <CheckCircle
@@ -293,7 +312,7 @@ export default function ProfileScreen() {
 
           {/* Profile Details Cards */}
           <View className="mt-8 flex flex-col">
-            <Text className="text-lg font-semibold mb-2 text-gray-900 web:md:text-xl">
+            <Text className="text-lg font-semibold mb-2 text-muted-foreground web:md:text-xl">
               Bio
             </Text>
             <View className="bg-muted p-4 rounded-lg web:md:p-6">
@@ -305,7 +324,7 @@ export default function ProfileScreen() {
 
           {/* Interests/Hobbies */}
           <View className="mt-8">
-            <Text className="text-lg font-semibold mb-4 text-gray-900 web:md:text-xl">
+            <Text className="text-lg font-semibold mb-4 text-muted-foreground web:md:text-xl">
               Intereses
             </Text>
             <View className="flex-row flex-wrap gap-2">
@@ -319,6 +338,29 @@ export default function ProfileScreen() {
                   </Text>
                 </View>
               ))}
+            </View>
+          </View>
+          <View className="mt-8">
+            <Text className="text-lg font-semibold mb-4 text-muted-foreground web:md:text-xl">
+              Apariencia
+            </Text>
+            <View className="bg-muted p-4 rounded-lg web:md:p-6 flex flex-row justify-between items-center">
+              <Text className="text-muted-foreground web:md:text-base">
+                {isDarkMode === "dark" ? "Modo Oscuro" : "Modo Claro"}
+              </Text>
+
+              <Button
+                size="icon"
+                variant="secondary"
+                className=" rounded-full"
+                onPress={handleToggleDarkMode}
+              >
+                {isDarkMode === "dark" ? (
+                  <Sun size={20} color="#FF5733" />
+                ) : (
+                  <Moon size={20} color="#FF5733" />
+                )}
+              </Button>
             </View>
           </View>
 
@@ -354,7 +396,7 @@ export default function ProfileScreen() {
               className="rounded-full web:md:max-w-xs web:md:mx-auto"
               onPress={() => signOut()}
             >
-              <Text className="text-white font-medium web:md:text-base">
+              <Text className=" font-medium web:md:text-base">
                 Cerrar sesión
               </Text>
             </Button>

@@ -97,7 +97,7 @@ export default function MyPlansScreen() {
     ({ item, index }: { item: Plan; index: number }) => (
       <Animated.View key={item.id} entering={FadeInDown.delay(index * 100)}>
         <TouchableOpacity
-          className="my-4 border border-zinc-200 bg-white rounded-xl shadow-sm overflow-hidden web:md:mx-auto"
+          className="my-4 border border-border bg-muted rounded-xl shadow-sm overflow-hidden web:md:mx-auto"
           onLongPress={() => handleDeletePlan(item.id as string)}
           onPress={() => router.push(`/(screens)/plans/plan/${item.id}`)}
         >
@@ -179,14 +179,14 @@ export default function MyPlansScreen() {
           onValueChange={setValue}
           className="flex-1 w-full max-w-[250px] mx-auto flex-col gap-1.5 web:md:w-full"
         >
-          <TabsList className="flex-row w-full rounded-full border border-gray-200 bg-white">
+          <TabsList className="flex-row w-full rounded-full  bg-muted">
             <TabsTrigger
               value="created"
               className="flex-1 rounded-full shadow-none"
             >
               <Text
                 className={`${
-                  value === "created" ? "text-black" : "text-zinc-400"
+                  value === "created" ? "" : "text-muted-foreground"
                 } web:md:text-base`}
               >
                 Creados
@@ -198,7 +198,7 @@ export default function MyPlansScreen() {
             >
               <Text
                 className={`${
-                  value === "joined" ? "text-black" : "text-zinc-400"
+                  value === "joined" ? "" : "text-muted-foreground"
                 } web:md:text-base`}
               >
                 Unidos

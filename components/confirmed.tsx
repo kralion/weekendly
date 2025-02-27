@@ -29,7 +29,7 @@ export function Confirmed({
         className="flex-1 justify-center items-center px-4 bg-black/50"
       >
         <Pressable onPress={(e) => e.stopPropagation()}>
-          <View className="bg-white rounded-3xl w-full max-w-sm overflow-hidden p-6  items-center">
+          <View className="bg-background rounded-3xl w-full max-w-sm overflow-hidden p-6  items-center">
             <View className="flex-row items-center justify-center mb-6">
               <Animated.View entering={FadeInLeft.duration(250).delay(150)}>
                 <View className="relative -right-4">

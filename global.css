@@ -36,7 +36,7 @@
     --rounded-full: 9999px; /* For fully rounded elements */
   }
 
-  .dark {
+  .dark:root {
     --background: 0 0% 6.67%;
     --foreground: 0 0% 93.33%;
     --muted: 0 0% 13.33%;
