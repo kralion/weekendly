@@ -6,12 +6,15 @@ import React from "react";
 import { Alert, Image, TouchableOpacity, Vibration, View } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
 import { toast } from "sonner-native";
+import { MotiView } from "moti";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Text } from "~/components/ui/text";
 import { usePlans } from "~/stores";
 import { Plan } from "~/types";
+import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MyPlansScreen() {
   const [value, setValue] = React.useState("created");
@@ -91,69 +94,72 @@ export default function MyPlansScreen() {
   }, [user?.id]);
 
   const renderPlanCard = React.useCallback(
-    ({ item }: { item: Plan }) => (
-      <TouchableOpacity
-        className="my-4 bg-white rounded-xl shadow-sm overflow-hidden  web:md:mx-auto"
-        onLongPress={() => handleDeletePlan(item.id as string)}
-        onPress={() => router.push(`/(screens)/plans/plan/${item.id}`)}
-      >
-        <Image
-          source={{
-            uri: item.image_url,
-          }}
-          className="w-full h-40 web:md:h-48"
-        />
-        <View className="p-4 web:md:p-5">
-          <View className="flex-row justify-between items-center mb-2">
-            <Text className="text-lg font-semibold web:md:text-xl">
-              {item.title}
-            </Text>
-            <View className="bg-blue-100 px-3 py-1 rounded-full">
-              <Text className="text-blue-800 text-sm web:md:text-base">
-                {new Date(item.date).toLocaleDateString()}
+    ({ item, index }: { item: Plan; index: number }) => (
+      <Animated.View key={item.id} entering={FadeInDown.delay(index * 100)}>
+        <TouchableOpacity
+          className="my-4 border border-zinc-200 bg-white rounded-xl shadow-sm overflow-hidden web:md:mx-auto"
+          onLongPress={() => handleDeletePlan(item.id as string)}
+          onPress={() => router.push(`/(screens)/plans/plan/${item.id}`)}
+        >
+          <Image
+            source={{
+              uri: item.image_url,
+            }}
+            className="w-full h-40 web:md:h-48"
+          />
+          <View className="p-4 web:md:p-5">
+            <View className="flex-row justify-between items-center mb-2">
+              <Text className="text-lg font-semibold web:md:text-xl">
+                {item.title}
               </Text>
-            </View>
-          </View>
-
-          <Text
-            className="text-gray-600 mb-3 web:md:text-base"
-            numberOfLines={2}
-          >
-            {item.description}
-          </Text>
-
-          <View className="flex-row justify-between items-center">
-            <View className="flex-row items-center">
-              <View className="flex-row -space-x-2">
-                {participants.slice(0, 3).map((participant, index) => (
-                  <Avatar
-                    key={index}
-                    alt={participant.username}
-                    className="web:md:h-9 web:md:w-9"
-                  >
-                    <AvatarImage
-                      source={{ uri: participant.image_url as string }}
-                    />
-                    <AvatarFallback>
-                      <Text>{participant.username?.[0]}</Text>
-                    </AvatarFallback>
-                  </Avatar>
-                ))}
+              <View className="bg-blue-100 px-3 py-1 rounded-full">
+                <Text className="text-blue-800 text-sm web:md:text-base">
+                  {new Date(item.date).toLocaleDateString()}
+                </Text>
               </View>
-              <Text className="text-gray-600 ml-2 web:md:text-base">
-                {item.participants.length} personas
-              </Text>
             </View>
 
-            <View className="flex-row items-center">
-              <View className="w-2 h-2 rounded-full bg-green-500 mr-2 web:md:w-3 web:md:h-3" />
-              <Text className="text-gray-600 web:md:text-base">Activo</Text>
+            <Text
+              className="text-gray-600 mb-3 web:md:text-base"
+              numberOfLines={2}
+            >
+              {item.description}
+            </Text>
+
+            <View className="flex-row justify-between items-center">
+              <View className="flex-row items-center">
+                {/* TODO: uncomment when there is a feature request */}
+                {/* <View className="flex-row -space-x-2">
+                  {participants.slice(0, 3).map((participant, index) => (
+                    <Avatar
+                      key={index}
+                      alt={participant.username}
+                      className="web:md:h-9 web:md:w-9"
+                    >
+                      <AvatarImage
+                        source={{ uri: participant.image_url as string }}
+                      />
+                      <AvatarFallback>
+                        <Text>{participant.username?.[0]}</Text>
+                      </AvatarFallback>
+                    </Avatar>
+                  ))}
+                </View> */}
+                <Text className="text-gray-600 web:md:text-base">
+                  {item.participants.length} personas
+                </Text>
+              </View>
+
+              <View className="flex-row items-center">
+                <View className="w-2 h-2 rounded-full bg-green-500 mr-2 web:md:w-3 web:md:h-3" />
+                <Text className="text-gray-600 web:md:text-base">Activo</Text>
+              </View>
             </View>
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </Animated.View>
     ),
-    [participants]
+    [participants, handleDeletePlan]
   );
 
   return (
@@ -227,13 +233,15 @@ export default function MyPlansScreen() {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             ListEmptyComponent={
-              <View className="flex-1 mt-16 justify-center items-center">
+              <View className="flex-1 justify-center items-center">
                 <Image
                   source={{
-                    uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",
+                    uri: "https://img.icons8.com/?size=100&id=97CiUKVEgclT&format=png&color=000000",
                   }}
-                  style={{ width: 100, height: 100 }}
-                  className="web:md:w-32 web:md:h-32"
+                  style={{
+                    width: 100,
+                    height: 100,
+                  }}
                 />
                 <Text className="text-center text-muted-foreground mx-auto w-2/3 web:md:text-lg web:md:mt-4">
                   {loading
@@ -256,18 +264,20 @@ export default function MyPlansScreen() {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
             ListEmptyComponent={
-              <View className="flex-1 mt-16 justify-center items-center">
+              <SafeAreaView className="flex-1  justify-center items-center ">
                 <Image
                   source={{
-                    uri: "https://img.icons8.com/?size=200&id=p7WlmbKvtsHM&format=png&color=000000",
+                    uri: "https://img.icons8.com/?size=100&id=97CiUKVEgclT&format=png&color=000000",
                   }}
-                  style={{ width: 100, height: 100 }}
-                  className="web:md:w-32 web:md:h-32"
+                  style={{
+                    width: 100,
+                    height: 100,
+                  }}
                 />
                 <Text className="text-center text-muted-foreground mx-auto w-2/3 web:md:text-lg web:md:mt-4">
                   No te has unido a ningún plan aún
                 </Text>
-              </View>
+              </SafeAreaView>
             }
           />
         </TabsContent>

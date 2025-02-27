@@ -24,6 +24,18 @@ import { useProfiles } from "~/stores";
 import * as ImagePicker from "expo-image-picker";
 import { toast } from "sonner-native";
 import { Textarea } from "~/components/ui/textarea";
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  FadeInUp,
+  SlideInDown,
+  SlideInUp,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
+
 const pageId = process.env.EXPO_PUBLIC_NOTION_DATABASE_ID!;
 const apiKey = process.env.EXPO_PUBLIC_NOTION_TOKEN!;
 export default function ProfileScreen() {
@@ -36,6 +48,23 @@ export default function ProfileScreen() {
   const [image_url, setImage_url] = React.useState<string>(
     user?.imageUrl || ""
   );
+
+  const avatarScale = useSharedValue(1);
+
+  const avatarAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: avatarScale.value }],
+    };
+  });
+
+  const handleAvatarPressIn = () => {
+    avatarScale.value = withSpring(1.05, { damping: 10, stiffness: 100 });
+  };
+
+  const handleAvatarPressOut = () => {
+    avatarScale.value = withSpring(1, { damping: 10, stiffness: 100 });
+  };
+
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -129,7 +158,7 @@ export default function ProfileScreen() {
         console.error("Notion API Error:", responseData);
       }
 
-      toast.success("¡Feedback enviado con éxito!");
+      toast.success("¡Feedback enviado con éxito!");
     } catch (error) {
       toast.error("No se pudo enviar el feedback");
     } finally {
@@ -172,32 +201,43 @@ export default function ProfileScreen() {
         </View>
 
         {/* Header */}
-        <View className="p-4 flex-row mt-10 justify-between items-center absolute top-0 left-0 right-0 z-10">
+        <Animated.View
+          entering={FadeInDown.duration(500).springify()}
+          className="p-4 flex-row mt-10 justify-between items-center absolute top-0 left-0 right-0 z-10"
+        >
           <TouchableOpacity
             onPress={() => router.back()}
             className="w-10 h-10 justify-center items-center bg-black/20 rounded-full"
           >
             <ChevronLeft size={24} color="white" />
           </TouchableOpacity>
-        </View>
-        <View className="p-4 flex-row mt-10 justify-between items-center absolute top-0 right-0 z-10">
+        </Animated.View>
+        <Animated.View
+          entering={FadeInDown.delay(100).duration(500).springify()}
+          className="p-4 flex-row mt-10 justify-between items-center absolute top-0 right-0 z-10"
+        >
           <TouchableOpacity
             onPress={() => router.push(`/(screens)/my-profile/my-plans`)}
             className="w-28 h-10 justify-center items-center bg-black/20 rounded-full"
           >
             <Text className="text-white">Mis Planes </Text>
           </TouchableOpacity>
-        </View>
+        </Animated.View>
 
         {/* Profile Info */}
-        <View className="px-6 -mt-16 web:md:max-w-2xl web:md:mx-auto">
+        <Animated.View
+          entering={SlideInUp.duration(800).springify()}
+          className="px-6 -mt-16 web:md:max-w-2xl web:md:mx-auto"
+        >
           <View className="relative flex items-center">
             <View className="relative">
-              <Image
-                source={{ uri: image_url }}
-                className="w-32 h-32 rounded-full overflow-hidden web:md:w-40 web:md:h-40"
-                style={{ opacity: isLoading ? 0.8 : 1 }}
-              />
+              <Animated.View style={avatarAnimatedStyle}>
+                <Image
+                  source={{ uri: image_url }}
+                  className="w-32 h-32 rounded-full overflow-hidden web:md:w-40 web:md:h-40"
+                  style={{ opacity: isLoading ? 0.8 : 1 }}
+                />
+              </Animated.View>
               {isLoading && (
                 <View className="absolute inset-0 flex items-center justify-center">
                   <ActivityIndicator size="large" color="#FF5733" />
@@ -208,6 +248,8 @@ export default function ProfileScreen() {
                 className="bg-white rounded-full p-1 absolute bottom-0 right-0 web:md:p-2"
                 variant="outline"
                 onPress={() => pickImage()}
+                onPressIn={handleAvatarPressIn}
+                onPressOut={handleAvatarPressOut}
                 disabled={isLoading}
               >
                 <Camera size={20} color="#FF5733" />
@@ -221,13 +263,21 @@ export default function ProfileScreen() {
               <Text className="text-2xl font-bold text-gray-900 web:md:text-3xl">
                 {user?.firstName?.split(" ")[0]} {user?.lastName?.split(" ")[0]}
               </Text>
-              <CheckCircle size={20} color="#1DA1F2" className="web:md:w-6 web:md:h-6" />
+              <CheckCircle
+                size={20}
+                color="#1DA1F2"
+                className="web:md:w-6 web:md:h-6"
+              />
             </View>
           </View>
 
           <View className="flex flex-row gap-4 mx-auto mt-2">
             <View className="flex flex-row gap-1 items-center">
-              <MapPin size={18} color="gray" className="web:md:w-5 web:md:h-5" />
+              <MapPin
+                size={18}
+                color="gray"
+                className="web:md:w-5 web:md:h-5"
+              />
               <Text className="text-gray-500 mt-1 web:md:text-base">
                 {currentProfile?.residency}
               </Text>
@@ -260,8 +310,13 @@ export default function ProfileScreen() {
             </Text>
             <View className="flex-row flex-wrap gap-2">
               {currentProfile?.hobbies?.map((hobby, index) => (
-                <View key={index} className="px-4 py-2 rounded-xl bg-gray-100 web:md:px-5 web:md:py-3">
-                  <Text className="text-gray-800 font-medium web:md:text-base">{hobby}</Text>
+                <View
+                  key={index}
+                  className="px-4 py-2 rounded-xl bg-gray-100 web:md:px-5 web:md:py-3"
+                >
+                  <Text className="text-gray-800 font-medium web:md:text-base">
+                    {hobby}
+                  </Text>
                 </View>
               ))}
             </View>
@@ -299,10 +354,12 @@ export default function ProfileScreen() {
               className="rounded-full web:md:max-w-xs web:md:mx-auto"
               onPress={() => signOut()}
             >
-              <Text className="text-white font-medium web:md:text-base">Cerrar sesión</Text>
+              <Text className="text-white font-medium web:md:text-base">
+                Cerrar sesión
+              </Text>
             </Button>
           </View>
-        </View>
+        </Animated.View>
       </ScrollView>
     </KeyboardAvoidingView>
   );

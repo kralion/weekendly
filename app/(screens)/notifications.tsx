@@ -8,6 +8,7 @@ import React from "react";
 import { RefreshControl, Vibration } from "react-native";
 import { TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import Animated, { FadeInDown, FadeInRight, Layout, SlideInRight, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { useInvitations } from "~/stores/useInvitations";
@@ -34,73 +35,98 @@ export default function NotificationsScreen() {
     getInvitationsByUserId(user?.id as string);
   }, []);
 
-  const renderNotification = (notification: Invitation) => (
-    <TouchableOpacity
-      key={notification.id}
-      className="p-4 border-b border-gray-200 web:md:max-w-2xl web:md:mx-auto web:md:p-5"
-      onPress={() => {
-        setSelectedNotification(
-          notification.id === selectedNotification?.id ? null : notification
-        );
-      }}
-    >
-      <View className="flex-row items-start gap-4">
-        <Image
-          source={{
-            uri: notification.sender?.image_url,
+  const renderNotification = (notification: Invitation, index: number) => {
+    const isSelected = selectedNotification?.id === notification.id;
+    const expandHeight = useSharedValue(0);
+    
+    React.useEffect(() => {
+      expandHeight.value = withTiming(isSelected ? 80 : 0, { duration: 300 });
+    }, [isSelected]);
+    
+    const expandStyle = useAnimatedStyle(() => {
+      return {
+        height: expandHeight.value,
+        opacity: expandHeight.value > 0 ? 1 : 0,
+        overflow: 'hidden',
+      };
+    });
+    
+    return (
+      <Animated.View
+        key={notification.id}
+        entering={FadeInDown.delay(index * 100).springify()}
+        layout={Layout.springify()}
+      >
+        <TouchableOpacity
+          className="p-4 border-b border-gray-200 web:md:max-w-2xl web:md:mx-auto web:md:p-5"
+          onPress={() => {
+            setSelectedNotification(
+              notification.id === selectedNotification?.id ? null : notification
+            );
           }}
-          style={{ width: 40, height: 40, borderRadius: 999 }}
-          className="web:md:w-12 web:md:h-12"
-        />
-        <View className="flex-1 flex flex-col gap-0">
-          <View className="flex-row justify-between items-center">
-            <Text className="font-semibold web:md:text-lg">
-              {notification.sender?.username} te invitó a este plan
-            </Text>
-            <Text className="text-sm text-gray-500 web:md:text-base">
-              {format(new Date(notification.created_at), "dd/MM/yyyy", {
-                locale: es,
-              })}
-            </Text>
+        >
+          <View className="flex-row items-start gap-4">
+            <Image
+              source={{
+                uri: notification.sender?.image_url,
+              }}
+              style={{ width: 40, height: 40, borderRadius: 999 }}
+              className="web:md:w-12 web:md:h-12"
+            />
+            <View className="flex-1 flex flex-col gap-0">
+              <View className="flex-row justify-between items-center">
+                <Text className="font-semibold web:md:text-lg">
+                  {notification.sender?.username} te invitó a este plan
+                </Text>
+                <Text className="text-sm text-gray-500 web:md:text-base">
+                  {format(new Date(notification.created_at), "dd/MM/yyyy", {
+                    locale: es,
+                  })}
+                </Text>
+              </View>
+              <Text className="text-gray-600 mb-2 web:md:text-base">
+                {notification.message}
+              </Text>
+            </View>
           </View>
-          <Text className="text-gray-600 mb-2 web:md:text-base">
-            {notification.message}
-          </Text>
-        </View>
-      </View>
 
-      {selectedNotification?.id === notification.id && (
-        <View className="flex-row gap-2 items-center mt-4 web:md:max-w-md web:md:mx-auto">
-          <Button
-            className="flex-1"
-            onPress={() => {
-              router.push(
-                `/(screens)/plans/plan/${selectedNotification.plan_id}`
-              );
-            }}
-          >
-            <Text className="text-white web:md:text-base">Ver detalles</Text>
-          </Button>
-          <Button
-            className="flex-1 "
-            variant="secondary"
-            onPress={() => {
-              markAsRead(selectedNotification.id);
-              setSelectedNotification(null);
-              Vibration.vibrate(50);
-            }}
-          >
-            <Text className="web:md:text-base">Marcar como leído</Text>
-          </Button>
-        </View>
-      )}
-    </TouchableOpacity>
-  );
+          <Animated.View style={expandStyle}>
+            <View className="flex-row gap-2 items-center mt-4 web:md:max-w-md web:md:mx-auto">
+              <Button
+                className="flex-1"
+                onPress={() => {
+                  router.push(
+                    `/(screens)/plans/plan/${selectedNotification?.plan_id}`
+                  );
+                }}
+              >
+                <Text className="text-white web:md:text-base">Ver detalles</Text>
+              </Button>
+              <Button
+                className="flex-1 "
+                variant="secondary"
+                onPress={() => {
+                  markAsRead(notification.id);
+                  setSelectedNotification(null);
+                  Vibration.vibrate(50);
+                }}
+              >
+                <Text className="web:md:text-base">Marcar como leído</Text>
+              </Button>
+            </View>
+          </Animated.View>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
 
   return (
     <View className="flex-1 bg-background pt-12">
       {/* Header */}
-      <View className="p-6 flex-row items-center bg-background web:md:max-w-2xl web:md:mx-auto">
+      <Animated.View 
+        entering={FadeInDown.duration(500).springify()}
+        className="p-6 flex-row items-center bg-background web:md:max-w-2xl web:md:mx-auto"
+      >
         <Button
           className="rounded-full"
           onPress={() => router.back()}
@@ -112,7 +138,7 @@ export default function NotificationsScreen() {
         <Text className="text-xl font-semibold ml-4 web:md:text-2xl">
           Notificaciones
         </Text>
-      </View>
+      </Animated.View>
 
       {/* Notifications List */}
       <ScrollView
@@ -124,11 +150,14 @@ export default function NotificationsScreen() {
         {notifications.length > 0 ? (
           notifications.map(renderNotification)
         ) : (
-          <View className="flex-1 justify-center items-center p-8 web:md:p-16">
+          <Animated.View 
+            entering={FadeInDown.delay(300).duration(800)}
+            className="flex-1 justify-center items-center p-8 web:md:p-16"
+          >
             <Text className="text-gray-500 text-center web:md:text-lg">
               No tienes notificaciones nuevas
             </Text>
-          </View>
+          </Animated.View>
         )}
       </ScrollView>
     </View>

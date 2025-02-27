@@ -63,7 +63,9 @@ function PlanCard({ plan }: { plan: Plan }) {
       {/* Main Content */}
       <View className="absolute bottom-4 left-0 right-0 p-6 web:md:max-w-2xl web:md:mx-auto">
         <View className="flex-row items-center justify-between mb-3">
-          <Text className="text-3xl font-bold text-white web:md:text-4xl">{plan.title}</Text>
+          <Text className="text-3xl font-bold text-white web:md:text-4xl">
+            {plan.title}
+          </Text>
         </View>
 
         {/* Date and Location */}
@@ -76,8 +78,12 @@ function PlanCard({ plan }: { plan: Plan }) {
           </View>
           <View className="flex-row items-center gap-2">
             <MapPin size={20} color="white" className="mr-2" />
-            <Text className="text-white text-base web:md:text-lg">{plan.location}</Text>
-            <Text className="text-white/60 text-sm ml-2 web:md:text-base">(2.5 km)</Text>
+            <Text className="text-white text-base web:md:text-lg">
+              {plan.location}
+            </Text>
+            <Text className="text-white/60 text-sm ml-2 web:md:text-base">
+              (2.5 km)
+            </Text>
           </View>
         </View>
 

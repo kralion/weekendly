@@ -213,7 +213,7 @@ export const usePlans = create<PlansState>((set, get) => ({
       const { data, error } = await supabase
         .from("plans")
         .select("*")
-        .or(`creator_id.eq.${userId},participants.cs.{${userId}}`)
+        .or(`creator_id.eq.${userId}`)
         .order("date", { ascending: true });
 
       if (error) throw error;
@@ -272,13 +272,14 @@ export const usePlans = create<PlansState>((set, get) => ({
         plans: [...state.plans, data],
         userPlans: [...state.userPlans, data],
       }));
-      
+
       toast.success("Plan creado exitosamente");
       router.back();
       return data;
     } catch (error) {
       console.error("Error creating plan:", error);
-      const message = error instanceof Error ? error.message : "Error al crear plan";
+      const message =
+        error instanceof Error ? error.message : "Error al crear plan";
       toast.error(message);
       throw error; // Re-throw to handle in component
     }
@@ -398,7 +399,7 @@ export const usePlans = create<PlansState>((set, get) => ({
   reportPlan: async (planId: string) => {
     try {
       set({ loading: true });
-      
+
       const { data: currentPlan, error: fetchError } = await supabase
         .from("plans")
         .select("reports")
@@ -408,7 +409,7 @@ export const usePlans = create<PlansState>((set, get) => ({
       if (fetchError) throw fetchError;
 
       const currentReports = currentPlan?.reports || 0;
-      
+
       const { error: updateError } = await supabase
         .from("plans")
         .update({ reports: currentReports + 1 })
@@ -418,13 +419,12 @@ export const usePlans = create<PlansState>((set, get) => ({
 
       // Update the local plan state
       const plans = get().plans;
-      const updatedPlans = plans.map(plan => 
-        plan.id === planId 
+      const updatedPlans = plans.map((plan) =>
+        plan.id === planId
           ? { ...plan, reports: (plan.reports || 0) + 1 }
           : plan
       );
       set({ plans: updatedPlans });
-
     } catch (error) {
       console.error("Error reporting plan:", error);
       throw error;
