@@ -3,69 +3,49 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { Check, ChevronLeft, X } from "lucide-react-native";
+import { ChevronLeft } from "lucide-react-native";
 import React from "react";
-import { RefreshControl, Vibration } from "react-native";
-import { TouchableOpacity, View } from "react-native";
+import { RefreshControl, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import Animated, { FadeInDown, FadeInRight, Layout, SlideInRight, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import Animated, {
+  FadeInDown,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { useInvitations } from "~/stores/useInvitations";
 import { Invitation } from "~/types";
 
-export default function NotificationsScreen() {
-  const {
-    invitations: notifications,
-    getInvitationsByUserId,
-    markAsRead,
-  } = useInvitations();
-  const [selectedNotification, setSelectedNotification] =
-    React.useState<Invitation | null>(null);
-  const { user } = useUser();
-  const [refreshing, setRefreshing] = React.useState(false);
+const NotificationItem = React.memo(
+  ({
+    notification,
+    index,
+    isSelected,
+    onSelect,
+    onAccept,
+    onReject,
+  }: {
+    notification: Invitation;
+    index: number;
+    isSelected: boolean;
+    onSelect: () => void;
+    onAccept: () => void;
+    onReject: () => void;
+  }) => {
+    const expandStyle = useAnimatedStyle(() => ({
+      height: withTiming(isSelected ? 80 : 0, { duration: 300 }),
+      opacity: withTiming(isSelected ? 1 : 0),
+      overflow: "hidden",
+    }));
 
-  const handleRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    getInvitationsByUserId(user?.id as string);
-    setRefreshing(false);
-  }, []);
-
-  React.useEffect(() => {
-    getInvitationsByUserId(user?.id as string);
-  }, []);
-
-  const renderNotification = (notification: Invitation, index: number) => {
-    const isSelected = selectedNotification?.id === notification.id;
-    const expandHeight = useSharedValue(0);
-    
-    React.useEffect(() => {
-      expandHeight.value = withTiming(isSelected ? 80 : 0, { duration: 300 });
-    }, [isSelected]);
-    
-    const expandStyle = useAnimatedStyle(() => {
-      return {
-        height: expandHeight.value,
-        opacity: expandHeight.value > 0 ? 1 : 0,
-        overflow: 'hidden',
-      };
-    });
-    
     return (
-      <Animated.View
-        key={notification.id}
-        entering={FadeInDown.delay(index * 100).springify()}
-        layout={Layout.springify()}
-      >
+      <Animated.View entering={FadeInDown.delay(index * 100).springify()}>
         <TouchableOpacity
-          className="p-4 border-b border-gray-200 web:md:max-w-2xl web:md:mx-auto web:md:p-5"
-          onPress={() => {
-            setSelectedNotification(
-              notification.id === selectedNotification?.id ? null : notification
-            );
-          }}
+          className="p-4 border-b border-muted web:md:max-w-2xl web:md:mx-auto web:md:p-5"
+          onPress={onSelect}
         >
-          <View className="flex-row items-start gap-4">
+          <View className="flex-row gap-2">
             <Image
               source={{
                 uri: notification.sender?.image_url,
@@ -92,38 +72,55 @@ export default function NotificationsScreen() {
 
           <Animated.View style={expandStyle}>
             <View className="flex-row gap-2 items-center mt-4 web:md:max-w-md web:md:mx-auto">
-              <Button
-                className="flex-1"
-                onPress={() => {
-                  router.push(
-                    `/(screens)/plans/plan/${selectedNotification?.plan_id}`
-                  );
-                }}
-              >
-                <Text className="text-white web:md:text-base">Ver detalles</Text>
+              <Button className="flex-1" onPress={onAccept}>
+                <Text className="text-white">Ver Plan</Text>
               </Button>
-              <Button
-                className="flex-1 "
-                variant="secondary"
-                onPress={() => {
-                  markAsRead(notification.id);
-                  setSelectedNotification(null);
-                  Vibration.vibrate(50);
-                }}
-              >
-                <Text className="web:md:text-base">Marcar como leído</Text>
+              <Button variant="secondary" className="flex-1" onPress={onReject}>
+                <Text>Marcar como leido</Text>
               </Button>
             </View>
           </Animated.View>
         </TouchableOpacity>
       </Animated.View>
     );
+  }
+);
+
+export default function NotificationsScreen() {
+  const {
+    invitations: notifications,
+    getInvitationsByUserId,
+    markAsRead,
+  } = useInvitations();
+  const [selectedNotification, setSelectedNotification] =
+    React.useState<Invitation | null>(null);
+  const { user } = useUser();
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const handleRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    getInvitationsByUserId(user?.id as string);
+    setRefreshing(false);
+  }, []);
+
+  React.useEffect(() => {
+    getInvitationsByUserId(user?.id as string);
+  }, []);
+
+  const handleAcceptInvitation = (notification: Invitation) => {
+    router.push(`/(screens)/plans/plan/${notification.plan_id}`);
+  };
+
+  const handleRejectInvitation = (notification: Invitation) => {
+    // Add rejection logic here
+    markAsRead(notification.id);
+    setSelectedNotification(null);
   };
 
   return (
     <View className="flex-1 bg-background pt-12">
       {/* Header */}
-      <Animated.View 
+      <Animated.View
         entering={FadeInDown.duration(500).springify()}
         className="p-6 flex-row items-center bg-background web:md:max-w-2xl web:md:mx-auto"
       >
@@ -148,9 +145,25 @@ export default function NotificationsScreen() {
         }
       >
         {notifications.length > 0 ? (
-          notifications.map(renderNotification)
+          notifications.map((notification, index) => (
+            <NotificationItem
+              key={notification.id}
+              notification={notification}
+              index={index}
+              isSelected={selectedNotification?.id === notification.id}
+              onSelect={() => {
+                setSelectedNotification(
+                  notification.id === selectedNotification?.id
+                    ? null
+                    : notification
+                );
+              }}
+              onAccept={() => handleAcceptInvitation(notification)}
+              onReject={() => handleRejectInvitation(notification)}
+            />
+          ))
         ) : (
-          <Animated.View 
+          <Animated.View
             entering={FadeInDown.delay(300).duration(800)}
             className="flex-1 justify-center items-center p-8 web:md:p-16"
           >

@@ -9,6 +9,7 @@ import { Text } from "./ui/text";
 import { usePlans } from "~/stores";
 import { toast } from "sonner-native";
 import { AlertTriangle } from "lucide-react-native";
+import { useColorScheme } from "~/lib/useColorScheme";
 
 interface ReportPlanProps {
   planId: string;
@@ -21,7 +22,9 @@ export default function ReportPlan({
 }: ReportPlanProps) {
   const { reportPlan } = usePlans();
   const [isLoading, setIsLoading] = React.useState(false);
-  const snapPoints = useMemo(() => ["45%"], []);
+  const { isDarkColorScheme: isDarkMode } = useColorScheme();
+
+  const snapPoints = useMemo(() => ["40%"], []);
 
   const handleReport = async () => {
     try {
@@ -51,10 +54,12 @@ export default function ReportPlan({
     <BottomSheet
       ref={bottomSheetRef}
       index={-1}
+      handleIndicatorStyle={{ backgroundColor: "gray" }}
       snapPoints={snapPoints}
+      backgroundStyle={{ backgroundColor: isDarkMode ? "#262626" : "white" }}
       backdropComponent={renderBackdrop}
     >
-      <BottomSheetView className="flex-1 p-4 gap-4">
+      <BottomSheetView className="flex-1 p-4  ">
         <View className="flex-row items-center gap-2 mb-4">
           <AlertTriangle size={20} color="#FF5733" />
           <Text className="text-2xl font-bold">Reportar Plan</Text>
@@ -66,14 +71,18 @@ export default function ReportPlan({
           necesarias.
         </Text>
 
-        <View className="flex-row justify-end gap-2">
+        <View className="flex-row gap-4">
           <Button
+            className="flex-1"
+            size="lg"
             variant="outline"
             onPress={() => bottomSheetRef.current?.close()}
           >
             <Text>Cancelar</Text>
           </Button>
           <Button
+            className="flex-1"
+            size="lg"
             variant="destructive"
             onPress={handleReport}
             disabled={isLoading}
@@ -81,7 +90,7 @@ export default function ReportPlan({
             {isLoading ? (
               <ActivityIndicator color="white" />
             ) : (
-              <Text className="text-white">Reportar Plan</Text>
+              <Text className="text-white">Reportar</Text>
             )}
           </Button>
         </View>

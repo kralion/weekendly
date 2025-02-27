@@ -73,6 +73,7 @@ export default function InviteBottomSheet({
       plan_id: id,
       receiver_id: selectedUser.user_id,
       message,
+      created_at: new Date(),
     });
 
     // Clear form and close

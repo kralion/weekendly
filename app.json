@@ -49,7 +49,7 @@
       [
         "expo-router",
         {
-          "origin": "https://weekendly-app.vercel.app/"
+          "origin": "https://weekendly-app.vercel.app"
         }
       ],
       "expo-secure-store",

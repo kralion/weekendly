@@ -15,7 +15,7 @@ import { Text } from "~/components/ui/text";
 import { useProfiles } from "~/stores";
 import Constants from "expo-constants";
 
-const API_URL = "https://weekendly-app.vercel.app/";
+const API_URL = "https://weekendly-app.vercel.app";
 
 const generateAPIUrl = (relativePath: string) => {
   console.log("Constants", Constants.experienceUrl);
@@ -77,16 +77,6 @@ export default function ProfileScreen() {
   return (
     <View className="flex-1 bg-background">
       <ScrollView className="bg-background" contentContainerClassName="pb-10">
-        {/* Header */}
-        <View className="p-4 flex-row  justify-between items-center absolute top-0 left-0 right-0 z-10">
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="w-10 h-10 justify-center items-center bg-black/20 rounded-full"
-          >
-            <X size={24} color="white" />
-          </TouchableOpacity>
-        </View>
-
         {/* Profile Banner */}
         <View style={{ position: "relative", width: "100%", height: 200 }}>
           <Image

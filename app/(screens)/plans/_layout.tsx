@@ -1,8 +1,10 @@
-import { Stack } from "expo-router";
+import { router, Stack } from "expo-router";
+import { X } from "lucide-react-native";
 import React from "react";
+import { TouchableOpacity } from "react-native";
+import { Button } from "~/components/ui/button";
 
 export default function TabLayout() {
-
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -26,8 +28,20 @@ export default function TabLayout() {
       <Stack.Screen
         name="profile/[id]"
         options={{
-          title: "Perfil",
+          title: "Perfil del Creador",
           presentation: "modal",
+          headerShadowVisible: false,
+          headerShown: true,
+          headerLeft: () => (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              onPress={() => router.back()}
+            >
+              <X size={20} color="#FF5733" />
+            </Button>
+          ),
         }}
       />
     </Stack>
