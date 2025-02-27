@@ -9,54 +9,56 @@ import {
   View,
 } from "react-native";
 import { toast } from "sonner-native";
-import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { useProfiles } from "~/stores";
+import Constants from "expo-constants";
+const API_URL = "https://weekendly-app.vercel.app";
+
+const generateAPIUrl = (relativePath: string) => {
+  console.log("Constants", Constants.experienceUrl);
+
+  const origin =
+    Constants?.experienceUrl?.replace("exp://", "http://") || API_URL;
+
+  const path = relativePath.startsWith("/") ? relativePath : `/${relativePath}`;
+
+  if (process.env.NODE_ENV === "development") {
+    return origin?.concat(path);
+  }
+
+  if (!API_URL) {
+    throw new Error("API_URL environment variable is not defined");
+  }
+
+  return API_URL.concat(path);
+};
 
 export default function ProfileScreen() {
   const { id } = useLocalSearchParams();
   const { fetchSpecificProfileById, profile, loading } = useProfiles();
   const [userInfo, setUserInfo] = React.useState<{
-    firstName: string;
-    lastName: string;
+    first_name: string;
+    last_name: string;
     image_url: string;
   } | null>(null);
   const [fetchingClerkData, setFetchingClerkData] = React.useState(false);
 
-  const fetchCreatorProfile = async (creatorId: string) => {
+  async function fetchClerkUserData() {
     setFetchingClerkData(true);
-    try {
-      const response = await fetch(
-        `https://api.clerk.com/v1/users/${creatorId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.EXPO_PUBLIC_CLERK_SECRET_KEY}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(`Failed to fetch creator profile: ${error.message}`);
-      }
-
-      const data = await response.json();
-      setUserInfo({
-        firstName: data.first_name || "",
-        lastName: data.last_name || "",
-        image_url: data.image_url,
-      });
-    } catch (error) {
-      console.error("Error fetching creator profile:", error);
-      toast.error("No se pudo cargar el perfil del creador");
-    } finally {
-      setFetchingClerkData(false);
-    }
-  };
+    const response = await fetch(generateAPIUrl(`/api/profile/${id}`));
+    const userData = await response.json();
+    setUserInfo({
+      first_name: userData.first_name || "",
+      last_name: userData.last_name || "",
+      image_url: userData.image_url || "",
+    });
+    setFetchingClerkData(false);
+  }
 
   React.useEffect(() => {
     fetchSpecificProfileById(id as string);
-    fetchCreatorProfile(id as string);
+    fetchClerkUserData();
   }, [id]);
   if (loading || fetchingClerkData) {
     return (
@@ -104,7 +106,7 @@ export default function ProfileScreen() {
             <View>
               <View className="flex-row items-center gap-2">
                 <Text className="text-xl font-bold">
-                  {userInfo?.firstName} {userInfo?.lastName}
+                  {userInfo?.first_name} {userInfo?.last_name}
                 </Text>
                 <CheckCircle size={16} color="#1DA1F2" className="ml-1" />
               </View>

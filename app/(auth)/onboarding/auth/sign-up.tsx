@@ -94,7 +94,7 @@ export default function SignUpScreen() {
   return (
     <KeyboardAvoidingView behavior="height" enabled style={{ flex: 1 }}>
       <ScrollView>
-        <View className="flex flex-col gap-8 h-screen-safe justify-center p-6">
+        <View className="flex flex-col gap-8 h-screen-safe justify-center p-6 web:md:max-w-xl web:md:mx-auto">
           <View className="flex flex-col items-center">
             <Image
               style={{
