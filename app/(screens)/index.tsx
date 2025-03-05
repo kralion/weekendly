@@ -1,4 +1,5 @@
 import { useUser } from "@clerk/clerk-expo";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import { Bell, BellDot, Search, X } from "lucide-react-native";
 import * as React from "react";
@@ -290,7 +291,17 @@ export default function Index() {
                 borderRadius: 999,
                 padding: 10,
               }}
-            ></View>
+            >
+              <Image
+                source={{
+                  uri: "https://img.icons8.com/?size=300&id=97CiUKVEgclT&format=png&color=000000",
+                }}
+                style={{
+                  width: 100,
+                  height: 100,
+                }}
+              />
+            </View>
             <Text className="text-center mt-5 text-muted-foreground mx-auto w-2/3">
               No se encontraron planes que coincidan con{" "}
               {searchQuery ? "tu búsqueda" : "la categoría seleccionada"}.

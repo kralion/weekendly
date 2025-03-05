@@ -236,7 +236,7 @@ export default function MyPlansScreen() {
               <View className="flex-1 justify-center items-center">
                 <Image
                   source={{
-                    uri: "https://img.icons8.com/?size=100&id=97CiUKVEgclT&format=png&color=000000",
+                    uri: "https://img.icons8.com/?size=300&id=97CiUKVEgclT&format=png&color=000000",
                   }}
                   style={{
                     width: 100,
