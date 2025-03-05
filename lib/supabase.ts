@@ -13,6 +13,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     persistSession: true,
     detectSessionInUrl: false,
   },
+  db: { schema: "weekendly" },
 });
 
 export function createClerkSupabaseClient() {
@@ -32,7 +33,7 @@ export function createClerkSupabaseClient() {
         // Get the custom Supabase token from Clerk
         fetch: async (url, options = {}) => {
           const clerkToken = await getToken({
-            template: "weekendly",
+            template: "monedo",
           });
 
           // Insert the Clerk Supabase token into the headers
@@ -46,6 +47,7 @@ export function createClerkSupabaseClient() {
           });
         },
       },
+      db: { schema: "weekendly" },
     }
   );
 }
