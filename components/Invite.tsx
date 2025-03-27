@@ -6,7 +6,7 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { Search, X } from "lucide-react-native";
 import React, { useCallback, useMemo } from "react";
-import { ActivityIndicator, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, TouchableOpacity, View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { useColorScheme } from "~/lib/useColorScheme";
@@ -152,9 +152,13 @@ export default function InviteBottomSheet({
               {searchResults.map((profile) => (
                 <TouchableOpacity
                   key={profile.user_id}
-                  className="py-3 px-4 border-b border-gray-100 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
+                  className="py-3 px-4 border-b border-gray-100 dark:border-gray-700 active:bg-gray-50  flex flex-row gap-1 items-center dark:active:bg-gray-700"
                   onPress={() => handleSelectUser(profile)}
                 >
+                  <Image
+                    source={{ uri: profile.image_url as string }}
+                    className="w-8 h-8 rounded-full"
+                  />
                   <Text className="font-medium">{profile.username}</Text>
                 </TouchableOpacity>
               ))}
