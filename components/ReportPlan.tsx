@@ -24,7 +24,7 @@ export default function ReportPlan({
   const [isLoading, setIsLoading] = React.useState(false);
   const { isDarkColorScheme: isDarkMode } = useColorScheme();
 
-  const snapPoints = useMemo(() => ["55%"], []);
+  const snapPoints = useMemo(() => ["40%"], []);
 
   const handleReport = async () => {
     try {

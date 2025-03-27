@@ -311,12 +311,12 @@ export default function PlanDetail() {
                 >
                   <Image
                     source={{
-                      uri: "https://mighty.tools/mockmind-api/content/human/122.jpg",
+                      uri: comment.profiles?.image_url
                     }}
                     className="rounded-full"
                     style={{ width: 40, height: 40, borderRadius: 999 }}
                   />
-                  <View className="flex flex-col">
+                  <View className="flex flex-col flex-wrap">
                     <View className="flex flex-row gap-2 items-center">
                       <Text className="font-medium text-muted-foreground">
                         {comment.profiles?.username}
@@ -325,7 +325,9 @@ export default function PlanDetail() {
                         {new Date(comment.created_at).toLocaleDateString()}
                       </Text>
                     </View>
-                    <Text className="font-medium">{comment.message}</Text>
+                    <View className="w-[75%]">
+                      <Text className="font-medium">{comment.message}</Text>
+                    </View>
                   </View>
                 </View>
               ))}

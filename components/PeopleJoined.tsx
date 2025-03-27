@@ -7,7 +7,6 @@ import { Image, View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { usePlans } from "~/stores";
-import { Separator } from "./ui/separator";
 
 export default function PeopleJoinedBottomSheet({
   bottomSheetRef,
