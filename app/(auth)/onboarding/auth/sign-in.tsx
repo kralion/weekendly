@@ -134,7 +134,6 @@ export default function SignInScreen() {
                       size="lg"
                       value={value}
                       secureTextEntry
-                      className="bg-white"
                     />
                   )}
                 />

@@ -9,6 +9,7 @@ import { Button } from "./ui/button";
 import { Text } from "./ui/text";
 import { useComments } from "~/stores/comments";
 import { toast } from "sonner-native";
+import { useColorScheme } from "~/lib/useColorScheme";
 
 interface AddCommentProps {
   planId: string;
@@ -22,6 +23,7 @@ export default function AddComment({
   bottomSheetRef,
 }: AddCommentProps) {
   const [comment, setComment] = React.useState("");
+  const { isDarkColorScheme: isDarkMode } = useColorScheme();
   const { createComment, isLoading } = useComments();
   const snapPoints = useMemo(() => ["40%"], []);
 
@@ -60,6 +62,7 @@ export default function AddComment({
       index={-1}
       snapPoints={snapPoints}
       backdropComponent={renderBackdrop}
+      backgroundStyle={{ backgroundColor: isDarkMode ? "#262626" : "white" }}
     >
       <BottomSheetView className="flex-1 gap-4 p-4">
         <View className="flex-row justify-between items-center mb-4">

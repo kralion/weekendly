@@ -122,7 +122,6 @@ export default function Preferences2Screen() {
         residency: data.residency,
         languages: selectedLanguages,
         phone: data.phone ? `+51${data.phone}` : null,
-        image_url: null,
         gender: data.gender as Gender,
       });
 

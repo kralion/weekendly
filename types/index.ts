@@ -29,7 +29,6 @@ export interface Profile {
   user_id: string;
   username: string;
   bio: string | null;
-  image_url: string | null;
   hobbies: string[];
   created_at: string;
   residency: string;

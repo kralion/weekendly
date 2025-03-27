@@ -61,8 +61,8 @@ export default function PlanDetail() {
   React.useEffect(() => {
     return sound
       ? () => {
-          sound.unloadAsync();
-        }
+        sound.unloadAsync();
+      }
       : undefined;
   }, [sound]);
 
@@ -110,13 +110,10 @@ export default function PlanDetail() {
       // Create a deep link URL for the plan
       const deepLink = `exp://192.168.100.6:8081/--/plans/${plan.id}`;
 
-      const message = `¡Únete a mi plan "${plan.title}"!\n\n📍 ${
-        plan.location
-      }\n📅 ${formatDate(new Date(plan.date))}\n\n${
-        plan.description
-      }\n\nParticipantes: ${plan.participants.length}/${
-        plan.max_participants
-      }\n\nAbrir plan: ${deepLink}`;
+      const message = `¡Únete a mi plan "${plan.title}"!\n\n📍 ${plan.location
+        }\n📅 ${formatDate(new Date(plan.date))}\n\n${plan.description
+        }\n\nParticipantes: ${plan.participants.length}/${plan.max_participants
+        }\n\nAbrir plan: ${deepLink}`;
 
       await Share.share({
         message,
@@ -183,7 +180,7 @@ export default function PlanDetail() {
 
         <View className="px-4 mt-4 web:md:px-8">
           <View className="flex flex-row justify-between items-center ">
-            <Text className="text-2xl font-bold mb-2">{plan.title}</Text>
+            <Text className="text-2xl w-2/3 web:md:w-full font-bold mb-2 web:md:text-3xl">{plan.title}</Text>
             <View className="flex flex-row items-center">
               <Button
                 size="icon"
@@ -228,7 +225,7 @@ export default function PlanDetail() {
           </View>
 
           <View className="flex-row flex-wrap gap-2 mb-6">
-            {["Música", "Fotografía", "Arte"].map((interest, index) => (
+            {plan.categories.map((interest, index) => (
               <View
                 key={index}
                 className="bg-primary/10 px-3 py-1 rounded-full"
@@ -321,7 +318,7 @@ export default function PlanDetail() {
                 >
                   <Image
                     source={{
-                      uri: comment.profiles?.image_url,
+                      uri: "https://mighty.tools/mockmind-api/content/human/122.jpg",
                     }}
                     className="rounded-full"
                     style={{ width: 40, height: 40, borderRadius: 999 }}

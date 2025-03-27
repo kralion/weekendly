@@ -28,7 +28,6 @@ function PlanCard({ plan }: { plan: Plan }) {
 
   return (
     <Pressable
-      onPress={() => router.push(`/(screens)/plans/plan/${plan.id}`)}
       className="relative"
       style={{ height: SCREEN_HEIGHT, width: "100%" }}
     >
@@ -62,7 +61,7 @@ function PlanCard({ plan }: { plan: Plan }) {
 
       {/* Main Content */}
       <View className="absolute bottom-4 left-0 right-0 p-6 web:md:max-w-2xl web:md:mx-auto">
-        <View className="flex-row items-center justify-between mb-3">
+        <View className="flex-row items-center justify-between mb-3 ">
           <Text className="text-3xl font-bold text-white web:md:text-4xl">
             {plan.title}
           </Text>
