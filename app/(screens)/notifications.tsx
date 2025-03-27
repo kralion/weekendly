@@ -42,7 +42,7 @@ const NotificationItem = React.memo(
     return (
       <Animated.View entering={FadeInDown.delay(index * 100).springify()}>
         <TouchableOpacity
-          className="p-4 border-b border-muted web:md:max-w-2xl web:md:mx-auto web:md:p-5"
+          className="p-4 border-b border-muted web:md:mx-auto web:md:p-5"
           onPress={onSelect}
         >
           <View className="flex-row gap-2">
@@ -122,7 +122,7 @@ export default function NotificationsScreen() {
       {/* Header */}
       <Animated.View
         entering={FadeInDown.duration(500).springify()}
-        className="p-6 flex-row items-center bg-background web:md:max-w-2xl web:md:mx-auto"
+        className="px-6 py-4 flex-row items-center bg-background web:md:mx-auto web:md:w-1/2"
       >
         <Button
           className="rounded-full"

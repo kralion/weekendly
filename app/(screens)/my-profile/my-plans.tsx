@@ -163,7 +163,7 @@ export default function MyPlansScreen() {
   );
 
   return (
-    <View className="flex-1 bg-background pt-12 web:md:mx-auto web:md:w-[650px]">
+    <View className="flex-1 bg-background pt-12 web:pt-4 web:md:mx-auto web:md:w-[650px]">
       {/* Header */}
       <View className="p-6 flex-row justify-between items-center bg-background  ">
         <Button
@@ -185,9 +185,8 @@ export default function MyPlansScreen() {
               className="flex-1 rounded-full shadow-none"
             >
               <Text
-                className={`${
-                  value === "created" ? "" : "text-muted-foreground"
-                } web:md:text-base`}
+                className={`${value === "created" ? "" : "text-muted-foreground"
+                  } web:md:text-base`}
               >
                 Creados
               </Text>
@@ -197,9 +196,8 @@ export default function MyPlansScreen() {
               className="flex-1 rounded-full shadow-none"
             >
               <Text
-                className={`${
-                  value === "joined" ? "" : "text-muted-foreground"
-                } web:md:text-base`}
+                className={`${value === "joined" ? "" : "text-muted-foreground"
+                  } web:md:text-base`}
               >
                 Unidos
               </Text>

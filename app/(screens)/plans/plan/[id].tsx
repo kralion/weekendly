@@ -16,6 +16,7 @@ import {
   Users,
 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
+import { Platform } from "react-native";
 import {
   ActivityIndicator,
   ScrollView,
@@ -28,6 +29,7 @@ import { toast } from "sonner-native";
 import AddComment from "~/components/AddComment";
 import { Confirmed } from "~/components/confirmed";
 import InviteBottomSheet from "~/components/Invite";
+import PeopleJoinedBottomSheet from "~/components/PeopleJoined";
 import ReportPlan from "~/components/ReportPlan";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
@@ -42,6 +44,7 @@ export default function PlanDetail() {
   const { user } = useUser();
   const bottomSheetRef = React.useRef<BottomSheet>(null);
   const commentSheetRef = React.useRef<BottomSheet>(null);
+  const peopleJoinedSheetRef = React.useRef<BottomSheet>(null);
   const reportSheetRef = React.useRef<BottomSheet>(null);
   const [plan, setPlan] = React.useState<Plan | null>(null);
 
@@ -91,38 +94,32 @@ export default function PlanDetail() {
     router.back();
   }
 
-  const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: false,
-    };
-    return date.toLocaleDateString("es-ES", options);
-  };
-
   const handleShare = async () => {
     if (!plan) return;
 
-    try {
-      // Create a deep link URL for the plan
-      const deepLink = `exp://192.168.100.6:8081/--/plans/${plan.id}`;
+    if (Platform.OS === "web") {
+      // On web, copy the deep link to the clipboard
+      const deepLink = `http://weekendly-app.vercel.app/plans/${plan.id}`;
+      await navigator.clipboard.writeText(deepLink);
+      toast.success("Enlace copiado al portapapeles");
+      return;
+    } else {
 
-      const message = `¡Únete a mi plan "${plan.title}"!\n\n📍 ${plan.location
-        }\n📅 ${formatDate(new Date(plan.date))}\n\n${plan.description
-        }\n\nParticipantes: ${plan.participants.length}/${plan.max_participants
-        }\n\nAbrir plan: ${deepLink}`;
+      try {
+        // Create a deep link URL for the plan
+        const deepLink = `exp://192.168.100.6:8081/--/plans/${plan.id}`;
 
-      await Share.share({
-        message,
-        title: "Compartir Plan",
-        url: deepLink,
-      });
-    } catch (error) {
-      toast.error("Error al compartir el plan");
-      console.error(error);
+        const message = `¡Únete a mi plan "${plan.title}"!\n\n${deepLink}`;
+
+        await Share.share({
+          message,
+          title: "Compartir Plan",
+          url: deepLink,
+        });
+      } catch (error) {
+        toast.error("Error al compartir el plan");
+        console.error(error);
+      }
     }
   };
 
@@ -136,7 +133,7 @@ export default function PlanDetail() {
 
   return (
     <View className="flex-1 bg-background">
-      <ScrollView contentContainerClassName="pb-10 web:md:max-w-4xl web:md:mx-auto">
+      <ScrollView contentContainerClassName="pb-10 web:md:w-1/2 web:md:mx-auto">
         <View className="relative " style={{ height: 400 }}>
           <Image
             source={{
@@ -236,15 +233,11 @@ export default function PlanDetail() {
           </View>
 
           <View className="flex-row justify-between mb-6 items-center web:md:flex-row">
-            <View className="flex-row items-center gap-2">
+            <View className="flex-row items-center">
               <Calendar size={16} className="mr-2" color="#FF5733" />
               <Text>
                 {capitalize(
-                  new Date(plan.date).toLocaleDateString("es", {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric",
-                  })
+                  new Date(plan.date).toLocaleDateString("es")
                 )}{" "}
                 -{" "}
                 {new Date(plan.date)
@@ -256,8 +249,8 @@ export default function PlanDetail() {
                   .toUpperCase()}
               </Text>
             </View>
-            <View className="flex-row items-center gap-2">
-              <Users size={16} className="mr-2" color="#FF5733" />
+            <View className="flex-row items-center">
+              <Users onPress={() => peopleJoinedSheetRef.current?.expand()} size={16} className="mr-2" color="#FF5733" />
               <Text>
                 {plan.participants.length}/{plan.max_participants}
               </Text>
@@ -338,7 +331,7 @@ export default function PlanDetail() {
               ))}
             </View>
           ) : (
-            <View className="bg-muted p-4 rounded-lg web:md:max-w-2xl">
+            <View className="bg-muted p-4 rounded-lg ">
               <Text className="text-center text-muted-foreground">
                 No hay comentarios aún
               </Text>
@@ -359,6 +352,7 @@ export default function PlanDetail() {
           />
         )}
         <InviteBottomSheet bottomSheetRef={bottomSheetRef} id={id as string} />
+        <PeopleJoinedBottomSheet bottomSheetRef={peopleJoinedSheetRef} id={id as string} />
         <AddComment
           planId={id as string}
           userId={user?.id as string}

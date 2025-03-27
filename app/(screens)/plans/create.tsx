@@ -154,7 +154,7 @@ export default function CreatePlan() {
         creator_id: user.id,
         categories: selectedCategories,
         status: "activo" as const,
-        participants: [],
+        participants: [user.id],
       };
 
       if (id) {
@@ -386,18 +386,16 @@ export default function CreatePlan() {
                 <Pressable
                   key={category}
                   onPress={() => toggleCategory(category)}
-                  className={`rounded-md px-6 py-2 web:md:px-8 web:md:py-3 ${
-                    selectedCategories.includes(category)
-                      ? "bg-primary"
-                      : "bg-muted/50"
-                  }`}
+                  className={`rounded-md px-6 py-2 web:md:px-8 web:md:py-3 ${selectedCategories.includes(category)
+                    ? "bg-primary"
+                    : "bg-muted/50"
+                    }`}
                 >
                   <Text
-                    className={`${
-                      selectedCategories.includes(category)
-                        ? "text-white"
-                        : "text-muted-foreground"
-                    } web:md:text-base`}
+                    className={`${selectedCategories.includes(category)
+                      ? "text-white"
+                      : "text-muted-foreground"
+                      } web:md:text-base`}
                   >
                     {category}
                   </Text>

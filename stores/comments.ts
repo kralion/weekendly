@@ -57,7 +57,7 @@ export const useComments = create<CommentsState>((set, get) => ({
 
       const { data, error } = await supabase
         .from("comments")
-        .insert([comment])
+        .insert(comment)
         .select(
           `
           *,

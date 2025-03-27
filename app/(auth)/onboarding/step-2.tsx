@@ -4,7 +4,7 @@ import { generalStyles } from "@/styles";
 import { ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { View, Text, Dimensions } from "react-native";
+import { Text, View } from "react-native";
 
 export default function OnboardingStepTwo() {
   const primary1 = useThemeColor({}, "primary1");

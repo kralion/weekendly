@@ -16,7 +16,7 @@ export function PlanCard({ plan, index }: { plan: Plan; index: number }) {
         .mass(0.5)
         .damping(8)
         .stiffness(80)}
-      className="px-4"
+      className="px-4 web:md:mx-auto web:md:w-[650px] my-8"
     >
       <Pressable
         style={{ height: height * 0.5 }}

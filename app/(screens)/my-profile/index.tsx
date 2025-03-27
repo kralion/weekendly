@@ -32,24 +32,31 @@ import { toast } from "sonner-native";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { Textarea } from "~/components/ui/textarea";
+import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
+import { supabase } from "~/lib/supabase";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { generateAPIUrl } from "~/lib/utils";
 import { useProfiles } from "~/stores";
 
 export default function ProfileScreen() {
   const { signOut } = useAuth();
-  const { isDarkColorScheme } = useColorScheme();
-  const [isDarkMode, setIsDarkMode] = React.useState(
-    isDarkColorScheme ? "dark" : "light"
-  );
   const { user } = useUser();
   const [feedbackText, setFeedbackText] = React.useState("");
   const [isSendingFeedback, setIsSendingFeedback] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const { currentProfile, loading, fetchProfileById } = useProfiles();
   const [image_url, setImage_url] = React.useState<string>(
-    user?.imageUrl || ""
+    currentProfile?.image_url || ""
   );
+
+  const { isDarkColorScheme, setColorScheme } = useColorScheme();
+
+  function toggleColorScheme() {
+    const newTheme = isDarkColorScheme ? 'light' : 'dark';
+    setColorScheme(newTheme);
+    setAndroidNavigationBar(newTheme);
+  }
 
   const avatarScale = useSharedValue(1);
 
@@ -59,10 +66,7 @@ export default function ProfileScreen() {
     };
   });
 
-  const handleToggleDarkMode = () => {
-    setIsDarkMode(isDarkMode === "dark" ? "light" : "dark");
-    Appearance.setColorScheme(isDarkMode === "dark" ? "light" : "dark");
-  };
+
 
   const handleAvatarPressIn = () => {
     avatarScale.value = withSpring(1.05, { damping: 10, stiffness: 100 });
@@ -104,8 +108,16 @@ export default function ProfileScreen() {
         const data = await response.json();
 
         if (data.status === "success") {
+          const { error } = await supabase
+            .from("profiles")
+            .update({
+              image_url: data.data.secure_url,
+            })
+            .eq("user_id", user?.id);
           setImage_url(data.data.secure_url);
-          user?.setProfileImage(data.data.secure_url);
+          if (error) {
+            console.log(error);
+          }
         } else {
           throw new Error(data.error || "Failed to upload image");
         }
@@ -118,7 +130,6 @@ export default function ProfileScreen() {
     }
   };
 
-  const { currentProfile, loading, fetchProfileById } = useProfiles();
 
   function onRefresh() {
     setRefreshing(true);
@@ -224,14 +235,14 @@ export default function ProfileScreen() {
             onPress={() => router.push(`/(screens)/my-profile/my-plans`)}
             className="w-28 h-10 justify-center items-center bg-black/20 rounded-full"
           >
-            <Text className="text-white">Mis Planes </Text>
+            <Text className="text-white">Mis Planes</Text>
           </TouchableOpacity>
         </Animated.View>
 
         {/* Profile Info */}
         <Animated.View
           entering={SlideInUp.duration(800).springify()}
-          className="px-6 -mt-16 web:md:max-w-2xl web:md:mx-auto"
+          className="px-6 -mt-16 web:md:w-1/2 web:md:mx-auto "
         >
           <View className="relative flex items-center">
             <View className="relative">
@@ -331,16 +342,16 @@ export default function ProfileScreen() {
             </Text>
             <View className="bg-muted p-4 rounded-lg web:md:p-6 flex flex-row justify-between items-center">
               <Text className="text-muted-foreground web:md:text-base">
-                {isDarkMode === "dark" ? "Modo Oscuro" : "Modo Claro"}
+                {isDarkColorScheme ? "Modo Oscuro" : "Modo Claro"}
               </Text>
 
               <Button
                 size="icon"
                 variant="secondary"
                 className=" rounded-full"
-                onPress={handleToggleDarkMode}
+                onPress={toggleColorScheme}
               >
-                {isDarkMode === "dark" ? (
+                {isDarkColorScheme ? (
                   <Sun size={20} color="#FF5733" />
                 ) : (
                   <Moon size={20} color="#FF5733" />

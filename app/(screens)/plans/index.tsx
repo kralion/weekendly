@@ -114,7 +114,7 @@ function PlanCard({ plan }: { plan: Plan }) {
         {/* Action Buttons */}
 
         <Button
-          className="flex-1 rounded-full web:md:max-w-xs web:md:self-center"
+          className="flex-1 rounded-full  web:md:max-w-xs web:md:self-center web:py-2 web:md:px-14"
           size="lg"
           onPress={() => router.push(`/(screens)/plans/plan/${plan.id}`)}
         >

@@ -171,25 +171,35 @@ export const usePlans = create<PlansState>((set, get) => ({
   },
 
   getParticipants: async (planId: string) => {
-    try {
-      set({ loading: true });
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .in(
-          "user_id",
-          (
-            await supabase.from("plans").select("participants").eq("id", planId)
-          ).data?.[0]?.participants
-        );
+  try {
+    set({ loading: true });
+
+    // Fetch the plan data
+    const { data: planData, error: planError } = await supabase
+      .from("plans")
+      .select("participants")
+      .eq("id", planId)
+      .single();
+
+    if (planError) throw planError;
+
+    
+    // Fetch the participants' profiles
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .in("user_id", planData.participants);
       if (error) throw error;
-      set({ participants: data });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      set({ loading: false });
-    }
-  },
+
+    // Update the state with the participants' data
+    set({ participants: data });
+  } catch (error) {
+    console.error("Error fetching participants:", error);
+  } finally {
+    set({ loading: false });
+  }
+},
+
 
   getPlanById: async (id: string) => {
     try {
@@ -330,14 +340,9 @@ export const usePlans = create<PlansState>((set, get) => ({
     try {
       const plan = get().plans.find((p) => p.id === planId);
       if (!plan) throw new Error("Plan no encontrado");
-
-      if (plan.participants.includes(userId)) {
-        toast.error("Ya estás participando en este plan");
-        return;
-      }
-
+    
       if (plan.participants.length >= plan.max_participants) {
-        toast.error("El plan está lleno");
+        toast.error("El plan está copado");
         return;
       }
 
@@ -367,11 +372,6 @@ export const usePlans = create<PlansState>((set, get) => ({
     try {
       const plan = get().plans.find((p) => p.id === planId);
       if (!plan) throw new Error("Plan no encontrado");
-
-      if (!plan.participants.includes(userId)) {
-        toast.error("No estás participando en este plan");
-        return;
-      }
 
       const { data, error } = await supabase
         .from("plans")

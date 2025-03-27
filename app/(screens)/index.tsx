@@ -18,7 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
-import { usePlans } from "~/stores";
+import { usePlans, useProfiles } from "~/stores";
 import { Plan } from "~/types";
 
 const CATEGORIES = [
@@ -75,6 +75,7 @@ export default function Index() {
   } = usePlans();
   const searchRef = React.useRef<TextInput>(null);
   const [notifications, setNotifications] = React.useState(2);
+  const { currentProfile, fetchProfileById } = useProfiles();
   const [refreshing, setRefreshing] = React.useState(false);
   const { user } = useUser();
 
@@ -91,6 +92,7 @@ export default function Index() {
       setSelectedCategory("1"); // Set default category to Música
     };
     init();
+    fetchProfileById(user?.id as string);
   }, []);
 
   // Effect to update filtered plans when plans array changes
@@ -206,7 +208,7 @@ export default function Index() {
                 onPress={() => router.push("/(screens)/my-profile")}
               >
                 <Avatar alt="profile">
-                  <AvatarImage source={{ uri: user?.imageUrl }} />
+                  <AvatarImage source={{ uri: currentProfile?.image_url as string }} />
                   <AvatarFallback>
                     <Text>{user?.firstName?.[0]}</Text>
                   </AvatarFallback>
@@ -216,19 +218,16 @@ export default function Index() {
           </View>
 
           {/* Search Bar */}
-          <View className="flex-row items-center justify-between p-4 web:md:justify-center web:md:gap-4">
+          <View className="flex-row items-center justify-between p-4 web:md:justify-center web:md:gap-4 web:md:mx-auto web:md:w-[650px]">
             <Input
               placeholder="Buscar planes..."
               ref={searchRef}
               value={searchQuery}
               onChangeText={setSearchQuery}
               style={{
-                width: 300,
                 height: 50,
                 borderRadius: 999,
-                paddingLeft: 24,
               }}
-              className="web:md:w-96 "
             />
             <Button
               variant="secondary"
@@ -270,19 +269,8 @@ export default function Index() {
             </View>
           )}
         </Animated.View>
-
-        <Text className="text-muted-foreground mb-8 m-4 web:md:max-w-4xl web:md:mx-auto web:md:px-4">
-          {searchQuery ? "Mejor coincidencia" : "Plan Sugerido"}
-        </Text>
         {filteredPlans.length > 0 ? (
-          <View className="web:md:max-w-4xl web:md:mx-auto">
-            <PlanCard plan={filteredPlans[0]} index={0} />
-            <View className="p-4 ">
-              <Text className="text-center text-sm text-muted-foreground">
-                TIP: Tap en plan para ver un scroll de planes relacionados.
-              </Text>
-            </View>
-          </View>
+          <PlanCard plan={filteredPlans[0]} index={0} />
         ) : (
           <View className="flex-1 mt-16 justify-center items-center web:md:max-w-4xl web:md:mx-auto">
             <View
