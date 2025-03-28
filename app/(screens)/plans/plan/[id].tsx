@@ -16,7 +16,7 @@ import {
   Users,
 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import { Platform } from "react-native";
+import { Platform, Pressable } from "react-native";
 import {
   ActivityIndicator,
   ScrollView,
@@ -176,8 +176,40 @@ export default function PlanDetail() {
         </View>
 
         <View className="px-4 mt-4 web:md:px-8">
-          <View className="flex flex-row justify-between items-center ">
-            <Text className="text-2xl w-2/3 web:md:w-full font-bold mb-2 web:md:text-3xl">{plan.title}</Text>
+
+          <Text className="text-2xl w-full web:md:w-full font-bold mb-2 web:md:text-3xl">{plan.title}</Text>
+
+
+
+          {(plan.reports || 0) > 10 && (
+            <View className="bg-destructive/10 p-4 rounded-lg mb-4 flex-row items-center gap-2">
+              <AlertTriangle size={20} color="#FF5733" />
+              <Text className="text-sm text-destructive flex-1">
+                Este plan ha sido reportado múltiples veces. Te recomendamos ser
+                precavido antes de unirte.
+              </Text>
+            </View>
+          )}
+
+          <View className="flex-row justify-between items-center mb-4 gap-1">
+
+            <View className="flex-col">
+
+              <View className="flex-row items-center mb-4 gap-1">
+                <MapPin size={16} className="mr-1" color="#FF5733" />
+                <Text className="text-sm">{plan.location}</Text>
+              </View>
+              <View className="flex-row flex-wrap gap-2 mb-6">
+                {plan.categories.map((interest, index) => (
+                  <View
+                    key={index}
+                    className="bg-primary/10 px-3 py-1 rounded-full"
+                  >
+                    <Text className="text-sm text-primary">{interest}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
             <View className="flex flex-row items-center">
               <Button
                 size="icon"
@@ -206,34 +238,10 @@ export default function PlanDetail() {
             </View>
           </View>
 
-          {(plan.reports || 0) > 10 && (
-            <View className="bg-destructive/10 p-4 rounded-lg mb-4 flex-row items-center gap-2">
-              <AlertTriangle size={20} color="#FF5733" />
-              <Text className="text-sm text-destructive flex-1">
-                Este plan ha sido reportado múltiples veces. Te recomendamos ser
-                precavido antes de unirte.
-              </Text>
-            </View>
-          )}
 
-          <View className="flex-row items-center mb-4 gap-1">
-            <MapPin size={16} className="mr-1" color="#FF5733" />
-            <Text className="text-sm">{plan.location}</Text>
-          </View>
-
-          <View className="flex-row flex-wrap gap-2 mb-6">
-            {plan.categories.map((interest, index) => (
-              <View
-                key={index}
-                className="bg-primary/10 px-3 py-1 rounded-full"
-              >
-                <Text className="text-sm text-primary">{interest}</Text>
-              </View>
-            ))}
-          </View>
 
           <View className="flex-row justify-between mb-6 items-center web:md:flex-row">
-            <View className="flex-row items-center">
+            <View className="flex-row items-center web:md:gap-0 gap-2">
               <Calendar size={16} className="mr-2" color="#FF5733" />
               <Text>
                 {capitalize(
@@ -249,22 +257,23 @@ export default function PlanDetail() {
                   .toUpperCase()}
               </Text>
             </View>
-            <View className="flex-row items-center">
-              <Users onPress={() => peopleJoinedSheetRef.current?.expand()} size={16} className="mr-2" color="#FF5733" />
+            <TouchableOpacity onPress={() => peopleJoinedSheetRef.current?.expand()} className="flex-row items-center web:md:gap-0 gap-2">
+              <Users size={16} className="mr-2" color="#FF5733" />
               <Text>
                 {plan.participants.length}/{plan.max_participants}
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
 
-          <Text className="text-lg font-semibold mb-2">Descripción</Text>
-          <Text className="text-gray-600 mb-6 web:md:text-base">
-            {plan.description}
-          </Text>
+          <View className="bg-muted p-4 rounded-lg web:md:p-6">
+            <Text className="text-muted-foreground web:md:text-base">
+              {plan.description}
+            </Text>
+          </View>
         </View>
         {user?.id !== plan.creator_id && (
-          <View className="flex-row items-center gap-1 px-4 web:md:px-8">
-            <Text className="text-sm text-muted-foreground">Creado por</Text>
+          <View className="flex-row items-center gap-1 p-4 web:md:p-8">
+            <Text className="text-sm text-muted-foreground">Organizado por</Text>
             <Link href={`/(screens)/plans/profile/${plan.creator_id}`}>
               <Text className="text-sm font-semibold text-brand">
                 @{plan.profiles?.username || "usuario"}
@@ -294,9 +303,9 @@ export default function PlanDetail() {
             </Button>
           )}
 
-        <View className="mt-6 px-6 web:md:px-8">
+        <View className="mt-16 px-6 web:md:px-8">
           <View className="flex-row justify-between items-center mb-4">
-            <Text className="text-lg font-semibold">Comentarios</Text>
+            <Text className="text-2xl font-semibold">Comentarios</Text>
             <TouchableOpacity onPress={() => commentSheetRef.current?.expand()}>
               <Text className=" text-primary">Comentar</Text>
             </TouchableOpacity>
@@ -309,13 +318,16 @@ export default function PlanDetail() {
                   className="flex-row items-center gap-2 mb-2"
                   key={comment.id}
                 >
-                  <Image
-                    source={{
-                      uri: comment.profiles?.image_url
-                    }}
-                    className="rounded-full"
-                    style={{ width: 40, height: 40, borderRadius: 999 }}
-                  />
+                  <Pressable onPress={() => router.push(`/(screens)/plans/profile/${comment.profiles?.user_id}`)}>
+
+                    <Image
+                      source={{
+                        uri: comment.profiles?.image_url
+                      }}
+                      className="rounded-full"
+                      style={{ width: 40, height: 40, borderRadius: 999 }}
+                    />
+                  </Pressable>
                   <View className="flex flex-col flex-wrap">
                     <View className="flex flex-row gap-2 items-center">
                       <Text className="font-medium text-muted-foreground">
@@ -325,7 +337,7 @@ export default function PlanDetail() {
                         {new Date(comment.created_at).toLocaleDateString()}
                       </Text>
                     </View>
-                    <View className="w-[75%]">
+                    <View className="">
                       <Text className="font-medium">{comment.message}</Text>
                     </View>
                   </View>

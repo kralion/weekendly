@@ -1,20 +1,17 @@
 import { useUser } from "@clerk/clerk-expo";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
-import { ChevronLeft, Plus } from "lucide-react-native";
+import { Calendar, ChevronLeft, Plus } from "lucide-react-native";
 import React from "react";
 import { Alert, Image, TouchableOpacity, Vibration, View } from "react-native";
 import { RefreshControl } from "react-native-gesture-handler";
-import { toast } from "sonner-native";
-import { MotiView } from "moti";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import Animated, { FadeInDown } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "~/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Text } from "~/components/ui/text";
 import { usePlans } from "~/stores";
 import { Plan } from "~/types";
-import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MyPlansScreen() {
   const [value, setValue] = React.useState("created");
@@ -107,54 +104,23 @@ export default function MyPlansScreen() {
             }}
             className="w-full h-40 web:md:h-48"
           />
-          <View className="p-4 web:md:p-5">
-            <View className="flex-row justify-between items-center mb-2">
-              <Text className="text-lg font-semibold web:md:text-xl">
-                {item.title}
-              </Text>
-              <View className="bg-blue-100 px-3 py-1 rounded-full">
-                <Text className="text-blue-800 text-sm web:md:text-base">
-                  {new Date(item.date).toLocaleDateString()}
-                </Text>
-              </View>
-            </View>
+          <View className="p-4 web:md:p-5 flex-col gap-4">
 
-            <Text
-              className="text-gray-600 mb-3 web:md:text-base"
-              numberOfLines={2}
-            >
-              {item.description}
+            <Text className="text-xl font-semibold web:md:text-xl">
+              {item.title}
             </Text>
 
-            <View className="flex-row justify-between items-center">
-              <View className="flex-row items-center">
-                {/* TODO: uncomment when there is a feature request */}
-                {/* <View className="flex-row -space-x-2">
-                  {participants.slice(0, 3).map((participant, index) => (
-                    <Avatar
-                      key={index}
-                      alt={participant.username}
-                      className="web:md:h-9 web:md:w-9"
-                    >
-                      <AvatarImage
-                        source={{ uri: participant.image_url as string }}
-                      />
-                      <AvatarFallback>
-                        <Text>{participant.username?.[0]}</Text>
-                      </AvatarFallback>
-                    </Avatar>
-                  ))}
-                </View> */}
-                <Text className="text-gray-600 web:md:text-base">
-                  {item.participants.length} personas
-                </Text>
-              </View>
 
-              <View className="flex-row items-center">
-                <View className="w-2 h-2 rounded-full bg-green-500 mr-2 web:md:w-3 web:md:h-3" />
-                <Text className="text-gray-600 web:md:text-base">Activo</Text>
-              </View>
+
+
+
+
+
+            <View className="flex-row items-center">
+              <Calendar size={18} color="gray" />
+              <Text className="text-muted-foreground">   {new Date(item.date).toLocaleDateString()}</Text>
             </View>
+
           </View>
         </TouchableOpacity>
       </Animated.View>

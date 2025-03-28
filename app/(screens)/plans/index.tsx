@@ -80,9 +80,7 @@ function PlanCard({ plan }: { plan: Plan }) {
             <Text className="text-white text-base web:md:text-lg">
               {plan.location}
             </Text>
-            <Text className="text-white/60 text-sm ml-2 web:md:text-base">
-              (2.5 km)
-            </Text>
+
           </View>
         </View>
 

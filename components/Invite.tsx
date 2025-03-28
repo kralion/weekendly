@@ -1,6 +1,7 @@
 import { useUser } from "@clerk/clerk-expo";
 import BottomSheet, {
   BottomSheetBackdrop,
+  BottomSheetScrollView,
   BottomSheetTextInput,
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
@@ -22,7 +23,7 @@ export default function InviteBottomSheet({
   bottomSheetRef: React.RefObject<BottomSheet>;
   id: string;
 }) {
-  const snapPoints = useMemo(() => ["55%"], []);
+  const snapPoints = useMemo(() => ["45%"], []);
   const { isDarkColorScheme: isDarkMode } = useColorScheme();
   const [message, setMessage] = React.useState<string>("");
   const { createInvitation, loading: invitationsLoading } = useInvitations();
@@ -119,11 +120,11 @@ export default function InviteBottomSheet({
         setMessage("");
       }}
     >
-      <BottomSheetView className="p-4 flex flex-col gap-4">
+      <BottomSheetScrollView
+        contentContainerClassName="p-4 flex flex-col gap-4">
         <Text className="font-bold text-3xl">Invitar</Text>
 
-        <View className="flex flex-col gap-2">
-          <Text style={{ color: "gray" }}>Nombre de usuario</Text>
+        <View className="flex flex-col gap-4">
           <View className="flex-row items-center gap-4">
             {selectedUser ? (
               <View className="flex-1 flex-row items-center justify-between bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-gray-200 dark:border-zinc-700">
@@ -136,7 +137,7 @@ export default function InviteBottomSheet({
               <>
                 <BottomSheetTextInput
                   className="border rounded-lg border-gray-200 p-4 flex-1 dark:border-zinc-700 text-black dark:text-white"
-                  placeholder="Ej. usuario123"
+                  placeholder="Nombre de usuario"
                   value={searchText}
                   onChangeText={setSearchText}
                 />
@@ -165,13 +166,11 @@ export default function InviteBottomSheet({
             </View>
           )}
 
-          <Text style={{ color: "gray" }} className="mt-2">
-            Mensaje
-          </Text>
+
           <View className="flex-row items-center ">
             <BottomSheetTextInput
-              className="border rounded-lg border-gray-200 p-4 flex-1 dark:border-zinc-700 text-black dark:text-white"
-              placeholder="Escribe ..."
+              className="web:flex min-h-[80px] w-full rounded-md border border-input dark:border-border bg-background px-3 py-2 text-base lg:text-sm native:text-lg native:leading-[1.25] text-foreground web:ring-offset-background placeholder:text-muted-foreground web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2"
+              placeholder="Mensaje de invitación ..."
               value={message}
               onChangeText={setMessage}
               multiline
@@ -192,7 +191,7 @@ export default function InviteBottomSheet({
             <Text>Invitar</Text>
           )}
         </Button>
-      </BottomSheetView>
+      </BottomSheetScrollView>
     </BottomSheet>
   );
 }

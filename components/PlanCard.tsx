@@ -16,12 +16,12 @@ export function PlanCard({ plan, index }: { plan: Plan; index: number }) {
         .mass(0.5)
         .damping(8)
         .stiffness(80)}
-      className="px-4 web:md:mx-auto web:md:w-[650px] my-8"
+      className="px-4 web:md:mx-auto web:md:w-[650px] web:md:my-8 my-4"
     >
       <Pressable
         style={{ height: height * 0.5 }}
         className="bg-white rounded-3xl overflow-hidden relative web:md:max-h-[500px]"
-        onPress={() => router.push("/(screens)/plans")}
+        onPress={() => router.push(`/(screens)/plans/plan/${plan.id}`)}
       >
         <Image
           source={{

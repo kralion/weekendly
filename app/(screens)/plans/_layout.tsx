@@ -31,17 +31,7 @@ export default function TabLayout() {
           title: "Perfil del Creador",
           presentation: "modal",
           headerShadowVisible: false,
-          headerShown: true,
-          headerLeft: () => (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full"
-              onPress={() => router.back()}
-            >
-              <X size={20} color="#FF5733" />
-            </Button>
-          ),
+          headerShown: false,
         }}
       />
     </Stack>

@@ -3,13 +3,14 @@ import { ActivityIndicator, View } from "react-native";
 import BottomSheet, {
   BottomSheetBackdrop,
   BottomSheetView,
+  BottomSheetTextInput
 } from "@gorhom/bottom-sheet";
 import { Button } from "./ui/button";
 import { Text } from "./ui/text";
 import { usePlans } from "~/stores";
 import { toast } from "sonner-native";
-import { AlertTriangle } from "lucide-react-native";
 import { useColorScheme } from "~/lib/useColorScheme";
+import { Textarea } from "./ui/textarea";
 
 interface ReportPlanProps {
   planId: string;
@@ -21,10 +22,11 @@ export default function ReportPlan({
   bottomSheetRef,
 }: ReportPlanProps) {
   const { reportPlan } = usePlans();
+  const [report, setReport] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
   const { isDarkColorScheme: isDarkMode } = useColorScheme();
 
-  const snapPoints = useMemo(() => ["40%"], []);
+  const snapPoints = useMemo(() => ["30%"], []);
 
   const handleReport = async () => {
     try {
@@ -59,17 +61,15 @@ export default function ReportPlan({
       backgroundStyle={{ backgroundColor: isDarkMode ? "#262626" : "white" }}
       backdropComponent={renderBackdrop}
     >
-      <BottomSheetView className="flex-1 p-4  ">
-        <View className="flex-row items-center gap-2 mb-4">
-          <AlertTriangle size={20} color="#FF5733" />
-          <Text className="text-2xl font-bold">Reportar Plan</Text>
-        </View>
+      <BottomSheetView className="flex-1 px-4 gap-4  ">
+        <Text className="text-2xl font-bold">Reportar Plan</Text>
 
-        <Text className="text-sm text-muted-foreground mb-6">
-          Si consideras que este plan es inapropiado o inseguro, puedes
-          reportarlo. Nuestro equipo revisará el reporte y tomará las medidas
-          necesarias.
-        </Text>
+        <BottomSheetTextInput className="web:flex min-h-[80px] w-full rounded-md border border-input dark:border-border bg-background px-3 py-2 text-base lg:text-sm native:text-lg native:leading-[1.25] text-foreground web:ring-offset-background placeholder:text-muted-foreground web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2"
+          value={report}
+          placeholder="Escribe tu reporte..."
+          onChangeText={setReport}
+          multiline
+        />
 
         <View className="flex-row gap-4">
           <Button
@@ -85,7 +85,7 @@ export default function ReportPlan({
             size="lg"
             variant="destructive"
             onPress={handleReport}
-            disabled={isLoading}
+            disabled={isLoading || report.length === 0}
           >
             {isLoading ? (
               <ActivityIndicator color="white" />

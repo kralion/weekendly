@@ -3,11 +3,13 @@ import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import {
   Camera,
+  Check,
   CheckCircle,
   ChevronLeft,
   Globe,
   MapPin,
   Moon,
+  Settings2,
   Sun,
 } from "lucide-react-native";
 import React from "react";
@@ -17,6 +19,7 @@ import {
   Image,
   KeyboardAvoidingView,
   ScrollView,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -30,6 +33,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { toast } from "sonner-native";
 import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
 import { Textarea } from "~/components/ui/textarea";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
@@ -45,7 +49,10 @@ export default function ProfileScreen() {
   const [isSendingFeedback, setIsSendingFeedback] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const { currentProfile, loading, fetchProfileById } = useProfiles();
+  const { currentProfile, loading, fetchProfileById, updateProfile } = useProfiles();
+  const [bio, setBio] = React.useState(currentProfile?.bio || "");
+  const [phone, setPhone] = React.useState(currentProfile?.phone || "");
+  const [ig_username, setIg_username] = React.useState(currentProfile?.ig_username || "");
   const [image_url, setImage_url] = React.useState<string>(
     currentProfile?.image_url || ""
   );
@@ -229,7 +236,7 @@ export default function ProfileScreen() {
         </Animated.View>
         <Animated.View
           entering={FadeInDown.delay(100).duration(500).springify()}
-          className="p-4 flex-row mt-10 justify-between items-center absolute top-0 right-0 z-10"
+          className="p-4 flex-row mt-10 justify-between items-center absolute top-0  right-0  z-10"
         >
           <TouchableOpacity
             onPress={() => router.push(`/(screens)/my-profile/my-plans`)}
@@ -238,6 +245,7 @@ export default function ProfileScreen() {
             <Text className="text-white">Mis Planes</Text>
           </TouchableOpacity>
         </Animated.View>
+
 
         {/* Profile Info */}
         <Animated.View
@@ -308,19 +316,35 @@ export default function ProfileScreen() {
 
           {/* Profile Details Cards */}
           <View className="mt-8 flex flex-col">
-            <Text className="text-lg font-semibold mb-2 text-muted-foreground web:md:text-xl">
+            <Text className="text-lg font-semibold mb-2  web:md:text-xl">
               Bio
             </Text>
             <View className="bg-muted p-4 rounded-lg web:md:p-6">
-              <Text className="text-muted-foreground web:md:text-base">
-                {currentProfile?.bio}
-              </Text>
+              <TextInput
+                value={bio}
+                className="dark:text-white"
+                onChangeText={(text) => setBio(text)}
+                onBlur={() => updateProfile(user?.id as string, { bio })}
+              />
+            </View>
+          </View>
+          <View className="mt-8 flex flex-col">
+            <Text className="text-lg font-semibold mb-2  web:md:text-xl">
+              Teléfono
+            </Text>
+            <View className="bg-muted p-4 rounded-lg web:md:p-6">
+              <TextInput
+                value={phone}
+                className="dark:text-white"
+                onChangeText={(text) => setPhone(text)}
+                onBlur={() => updateProfile(user?.id as string, { phone })}
+              />
             </View>
           </View>
 
           {/* Interests/Hobbies */}
           <View className="mt-8">
-            <Text className="text-lg font-semibold mb-4 text-muted-foreground web:md:text-xl">
+            <Text className="text-lg font-semibold mb-4  web:md:text-xl">
               Intereses
             </Text>
             <View className="flex-row flex-wrap gap-2">
@@ -336,12 +360,41 @@ export default function ProfileScreen() {
               ))}
             </View>
           </View>
+          <View className="mt-8 flex flex-col gap-2">
+
+            <View className="flex-row items-center gap-4 ">
+              <View className="flex flex-col gap-2">
+                <View className="flex flex-col">
+
+                  <Text className="text-lg font-semibold mr-2  web:md:text-xl">
+                    Tu Instagram
+                  </Text>
+                  <Text className="text-xs text-muted-foreground">
+                    Para que se animen a hacer más planes contigo
+                  </Text>
+                </View>
+                <View className="flex-row justify-between items-center gap-4">
+
+                  <View className="bg-muted p-4 rounded-lg web:md:p-6 w-full">
+                    <TextInput
+                      placeholder="@usuario"
+                      className="dark:text-white"
+                      value={ig_username}
+                      onChangeText={(text) => setIg_username(text)}
+                      onBlur={() => updateProfile(user?.id as string, { ig_username: `https://www.instagram.com/${ig_username}` })}
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+
           <View className="mt-8">
-            <Text className="text-lg font-semibold mb-4 text-muted-foreground web:md:text-xl">
+            <Text className="text-lg font-semibold mb-4  web:md:text-xl">
               Apariencia
             </Text>
             <View className="bg-muted p-4 rounded-lg web:md:p-6 flex flex-row justify-between items-center">
-              <Text className="text-muted-foreground web:md:text-base">
+              <Text className=" web:md:text-base">
                 {isDarkColorScheme ? "Modo Oscuro" : "Modo Claro"}
               </Text>
 

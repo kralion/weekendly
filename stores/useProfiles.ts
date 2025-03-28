@@ -131,7 +131,6 @@ export const useProfiles = create<ProfilesState>((set, get) => ({
         profiles: state.profiles.map((p) => (p.user_id === userId ? data : p)),
         currentProfile: data,
       }));
-      toast.success("Perfil actualizado exitosamente");
     } catch (error) {
       toast.error("Error al actualizar perfil");
       console.error(error);

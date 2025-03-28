@@ -1,9 +1,11 @@
 import BottomSheet, {
   BottomSheetBackdrop,
+  BottomSheetScrollView,
   BottomSheetView
 } from "@gorhom/bottom-sheet";
+import { router } from "expo-router";
 import React, { useCallback, useEffect, useMemo } from "react";
-import { Image, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import { Text } from "~/components/ui/text";
 import { useColorScheme } from "~/lib/useColorScheme";
 import { usePlans } from "~/stores";
@@ -46,20 +48,22 @@ export default function PeopleJoinedBottomSheet({
       backdropComponent={renderBackdrop}
 
     >
-      <BottomSheetView className="p-4 flex flex-col gap-4">
+      <BottomSheetScrollView contentContainerClassName="px-4 flex flex-col gap-8">
         <Text className="font-bold text-3xl">Invitados</Text>
-        <View className="flex flex-col gap-2">
+        <View className="flex flex-col gap-4">
           {participants.map((participant) => (
-            <View key={participant.user_id} className="flex flex-row items-center gap-2">
+            <TouchableOpacity onPress={() => router.push(`/(screens)/plans/profile/${participant.user_id}`)} key={participant.user_id} className="flex flex-row items-center gap-2">
               <Image
                 source={{ uri: participant.image_url as string }}
-                className="w-8 h-8 rounded-full"
+                className="w-10 h-10 rounded-full"
               />
               <Text className="font-medium">{participant.username}</Text>
-            </View>
+            </TouchableOpacity>
           ))}
+
+
         </View>
-      </BottomSheetView>
+      </BottomSheetScrollView>
 
 
 

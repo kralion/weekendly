@@ -28,6 +28,7 @@ export interface Invitation {
 export interface Profile {
   user_id: string;
   username: string;
+  ig_username: string | null;
   bio: string | null;
   image_url: string | null;
   hobbies: string[];
