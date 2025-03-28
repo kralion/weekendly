@@ -23,6 +23,7 @@ import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
 import { Textarea } from "~/components/ui/textarea";
 import { usePlans } from "~/stores";
+import { Switch } from "~/components/ui/switch";
 
 const HEADER_HEIGHT = 100;
 
@@ -50,6 +51,7 @@ export default function CreatePlan() {
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [location, setLocation] = React.useState("");
+  const [isPrivate, setIsPrivate] = React.useState(false);
   const [date, setDate] = React.useState(new Date());
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     []
@@ -81,6 +83,7 @@ export default function CreatePlan() {
         setSelectedCategories(selectedPlan.categories);
         setMaxParticipants(selectedPlan.max_participants);
         setImageUrl(selectedPlan.image_url);
+        setIsPrivate(selectedPlan.is_private);
       }
     }
   }, [id, setSelectedPlan]);
@@ -154,6 +157,7 @@ export default function CreatePlan() {
         creator_id: user.id,
         categories: selectedCategories,
         status: "activo" as const,
+        is_private: isPrivate,
         participants: [user.id],
       };
 
@@ -407,6 +411,13 @@ export default function CreatePlan() {
                 {errors.categories}
               </Text>
             )}
+          </View>
+          <View>
+            <Text className="text-base mb-2 web:md:text-lg">Privado</Text>
+            <Switch
+              checked={isPrivate}
+              onCheckedChange={setIsPrivate}
+            />
           </View>
 
           <View className="flex flex-row gap-2 justify-center mt-5">

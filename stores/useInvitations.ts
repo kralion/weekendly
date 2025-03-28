@@ -34,7 +34,7 @@ export const useInvitations = create<InvitationStore>((set, get) => ({
         `
         )
         .eq("status", "pending")
-        .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
+        .or(`receiver_id.eq.${userId}`)
         .order("created_at", { ascending: false });
 
       if (error) throw error;

@@ -23,6 +23,7 @@ export interface Invitation {
   receiver?: Profile;
   plan_id: string;
   status: InvitationStatus;
+  type: "request" | "invite";
   message: string;
 }
 
