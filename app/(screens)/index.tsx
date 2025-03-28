@@ -2,7 +2,7 @@ import { useUser } from "@clerk/clerk-expo";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { Bell, BellDot, Search } from "lucide-react-native";
+import { Bell, BellDot, Plus, Search } from "lucide-react-native";
 import * as React from "react";
 import {
   ActivityIndicator,
@@ -141,20 +141,19 @@ export default function Index() {
         >
           <View className="flex-row items-center justify-between p-4">
             <View>
-              <Text className="text-3xl font-bold">
+              <Text className="text-2xl font-bold">
                 ¡Hola! {user?.firstName?.split(" ")[0]} 👋
               </Text>
-              <Text className="text-base text-muted-foreground">
+              <Text className="text-base text-md text-muted-foreground">
                 Descubre planes increíbles
               </Text>
+
             </View>
-            <View className="flex-row items-center gap-6">
-              <Pressable
-                style={({ pressed }) => [
-                  {
-                    backgroundColor: pressed || results?.length > 0 ? "red" : "transparent",
-                  },
-                ]}
+            <View className="flex-row items-center gap-2">
+              <Button
+                variant="ghost"
+                className="rounded-full"
+                size="icon"
                 onPress={() => {
                   if (results?.length > 0) {
                     setSearchToNull();
@@ -164,19 +163,32 @@ export default function Index() {
                 }}
               >
                 <Search color="#FF5733" size={24} />
-              </Pressable>
-              <TouchableOpacity
+              </Button>
+
+              <Button
+                variant="ghost"
+                className="rounded-full"
+                size="icon"
                 onPress={() => router.push("/(screens)/notifications")}
               >
-                <View className="relative">
-                  {notifications > 0 ? (
-                    <BellDot color="#FF5733" size={24} />
-                  ) : (
-                    <Bell color="#FF5733" size={24} />
-                  )}
-                </View>
-              </TouchableOpacity>
-              <TouchableOpacity
+                {notifications > 0 ? (
+                  <BellDot color="#FF5733" size={24} />
+                ) : (
+                  <Bell color="#FF5733" size={24} />
+                )}
+              </Button>
+              <Button
+                variant="ghost"
+                className="rounded-full"
+                size="icon"
+                onPress={() => router.push("/(screens)/plans/create")}
+              >
+                <Plus color="#FF5733" size={24} />
+              </Button>
+              <Button
+                variant="ghost"
+                className="rounded-full"
+                size="icon"
                 onPress={() => router.push("/(screens)/my-profile")}
               >
                 <Avatar alt="profile">
@@ -185,7 +197,7 @@ export default function Index() {
                     <Text>{user?.firstName?.[0]}</Text>
                   </AvatarFallback>
                 </Avatar>
-              </TouchableOpacity>
+              </Button>
             </View>
           </View>
 
