@@ -12,19 +12,26 @@ export interface SearchState {
 export const useSearch = create<SearchState>((set, get) => ({
   results: [],
   loading: false,
-  search: async (search: { location?: string; date?: string; categories?: string[] }) => {
+search: async (search: { location?: string; date?: string; categories?: string[] }) => {
     set({ loading: true });
-    const categoriesQuery = search.categories
-      ? `categories && array['${search.categories.join("','")}'::text[]]`
-      : "true";
-    const { data: results, error } = await supabase
-      .from("plans")
-      .select("*")
-      .ilike("location", `%${search.location || ""}%`)
-      // .or(categoriesQuery)
-      // .ilike("date", `%${search.date || ""}%`)
-    if (error) console.error(error);
+    let query = supabase.from("plans").select("*");
+    if (search.location) {
+        query = query.ilike("location", `%${search.location.trim()}%`);
+    }
+    if (search.date) {
+        query = query.eq("date", search.date);
+    }
+    if (search.categories && search.categories.length > 0) {
+        query = query.containedBy("categories", search.categories);
+    }
+    const { data: results, error } = await query;
+    if (error) {
+        console.error("Search error:", error);
+    }
     set({ results: results || [], loading: false });
-  },
+},
+
+
+
   setSearchToNull: () => set({ results: [] }),
 }));
