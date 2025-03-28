@@ -1,4 +1,5 @@
 export type PlanStatus = "activo" | "cancelado" | "completado";
+export type InvitationStatus = "accepted"  | "rejected" | "pending";
 
 export interface Category {
   id: string;
@@ -21,7 +22,7 @@ export interface Invitation {
   sender?: Profile;
   receiver?: Profile;
   plan_id: string;
-  status: string;
+  status: InvitationStatus;
   message: string;
 }
 
@@ -52,6 +53,7 @@ export interface Plan {
   categories: string[];
   reports?: number;
   title: string;
+  is_private: boolean;
   description: string;
   profiles?: Profile;
   location: string;

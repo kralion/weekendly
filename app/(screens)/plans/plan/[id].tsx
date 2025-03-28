@@ -47,7 +47,6 @@ export default function PlanDetail() {
   const peopleJoinedSheetRef = React.useRef<BottomSheet>(null);
   const reportSheetRef = React.useRef<BottomSheet>(null);
   const [plan, setPlan] = React.useState<Plan | null>(null);
-
   const { joinPlan, leavePlan, getPlanById } = usePlans();
   const { comments, getCommentsByPlanId } = useComments();
 
@@ -215,14 +214,6 @@ export default function PlanDetail() {
                 size="icon"
                 className="rounded-full"
                 variant="ghost"
-                onPress={() => bottomSheetRef.current?.expand()}
-              >
-                <UserPlus size={20} color="#FF5733" />
-              </Button>
-              <Button
-                size="icon"
-                className="rounded-full"
-                variant="ghost"
                 onPress={handleShare}
               >
                 <Share2 size={20} color="#FF5733" />
@@ -297,9 +288,14 @@ export default function PlanDetail() {
             <Button
               size="lg"
               className="m-4 mb-8 rounded-full web:md:mx-8 web:md:max-w-xs web:md:self-center"
-              onPress={handleJoinPlan}
+              variant={plan.is_private ? "secondary" : "default"}
+              onPress={
+                plan.is_private ? () => bottomSheetRef.current?.expand() : handleJoinPlan
+              }
             >
-              <Text className="text-white font-semibold">Unirme al plan</Text>
+              <Text className=" font-semibold">
+                {plan.is_private ? "Solicitar unirme" : "Unirme al plan"}
+              </Text>
             </Button>
           )}
 

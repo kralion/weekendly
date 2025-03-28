@@ -1,4 +1,5 @@
 import { useUser } from "@clerk/clerk-expo";
+import { FlashList } from "@shopify/flash-list";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Image } from "expo-image";
@@ -13,6 +14,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { Button } from "~/components/ui/button";
+import { Separator } from "~/components/ui/separator";
 import { Text } from "~/components/ui/text";
 import { useInvitations } from "~/stores/useInvitations";
 import { Invitation } from "~/types";
@@ -41,11 +43,12 @@ const NotificationItem = React.memo(
 
     return (
       <Animated.View entering={FadeInDown.delay(index * 100).springify()}>
-        <TouchableOpacity
-          className="p-4 border-b border-muted web:md:mx-auto web:md:p-5"
-          onPress={onSelect}
-        >
-          <View className="flex-row gap-2">
+
+        <View className="flex-row gap-4 p-4">
+          <TouchableOpacity
+            className=" web:md:mx-auto web:md:p-5"
+            onPress={() => router.push(`/(screens)/plans/profile/${notification.sender_id}`)}
+          >
             <Image
               source={{
                 uri: notification.sender?.image_url,
@@ -53,10 +56,15 @@ const NotificationItem = React.memo(
               style={{ width: 40, height: 40, borderRadius: 999 }}
               className="web:md:w-12 web:md:h-12"
             />
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="  web:md:mx-auto web:md:p-5"
+            onPress={onSelect}
+          >
             <View className="flex-1 flex flex-col gap-0">
-              <View className="flex-row justify-between items-center">
+              <View className="flex-row gap-6 items-center">
                 <Text className="font-semibold web:md:text-lg">
-                  {notification.sender?.username} te invitó a este plan
+                  {notification.sender?.username} solicitó unirse a tu plan
                 </Text>
                 <Text className="text-sm text-gray-500 web:md:text-base">
                   {format(new Date(notification.created_at), "dd/MM/yyyy", {
@@ -68,19 +76,20 @@ const NotificationItem = React.memo(
                 {notification.message}
               </Text>
             </View>
+          </TouchableOpacity>
+        </View>
+        <Animated.View style={expandStyle}>
+          <View className="flex-row gap-2 items-center  web:md:max-w-md web:md:mx-auto web:md:p-5 px-4">
+            <Button className="flex-1" onPress={onAccept}>
+              <Text >Aceptar</Text>
+            </Button>
+            <Button variant="secondary" className="flex-1" onPress={onReject}>
+              <Text>Rechazar</Text>
+            </Button>
           </View>
+        </Animated.View>
 
-          <Animated.View style={expandStyle}>
-            <View className="flex-row gap-2 items-center mt-4 web:md:max-w-md web:md:mx-auto">
-              <Button className="flex-1" onPress={onAccept}>
-                <Text className="text-white">Ver Plan</Text>
-              </Button>
-              <Button variant="secondary" className="flex-1" onPress={onReject}>
-                <Text>Marcar como leido</Text>
-              </Button>
-            </View>
-          </Animated.View>
-        </TouchableOpacity>
+
       </Animated.View>
     );
   }
@@ -90,7 +99,8 @@ export default function NotificationsScreen() {
   const {
     invitations: notifications,
     getInvitationsByUserId,
-    markAsRead,
+    acceptInvitation,
+    rejectInvitation,
   } = useInvitations();
   const [selectedNotification, setSelectedNotification] =
     React.useState<Invitation | null>(null);
@@ -108,12 +118,12 @@ export default function NotificationsScreen() {
   }, []);
 
   const handleAcceptInvitation = (notification: Invitation) => {
-    router.push(`/(screens)/plans/plan/${notification.plan_id}`);
+    acceptInvitation(notification.id);
+    setSelectedNotification(null);
   };
 
   const handleRejectInvitation = (notification: Invitation) => {
-    // Add rejection logic here
-    markAsRead(notification.id);
+    rejectInvitation(notification.id);
     setSelectedNotification(null);
   };
 
@@ -138,31 +148,29 @@ export default function NotificationsScreen() {
       </Animated.View>
 
       {/* Notifications List */}
-      <ScrollView
-        className="flex-1"
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-      >
-        {notifications.length > 0 ? (
-          notifications.map((notification, index) => (
-            <NotificationItem
-              key={notification.id}
-              notification={notification}
-              index={index}
-              isSelected={selectedNotification?.id === notification.id}
-              onSelect={() => {
-                setSelectedNotification(
-                  notification.id === selectedNotification?.id
-                    ? null
-                    : notification
-                );
-              }}
-              onAccept={() => handleAcceptInvitation(notification)}
-              onReject={() => handleRejectInvitation(notification)}
-            />
-          ))
-        ) : (
+      <FlashList
+        data={notifications}
+        contentContainerClassName="px-8  web:md:mx-auto web:md:w-1/2"
+        estimatedItemSize={100}
+        ItemSeparatorComponent={() => <Separator />}
+        renderItem={({ item: notification, index }) => (
+          <NotificationItem
+            key={notification.id}
+            notification={notification}
+            index={index}
+            isSelected={selectedNotification?.id === notification.id}
+            onSelect={() => {
+              setSelectedNotification(
+                notification.id === selectedNotification?.id
+                  ? null
+                  : notification
+              );
+            }}
+            onAccept={() => handleAcceptInvitation(notification)}
+            onReject={() => handleRejectInvitation(notification)}
+          />
+        )}
+        ListEmptyComponent={
           <Animated.View
             entering={FadeInDown.delay(300).duration(800)}
             className="flex-1 justify-center items-center p-8 web:md:p-16"
@@ -171,8 +179,11 @@ export default function NotificationsScreen() {
               No tienes notificaciones nuevas
             </Text>
           </Animated.View>
-        )}
-      </ScrollView>
+        }
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      />
     </View>
   );
 }

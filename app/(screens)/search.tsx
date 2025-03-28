@@ -183,7 +183,7 @@ export default function SearchScreen() {
       <Button
         onPress={handleSearch}
         size="lg"
-        className="m-4"
+        className="m-4 web:md:mx-auto web:md:p-5"
       >
         <Text className="text-white font-semibold text-lg">
           Buscar

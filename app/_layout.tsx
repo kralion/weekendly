@@ -20,7 +20,7 @@ import { router, Slot, SplashScreen, useSegments } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { Platform } from "react-native";
+import { Platform, useWindowDimensions } from "react-native";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
 import { NAV_THEME } from "~/lib/constants";
 import { useColorScheme } from "~/lib/useColorScheme";
@@ -83,6 +83,8 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({ DMSans_400Regular, DMSans_700Bold });
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
+  const width = useWindowDimensions().width;
+  const isMobile = width < 768;
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 
   React.useEffect(() => {
@@ -122,7 +124,10 @@ export default function RootLayout() {
         <ClerkLoaded>
           <GestureHandlerRootView>
             <RootLayoutNav />
-            <Toaster />
+            <Toaster style={{
+              width: isMobile ? "100%" : "50%",
+              marginHorizontal: isMobile ? 0 : "auto"
+            }} />
           </GestureHandlerRootView>
         </ClerkLoaded>
         <PortalHost />

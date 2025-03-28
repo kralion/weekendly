@@ -9,7 +9,8 @@ interface InvitationStore {
   error: string | null;
   // Actions
   getInvitationsByUserId: (userId: string) => Promise<void>;
-  markAsRead: (invitationId: string) => Promise<void>;
+  rejectInvitation: (invitationId: string) => Promise<void>;
+  acceptInvitation: (invitationId: string) => Promise<void>;
   createInvitation: (
     invitation: Omit<Invitation, "id" | "status">
   ) => Promise<void>;
@@ -32,8 +33,8 @@ export const useInvitations = create<InvitationStore>((set, get) => ({
           receiver:profiles!invitations_receiver_id_fkey(*)
         `
         )
-        .eq("status", "unread")
-        .or(`receiver_id.eq.${userId}`)
+        .eq("status", "pending")
+        .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -46,27 +47,55 @@ export const useInvitations = create<InvitationStore>((set, get) => ({
     }
   },
 
-  markAsRead: async (invitationId) => {
+  rejectInvitation: async (invitationId) => {
     try {
       set({ loading: true });
-
-      // Delete the invitation after marking as read
       const { error } = await supabase
         .from("invitations")
-        .delete()
+        .update({ status: "rejected" })
         .eq("id", invitationId);
 
       if (error) throw error;
-
-      // Update local state
-      const invitations = get().invitations.filter(
-        (inv) => inv.id !== invitationId
-      );
-      set({ invitations });
-
-      toast.success("Invitación marcada como leída");
+      toast.success("Invitación rechazada");
+      get().getInvitationsByUserId(invitationId);
     } catch (error) {
-      toast.error("Error al marcar la invitación como leída");
+      toast.error("Error al rechazar la invitación");
+      console.error(error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  acceptInvitation: async (invitationId) => {
+    try {
+      set({ loading: true });
+      const invitation = get().invitations.find(
+        (invitation) => invitation.id === invitationId
+      );
+      if (!invitation) {
+        throw new Error("Invitación no encontrada");
+      }
+      const { error } = await supabase
+        .from("invitations")
+        .update({ status: "accepted" })
+        .eq("id", invitationId);
+      const { error: error2, data: plan } = await supabase
+        .from("plans")
+        .select("participants")
+        .eq("id", invitation.plan_id)
+        .single();
+      if (error2) throw error2;
+      const { error: error3 } = await supabase
+        .from("plans")
+        .update({
+          participants: [...plan.participants, invitation.sender_id],
+        })
+        .eq("id", invitation.plan_id);
+      if (error || error2) throw error || error2;
+      toast.success("Invitación aceptada");
+      get().getInvitationsByUserId(invitationId);
+    } catch (error) {
+      toast.error("Error al aceptar la invitación");
       console.error(error);
     } finally {
       set({ loading: false });
@@ -78,7 +107,7 @@ export const useInvitations = create<InvitationStore>((set, get) => ({
       set({ loading: true });
       const { error } = await supabase.from("invitations").insert({
         ...invitation,
-        status: "unread",
+        status: "pending",
       });
 
       if (error) throw error;
