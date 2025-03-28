@@ -164,7 +164,10 @@ export default function PlanDetail() {
             {user?.id === plan.creator_id && (
               <TouchableOpacity
                 onPress={() =>
-                  router.push(`/(screens)/plans/create?id=${plan.id}`)
+                  router.push({
+                    pathname: '/(screens)/plans/create',
+                    params: { id: plan.id },
+                  })
                 }
                 className="w-10 h-10 justify-center items-center bg-black/20 rounded-full"
               >
@@ -211,6 +214,14 @@ export default function PlanDetail() {
             </View>
             <View className="flex flex-row items-center">
               <Button
+                hitSlop={
+                  {
+                    top: 10,
+                    bottom: 10,
+                    left: 10,
+                    right: 10
+                  }
+                }
                 size="icon"
                 className="rounded-full"
                 variant="ghost"
@@ -219,6 +230,14 @@ export default function PlanDetail() {
                 <Share2 size={20} color="#FF5733" />
               </Button>
               <Button
+                hitSlop={
+                  {
+                    top: 10,
+                    bottom: 10,
+                    left: 10,
+                    right: 10
+                  }
+                }
                 size="icon"
                 className="rounded-full"
                 variant="ghost"
@@ -356,7 +375,6 @@ export default function PlanDetail() {
             userImage={user?.imageUrl as string}
             onClose={() => {
               setShowConfirmed(false);
-              router.back();
             }}
             creatorPhone={plan.profiles?.phone}
           />

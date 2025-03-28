@@ -24,6 +24,8 @@ import { Text } from "~/components/ui/text";
 import { Textarea } from "~/components/ui/textarea";
 import { usePlans } from "~/stores";
 import { Switch } from "~/components/ui/switch";
+import { setHours, setMinutes, subDays } from "date-fns";
+import { es } from "date-fns/locale";
 
 const HEADER_HEIGHT = 100;
 
@@ -73,20 +75,18 @@ export default function CreatePlan() {
   const { user } = useUser();
 
   React.useEffect(() => {
-    if (id) {
+    if (id && selectedPlan) {
       fetchPlanById(id as string);
-      if (selectedPlan) {
-        setTitle(selectedPlan.title);
-        setDescription(selectedPlan.description);
-        setLocation(selectedPlan.location);
-        setDate(new Date(selectedPlan.date));
-        setSelectedCategories(selectedPlan.categories);
-        setMaxParticipants(selectedPlan.max_participants);
-        setImageUrl(selectedPlan.image_url);
-        setIsPrivate(selectedPlan.is_private);
-      }
+      setTitle(selectedPlan.title);
+      setDescription(selectedPlan.description);
+      setLocation(selectedPlan.location);
+      setDate(new Date(selectedPlan.date));
+      setSelectedCategories(selectedPlan.categories);
+      setMaxParticipants(selectedPlan.max_participants);
+      setImageUrl(selectedPlan.image_url);
+      setIsPrivate(selectedPlan.is_private);
     }
-  }, [id, setSelectedPlan]);
+  }, [id]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -244,145 +244,83 @@ export default function CreatePlan() {
 
         {/* Content Section */}
         <View className="flex flex-col gap-8 p-6 mt-4 web:md:max-w-2xl web:md:mx-auto">
-          <View>
-            <Text className="text-base mb-2 web:md:text-lg">
-              Título del Plan
+
+          <Input
+            value={title}
+            onChangeText={setTitle}
+            autoCapitalize="sentences"
+            placeholder="Título del plan"
+            className="web:md:text-base web:md:h-12"
+          />
+          {errors.title && (
+            <Text className="text-red-500 text-sm web:md:text-base mt-2">
+              {errors.title}
             </Text>
-            <Input
-              value={title}
-              onChangeText={setTitle}
-              autoCapitalize="sentences"
-              placeholder="Ej: Salida al café"
-              className="web:md:text-base web:md:h-12"
-            />
-            {errors.title && (
-              <Text className="text-red-500 text-sm web:md:text-base">
-                {errors.title}
-              </Text>
-            )}
-          </View>
+          )}
 
-          <View>
-            <Text className="text-muted-foreground mb-2 web:md:text-lg">
-              Descripción
+
+          <Textarea
+            value={description}
+            onChangeText={setDescription}
+            placeholder="Descripción de tu plan..."
+            className="web:md:text-base"
+          />
+          {errors.description && (
+            <Text className="text-red-500 text-sm web:md:text-base mt-2">
+              {errors.description}
             </Text>
-            <Textarea
-              value={description}
-              onChangeText={setDescription}
-              placeholder="Describe tu plan..."
-              className="web:md:text-base"
+          )}
+
+
+
+          {Platform.OS === "web" && (
+            <DatePicker
+              selected={date}
+              onChange={(newDate: Date | null) => {
+                if (newDate) {
+                  setDate(newDate);
+                }
+              }}
+              minDate={subDays(new Date(), 0)}
+              locale={es}
+              className="flex-1 h-12 px-4 rounded-lg bg-muted/50 text-base web:md:text-base"
+              placeholderText="Selecciona fecha"
+              showTimeSelect
+              excludeTimes={[
+                setHours(setMinutes(new Date(), 0), 17),
+                setHours(setMinutes(new Date(), 30), 18),
+                setHours(setMinutes(new Date(), 30), 19),
+                setHours(setMinutes(new Date(), 30), 17),
+              ]}
+              dateFormat="MMMM d, yyyy h:mm aa"
             />
-            {errors.description && (
-              <Text className="text-red-500 text-sm web:md:text-base">
-                {errors.description}
-              </Text>
-            )}
-          </View>
 
-          <View>
-            <Text className="text-base mb-2 web:md:text-lg">Ubicación</Text>
-            <Input
-              value={location}
-              onChangeText={setLocation}
-              placeholder="¿Dónde será el plan?"
-              className="web:md:text-base web:md:h-12"
+          )}
+
+          {Platform.OS !== "web" && (
+
+            <DateTimePicker
+              style={{ marginLeft: -16 }}
+              value={date || new Date()}
+              mode="date"
+              display="default"
+              onChange={(event, selectedDate) => {
+                setShowDatePicker(false);
+                if (selectedDate) {
+                  setDate(selectedDate);
+                }
+              }}
+              locale="es-ES"
             />
-            {errors.location && (
-              <Text className="text-red-500 text-sm web:md:text-base">
-                {errors.location}
-              </Text>
-            )}
-          </View>
 
-          <View>
-            <Text className="text-base mb-2 web:md:text-lg">Fecha y Hora</Text>
-            {Platform.OS === "web" && (
-              <View className="flex flex-col gap-2">
-                <View className="flex flex-row gap-4">
-                  <View style={{ position: "relative", zIndex: 10 }}>
-                    <DatePicker
-                      selected={date}
-                      onChange={(newDate: Date | null) => {
-                        if (newDate) {
-                          setDate(newDate);
-                        }
-                      }}
-                      showTimeSelect
-                      timeFormat="HH:mm"
-                      timeIntervals={15}
-                      dateFormat="MMMM d, yyyy h:mm aa"
-                      locale="es"
-                      className="flex-1 h-12 px-4 rounded-lg bg-muted/50 text-base web:md:text-base"
-                      placeholderText="Selecciona fecha y hora"
-                    />
-                  </View>
-                </View>
-                <View className="flex flex-row gap-4">
-                  <TouchableOpacity
-                    onPress={() => setShowDatePicker(true)}
-                    className="flex-1 h-12 px-4 rounded-lg bg-muted/50 justify-center"
-                  >
-                    <Text className="text-base">
-                      {date.toLocaleDateString("es-ES", {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => setShowTimePicker(true)}
-                    className="flex-1 h-12 px-4 rounded-lg bg-muted/50 justify-center"
-                  >
-                    <Text className="text-base">
-                      {date.toLocaleTimeString("es-ES", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
 
-            {Platform.OS !== "web" && (
-              <View className="flex flex-row ">
-                <DateTimePicker
-                  style={{ marginLeft: -16 }}
-                  value={date}
-                  mode="date"
-                  display="default"
-                  onChange={(event, selectedDate) => {
-                    setShowDatePicker(false);
-                    if (selectedDate) {
-                      setDate(selectedDate);
-                    }
-                  }}
-                  locale="es-ES"
-                />
-                <DateTimePicker
-                  value={date}
-                  mode="time"
-                  display="default"
-                  onChange={(event, selectedDate) => {
-                    setShowTimePicker(false);
-                    if (selectedDate) {
-                      setDate(selectedDate);
-                    }
-                  }}
-                  locale="es-ES"
-                />
-              </View>
-            )}
-
-            {errors.date && (
-              <Text className="text-red-500 text-sm web:md:text-base">
-                {errors.date}
-              </Text>
-            )}
-          </View>
-
+          )}
+          <Input
+            value={location}
+            onChangeText={setLocation}
+            placeholder="Ubicación del plan"
+            className="web:md:text-base web:md:h-12"
+          />
           <View>
             <Text className="text-base mb-2 web:md:text-lg">Categorías</Text>
             <View className="flex flex-row gap-2 flex-wrap">

@@ -72,7 +72,7 @@ export default function ProfileScreen() {
               uri: userInfo?.image_url,
             }}
             style={{ width: "100%", height: "100%" }}
-            className="absolute web:md:rounded-xl"
+            className="absolute web:md:rounded-b-xl"
           />
 
           <LinearGradient

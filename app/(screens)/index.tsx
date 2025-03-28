@@ -19,6 +19,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Text } from "~/components/ui/text";
 import { usePlans, useProfiles, useSearch } from "~/stores";
+import { useInvitations } from "~/stores/useInvitations";
 
 const CATEGORIES = [
   { id: "1", name: "Música" },
@@ -71,8 +72,8 @@ export default function Index() {
     plans,
   } = usePlans();
   const { results, setSearchToNull } = useSearch();
-  const [notifications, setNotifications] = React.useState(2);
   const { currentProfile, fetchProfileById } = useProfiles();
+  const { invitations } = useInvitations()
   const [refreshing, setRefreshing] = React.useState(false);
   const { user } = useUser();
 
@@ -137,9 +138,9 @@ export default function Index() {
             .damping(8)
             .stiffness(80)
             .duration(600)}
-          className="bg-background flex flex-col gap-4 web:md:max-w-4xl web:md:mx-auto web:md:px-4"
+          className="bg-background flex flex-col gap-4 web:md:w-4xl web:md:mx-auto web:md:px-4"
         >
-          <View className="flex-row items-center justify-between p-4">
+          <View className="flex-row items-center justify-between p-4 web:md:w-[650px]">
             <View>
               <Text className="text-2xl font-bold">
                 ¡Hola! {user?.firstName?.split(" ")[0]} 👋
@@ -149,10 +150,18 @@ export default function Index() {
               </Text>
 
             </View>
-            <View className="flex-row items-center gap-2">
+            <View className="flex-row items-center gap-1">
               <Button
                 variant="ghost"
                 className="rounded-full"
+                hitSlop={
+                  {
+                    top: 10,
+                    bottom: 10,
+                    left: 10,
+                    right: 10
+                  }
+                }
                 size="icon"
                 onPress={() => {
                   if (results?.length > 0) {
@@ -166,18 +175,34 @@ export default function Index() {
               </Button>
 
               <Button
+                hitSlop={
+                  {
+                    top: 10,
+                    bottom: 10,
+                    left: 10,
+                    right: 10
+                  }
+                }
                 variant="ghost"
                 className="rounded-full"
                 size="icon"
                 onPress={() => router.push("/(screens)/notifications")}
               >
-                {notifications > 0 ? (
+                {invitations?.length > 0 ? (
                   <BellDot color="#FF5733" size={24} />
                 ) : (
                   <Bell color="#FF5733" size={24} />
                 )}
               </Button>
               <Button
+                hitSlop={
+                  {
+                    top: 10,
+                    bottom: 10,
+                    left: 10,
+                    right: 10
+                  }
+                }
                 variant="ghost"
                 className="rounded-full"
                 size="icon"
@@ -186,6 +211,14 @@ export default function Index() {
                 <Plus color="#FF5733" size={24} />
               </Button>
               <Button
+                hitSlop={
+                  {
+                    top: 10,
+                    bottom: 10,
+                    left: 10,
+                    right: 10
+                  }
+                }
                 variant="ghost"
                 className="rounded-full"
                 size="icon"

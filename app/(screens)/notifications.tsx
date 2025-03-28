@@ -7,12 +7,12 @@ import { RefreshControl, View } from "react-native";
 import Animated, {
   FadeInDown
 } from "react-native-reanimated";
+import { NotificationItem } from "~/components/NotificationItem";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { Text } from "~/components/ui/text";
 import { useInvitations } from "~/stores/useInvitations";
 import { Invitation } from "~/types";
-import { NotificationItem } from "~/components/NotificationItem";
 
 
 
@@ -47,11 +47,7 @@ export default function NotificationsScreen() {
     rejectInvitation(notification.id);
     setSelectedNotification(null);
   };
-  const handleSelect = (notification: Invitation) => {
-    setSelectedNotification((prev) =>
-      prev?.id === notification.id ? null : notification
-    );
-  };
+
 
   return (
     <View className="flex-1 bg-background pt-12">
@@ -76,7 +72,7 @@ export default function NotificationsScreen() {
       {/* Notifications List */}
       <FlashList
         data={notifications}
-        contentContainerClassName="px-8  web:md:mx-auto web:md:w-1/2"
+        contentContainerClassName="px-8 py-4 web:md:mx-auto web:md:w-1/2"
         estimatedItemSize={100}
         ItemSeparatorComponent={() => <Separator />}
         renderItem={({ item: notification, index }) => (
@@ -84,8 +80,6 @@ export default function NotificationsScreen() {
             key={notification.id}
             notification={notification}
             index={index}
-            isSelected={selectedNotification?.id === notification.id}
-            onSelect={() => handleSelect(notification)}
             onAccept={() => handleAcceptInvitation(notification)}
             onReject={() => handleRejectInvitation(notification)}
           />

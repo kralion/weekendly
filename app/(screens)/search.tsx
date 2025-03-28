@@ -10,10 +10,11 @@ import Animated, {
   FadeInDown
 } from "react-native-reanimated";
 import { Button } from "~/components/ui/button";
-
+import { es } from 'date-fns/locale/es'
 import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
 import { useSearch } from "~/stores";
+import { setHours, setMinutes, subDays } from "date-fns";
 
 const CATEGORIES = [
   "Música",
@@ -34,7 +35,7 @@ export default function SearchScreen() {
   const [location, setLocation] = React.useState("");
   const { search } = useSearch();
   const [showDatePicker, setShowDatePicker] = React.useState(false);
-  const [date, setDate] = React.useState(new Date());
+  const [date, setDate] = React.useState<Date | undefined>(undefined);
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
     []
   );
@@ -52,7 +53,7 @@ export default function SearchScreen() {
   const handleSearch = () => {
     search({
       location,
-      date: date.toISOString(),
+      date: date?.toISOString(),
       categories: selectedCategories
     });
     router.back();
@@ -80,76 +81,56 @@ export default function SearchScreen() {
 
 
       <View className="flex flex-col gap-8 p-6 mt-4 web:md:max-w-2xl web:md:mx-auto">
-        <View>
-          <Text className="text-base mb-2 web:md:text-lg">Ubicación</Text>
-          <Input
-            value={location}
-            onChangeText={setLocation}
-            placeholder="¿Dónde quieres que sea?"
-            className="web:md:text-base web:md:h-12"
+
+        {Platform.OS === "web" && (
+          <DatePicker
+            selected={date}
+            onChange={(newDate: Date | null) => {
+              if (newDate) {
+                setDate(newDate);
+              }
+              console.log(newDate);
+            }}
+            minDate={subDays(new Date(), 0)}
+            locale={es}
+            className="flex-1 h-12 px-4 rounded-lg bg-muted/50 text-base web:md:text-base"
+            placeholderText="Selecciona fecha"
+            showTimeSelect
+            excludeTimes={[
+              setHours(setMinutes(new Date(), 0), 17),
+              setHours(setMinutes(new Date(), 30), 18),
+              setHours(setMinutes(new Date(), 30), 19),
+              setHours(setMinutes(new Date(), 30), 17),
+            ]}
+            dateFormat="MMMM d, yyyy h:mm aa"
           />
 
-        </View>
+        )}
 
-        <View>
-          <Text className="text-base mb-2 web:md:text-lg">Fecha</Text>
-          {Platform.OS === "web" && (
-            <View className="flex flex-col gap-2">
-              <View className="flex flex-row gap-4">
-                <View style={{ position: "relative", zIndex: 10 }}>
-                  <DatePicker
-                    selected={date}
-                    onChange={(newDate: Date | null) => {
-                      if (newDate) {
-                        setDate(newDate);
-                      }
-                    }}
-                    dateFormat="MMMM d, yyyy"
-                    locale="es"
-                    className="flex-1 h-12 px-4 rounded-lg bg-muted/50 text-base web:md:text-base"
-                    placeholderText="Selecciona fecha"
-                  />
-                </View>
-              </View>
-              <View className="flex flex-row gap-4">
-                <TouchableOpacity
-                  onPress={() => setShowDatePicker(true)}
-                  className="flex-1 h-12 px-4 rounded-lg bg-muted/50 justify-center"
-                >
-                  <Text className="text-base">
-                    {date.toLocaleDateString("es-ES", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
+        {Platform.OS !== "web" && (
 
-          {Platform.OS !== "web" && (
-            <View className="flex flex-row ">
-              <DateTimePicker
-                style={{ marginLeft: -16 }}
-                value={date}
-                mode="date"
-                display="default"
-                onChange={(event, selectedDate) => {
-                  setShowDatePicker(false);
-                  if (selectedDate) {
-                    setDate(selectedDate);
-                  }
-                }}
-                locale="es-ES"
-              />
-
-            </View>
-          )}
+          <DateTimePicker
+            style={{ marginLeft: -16 }}
+            value={date || new Date()}
+            mode="date"
+            display="default"
+            onChange={(event, selectedDate) => {
+              setShowDatePicker(false);
+              if (selectedDate) {
+                setDate(selectedDate);
+              }
+            }}
+            locale="es-ES"
+          />
 
 
-        </View>
+        )}
+        <Input
+          value={location}
+          onChangeText={setLocation}
+          placeholder="Ubicación del plan"
+          className="web:md:text-base web:md:h-12"
+        />
 
         <View>
           <Text className="text-base mb-2 web:md:text-lg">Categorías</Text>
