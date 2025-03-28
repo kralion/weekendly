@@ -17,6 +17,13 @@ export default function TabLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="search"
+        options={{
+          title: "Buscar",
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

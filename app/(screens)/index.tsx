@@ -2,25 +2,23 @@ import { useUser } from "@clerk/clerk-expo";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { Bell, BellDot, Search, X, ZoomIn } from "lucide-react-native";
+import { Bell, BellDot, Search } from "lucide-react-native";
 import * as React from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
+  Pressable,
   RefreshControl,
   ScrollView,
-  TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { PlanCard } from "~/components/PlanCard";
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import { Text } from "~/components/ui/text";
-import { usePlans, useProfiles } from "~/stores";
-import { Plan } from "~/types";
+import { usePlans, useProfiles, useSearch } from "~/stores";
 
 const CATEGORIES = [
   { id: "1", name: "Música" },
@@ -68,13 +66,11 @@ export default function Index() {
     fetchPlans,
     filteredPlans,
     selectedCategory,
-    searchQuery,
-    setSearchQuery,
     setFilteredPlans,
     setSelectedCategory,
     plans,
   } = usePlans();
-  const searchRef = React.useRef<TextInput>(null);
+  const { results, setSearchToNull } = useSearch();
   const [notifications, setNotifications] = React.useState(2);
   const { currentProfile, fetchProfileById } = useProfiles();
   const [refreshing, setRefreshing] = React.useState(false);
@@ -98,62 +94,21 @@ export default function Index() {
 
   // Effect to update filtered plans when plans array changes
   React.useEffect(() => {
-    if (plans.length > 0) {
-      if (searchQuery) {
-        // If there's a search query, filter by relevance
-        const filtered = plans
-          .filter((plan) => {
-            const titleMatch = plan.title
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase());
-            const descriptionMatch = plan.description
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase());
-            const locationMatch = plan.location
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase());
-            const categoryMatch = plan.categories.some((cat) =>
-              cat.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-            return (
-              titleMatch || descriptionMatch || locationMatch || categoryMatch
-            );
-          })
-          .sort((a, b) => {
-            // Calculate relevance score
-            const getScore = (plan: Plan) => {
-              let score = 0;
-              const lowerQuery = searchQuery.toLowerCase();
-              if (plan.title.toLowerCase().includes(lowerQuery)) score += 10;
-              if (plan.title.toLowerCase().startsWith(lowerQuery)) score += 5;
-              if (plan.description.toLowerCase().includes(lowerQuery))
-                score += 3;
-              if (plan.location.toLowerCase().includes(lowerQuery)) score += 2;
-              if (
-                plan.categories.some((cat) =>
-                  cat.toLowerCase().includes(lowerQuery)
-                )
-              )
-                score += 1;
-              return score;
-            };
-            return getScore(b) - getScore(a);
-          });
+
+    if (selectedCategory) {
+      // If there's a selected category, filter by it
+      const categoryName = CATEGORIES.find(
+        (cat) => cat.id === selectedCategory
+      )?.name;
+      if (categoryName) {
+        const filtered = plans.filter((plan) =>
+          plan.categories.includes(categoryName)
+        );
         setFilteredPlans(filtered);
-      } else if (selectedCategory) {
-        // If there's a selected category, filter by it
-        const categoryName = CATEGORIES.find(
-          (cat) => cat.id === selectedCategory
-        )?.name;
-        if (categoryName) {
-          const filtered = plans.filter((plan) =>
-            plan.categories.includes(categoryName)
-          );
-          setFilteredPlans(filtered);
-        }
       }
     }
-  }, [plans, searchQuery, selectedCategory]);
+
+  }, [plans, selectedCategory]);
 
   if (!filteredPlans)
     return (
@@ -194,13 +149,22 @@ export default function Index() {
               </Text>
             </View>
             <View className="flex-row items-center gap-6">
-              <TouchableOpacity
-                onPress={() => router.push("/(screens)/notifications")}
+              <Pressable
+                style={({ pressed }) => [
+                  {
+                    backgroundColor: pressed || results?.length > 0 ? "red" : "transparent",
+                  },
+                ]}
+                onPress={() => {
+                  if (results?.length > 0) {
+                    setSearchToNull();
+                  } else {
+                    router.push("/(screens)/search");
+                  }
+                }}
               >
-
                 <Search color="#FF5733" size={24} />
-
-              </TouchableOpacity>
+              </Pressable>
               <TouchableOpacity
                 onPress={() => router.push("/(screens)/notifications")}
               >
@@ -228,7 +192,7 @@ export default function Index() {
 
 
           {/* Categories */}
-          {!searchQuery && (
+          {results.length <= 0 && (
             <View className="web:md:px-4 mb-8">
               <Text className="text-muted-foreground px-4 mb-4">
                 Categorías
@@ -251,7 +215,7 @@ export default function Index() {
           )}
         </Animated.View>
         <FlashList
-          data={filteredPlans}
+          data={results.length > 0 ? results : filteredPlans}
           estimatedItemSize={200}
           renderItem={({ item, index }) => <PlanCard plan={item} index={index} />}
           ListEmptyComponent={
@@ -274,8 +238,7 @@ export default function Index() {
                 />
               </View>
               <Text className="text-center mt-5 text-muted-foreground mx-auto w-2/3">
-                No se encontraron planes que coincidan con{" "}
-                {searchQuery ? "tu búsqueda" : "la categoría seleccionada"}.
+                No se encontraron planes que coincidan
               </Text>
             </View>
           }
