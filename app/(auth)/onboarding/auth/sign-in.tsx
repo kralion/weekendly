@@ -9,7 +9,7 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
-  View,
+  View, Linking, TouchableOpacity
 } from "react-native";
 import { toast } from "sonner-native";
 import { z } from "zod";
@@ -175,14 +175,15 @@ export default function SignInScreen() {
             </View>
             <View className="mt-10">
               <Text className="text-center text-muted-foreground web:md:text-sm">
-                Al inciar sesión aceptas nuestros{" "}
-                <Text className="text-primary font-semibold underline">
-                  Términos y condiciones
-                </Text>{" "}
-                y nuestra{" "}
-                <Text className="text-primary font-semibold underline">
-                  Política de Privacidad
-                </Text>
+                App desarrollada por {" "}
+               <TouchableOpacity
+      onPress={() => Linking.openURL('https://brayan-paucar.framer.website')}
+      activeOpacity={0.7}
+    >
+      <Text className="text-primary font-semibold underline">
+        Brayan Paucar
+      </Text>
+    </TouchableOpacity>              
               </Text>
             </View>
           </View>
