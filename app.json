@@ -83,7 +83,8 @@
         {
           "locationWhenInUsePermission": "Mostrar mi ubicación actual en el mapa."
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
