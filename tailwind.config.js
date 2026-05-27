@@ -1,24 +1,10 @@
-const { hairlineWidth } = require("nativewind/theme");
-
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   darkMode: "class",
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
-  presets: [require("nativewind/preset")],
+  content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
-      transitionDuration: {
-        DEFAULT: "150ms",
-      },
-      borderRadius: {
-        md: "var(--rounded-md)",
-        lg: "var(--rounded-lg)",
-        xl: "var(--rounded-xl)",
-        "2xl": "var(--rounded-2xl)",
-        full: "var(--rounded-full)",
-      },
       colors: {
-        brand: "#FF5733",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -53,10 +39,11 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
-      borderWidth: {
-        hairline: hairlineWidth(),
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
-
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

@@ -1,15 +1,60 @@
-# Weekendly 🎉
+# Weekendly
 
-**Weekendly** is a unique platform for people seeking fun, casual, and meaningful connections exclusively on weekends. Whether you're looking for companionship, hangouts, or weekend adventures, Weekendly makes it easy to find like-minded individuals in your area.
+Web app for discovering and creating weekend plans. Built with TanStack Start, React, Tailwind CSS, Supabase, and Clerk.
 
----
+## Tech Stack
 
-## 🛠️ Tech Stack
+- **Framework:** TanStack Start (Vite + React)
+- **Routing:** TanStack Router (file-based)
+- **Styling:** Tailwind CSS
+- **Auth:** Clerk
+- **Database:** Supabase
+- **State:** Zustand
+- **Forms:** React Hook Form + Zod
 
-- **Frontend:** React Native (using Expo), NativeWind
-- **Backend:** Supabase for database, real-time updates, and authentication
-- **Authentication:** Clerk with Google, Facebook, and TikTok social logins
-- **State Management:** Context API with a modular design
-- **Deployment:** Optimized for web MVP using Expo
+## Getting Started
 
----
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Copy `.env.example` to `.env` and fill in your keys:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Run the dev server:
+   ```bash
+   npm run dev
+   ```
+
+4. Build for production:
+   ```bash
+   npm run build
+   ```
+
+5. Start the production server:
+   ```bash
+   npm start
+   ```
+
+## Project Structure
+
+```
+src/
+├── components/     # React components
+├── lib/            # Utilities (supabase, utils)
+├── routes/         # TanStack Router file-based routes
+├── server/         # Server functions (API logic)
+├── stores/         # Zustand stores
+├── styles/         # Global CSS
+├── types/          # TypeScript types
+├── router.tsx      # Router config
+├── routeTree.gen.ts # Auto-generated route tree
+└── start.tsx       # TanStack Start config
+```
+
+## Environment Variables
+
+See `.env.example` for required variables.
